@@ -1,4 +1,4 @@
-package dev.riotjy.mobjy.jmobjy.main;
+package dev.riotjy.mobjy;
 
 public class Mobjy {
 

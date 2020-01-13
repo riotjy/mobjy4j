@@ -1,4 +1,4 @@
-package dev.riotjy.mobjy.jmobjy.test;
+package dev.riotjy.mobjy;
 
 import static org.junit.Assert.*;
 
