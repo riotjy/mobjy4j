@@ -13,11 +13,8 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  *******************************************************************************/
-package dev.riotjy.mobjy;
+package dev.riotjy.mobjy.model;
 
-public class Mobjy {
+public enum PrimitiveType {
 
-  public static void main(String[] args) {
-    System.out.println("Welcome to mobjy for Java!");
-  }
 }

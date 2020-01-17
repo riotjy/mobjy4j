@@ -13,11 +13,18 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  *******************************************************************************/
-package dev.riotjy.mobjy;
+package dev.riotjy.mobjy.model;
 
-public class Mobjy {
+public abstract class MjyType {
 
-  public static void main(String[] args) {
-    System.out.println("Welcome to mobjy for Java!");
+  static public boolean isPrimitive(MjyType type) {
+    return type.getClass() == MjyPrimitive.class;
   }
+
+  static public boolean isObject(MjyType type) {
+    return type.getClass() == MjyObject.class;
+  }
+
+  abstract public String getTypeName ();
+
 }

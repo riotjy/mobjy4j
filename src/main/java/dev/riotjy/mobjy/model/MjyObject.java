@@ -13,11 +13,22 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  *******************************************************************************/
-package dev.riotjy.mobjy;
+package dev.riotjy.mobjy.model;
 
-public class Mobjy {
+public class MjyObject extends MjyType {
+  
+  private MjyClass reference;
 
-  public static void main(String[] args) {
-    System.out.println("Welcome to mobjy for Java!");
+  public MjyClass getReference() {
+    return reference;
+  }
+
+  public void setReference(MjyClass reference) {
+    this.reference = reference;
+  }
+
+  @Override
+  public String getTypeName() {
+    return reference.getName();
   }
 }
