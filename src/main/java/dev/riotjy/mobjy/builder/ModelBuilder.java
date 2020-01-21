@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 public class ModelBuilder {
 
-  final static Logger logger = LoggerFactory.getLogger(ModelBuilder.class);
+  final static Logger log = LoggerFactory.getLogger(ModelBuilder.class);
 
   ModelLoader modelLoader;
   
@@ -36,7 +36,7 @@ public class ModelBuilder {
   
   public void dumpLoaderInfo() {
     
-    System.out.println("Dumping loader info: ");
+    log.info("Dumping loader info: ");
     Collection<? extends Object> keys = modelLoader.getKeys();
     
     Iterator<? extends Object> it = keys.iterator();
@@ -44,7 +44,7 @@ public class ModelBuilder {
     while(it.hasNext()) {
       Object key = it.next();
       
-      System.out.println("Found key: " + key.toString());
+      log.info("Found key: " + key.toString());
     }
 
     Collection<? extends Object> mappings = modelLoader.getMappings();
@@ -54,7 +54,7 @@ public class ModelBuilder {
     while(it.hasNext()) {
       Object key = it.next();
       
-      System.out.println("Mapping: " + key.toString());
+      log.info("Mapping: " + key.toString());
     }
   }
 }

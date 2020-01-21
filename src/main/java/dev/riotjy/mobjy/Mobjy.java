@@ -15,14 +15,35 @@
  *******************************************************************************/
 package dev.riotjy.mobjy;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dev.riotjy.mobjy.builder.ModelBuilder;
 
 public class Mobjy {
 
+  final static Logger log = LoggerFactory.getLogger(Mobjy.class);
+
   public static void main(String[] args) {
-    System.out.println("Welcome to mobjy for Java!\n");
     
-    ModelBuilder mBuilder = new ModelBuilder("/home/alex/riotjy/gitlab/mobjy/mobjyarch/examples/example.yaml");
+    MobjyConfig cfg = MobjyConfig.getInst();
+    
+    cfg.parseCommandLine(args);
+    
+    if (cfg.hasOption(StrConst.CLI_HELP)) {
+      cfg.printFormatedHelp();
+      return;
+    }
+    
+    String inFileName = "";
+    if (cfg.hasOption(StrConst.CLI_IN_FILE_NAME)) {
+      inFileName = cfg.getCmdStr(StrConst.CLI_IN_FILE_NAME);
+    } else {
+      log.error("Missing input file argument");
+      return;
+    }
+    
+    ModelBuilder mBuilder = new ModelBuilder(inFileName);
     
     mBuilder.dumpLoaderInfo();
   }

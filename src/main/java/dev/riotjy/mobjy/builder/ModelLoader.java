@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 public interface ModelLoader {
 
-  final static Logger logger = LoggerFactory.getLogger(ModelLoader.class);
+  final static Logger log = LoggerFactory.getLogger(ModelLoader.class);
 
   public Collection<? extends Object> getMappings();
   public Collection<? extends Object> getKeys();
@@ -32,7 +32,7 @@ public interface ModelLoader {
   public static ModelLoader getLoader(String fileName) {
     
     if (null == fileName || fileName.equals("") || !fileName.contains(".")) {
-      logger.error("Invalid model file name.");
+      log.error("Invalid model file name.");
       return null;
     }
     
@@ -41,7 +41,7 @@ public interface ModelLoader {
     if (ext.equals("yaml") || ext.equals("y")) {
       return new SnakeYamlLoader(fileName);
     }
-    logger.error("No model loader available for extension ." + ext);
+    log.error("No model loader available for extension ." + ext);
     return null;
   }
 }
