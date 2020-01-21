@@ -19,7 +19,7 @@ public class MjyCollection {
 
   private MjyType valueType;
   private String name;
-  private CollectionType collectionType;
+  private MjyCollectionType collectionType;
 
   public MjyType getValueType() {
     return valueType;
@@ -37,11 +37,11 @@ public class MjyCollection {
     this.name = name;
   }
 
-  public CollectionType getCollectionType() {
+  public MjyCollectionType getCollectionType() {
     return collectionType;
   }
 
-  public void setCollectionType(CollectionType collectionType) {
+  public void setCollectionType(MjyCollectionType collectionType) {
     this.collectionType = collectionType;
   }
 }

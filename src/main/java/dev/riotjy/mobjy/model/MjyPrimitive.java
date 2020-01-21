@@ -17,13 +17,13 @@ package dev.riotjy.mobjy.model;
 
 public class MjyPrimitive extends MjyType {
 
-  private PrimitiveType type;
+  private MjyPrimitiveType type;
 
-  public PrimitiveType getType() {
+  public MjyPrimitiveType getType() {
     return type;
   }
 
-  public void setType(PrimitiveType type) {
+  public void setType(MjyPrimitiveType type) {
     this.type = type;
   }
 

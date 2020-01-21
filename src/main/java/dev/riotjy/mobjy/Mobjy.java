@@ -15,9 +15,15 @@
  *******************************************************************************/
 package dev.riotjy.mobjy;
 
+import dev.riotjy.mobjy.builder.ModelBuilder;
+
 public class Mobjy {
 
   public static void main(String[] args) {
-    System.out.println("Welcome to mobjy for Java!");
+    System.out.println("Welcome to mobjy for Java!\n");
+    
+    ModelBuilder mBuilder = new ModelBuilder("/home/alex/riotjy/gitlab/mobjy/mobjyarch/examples/example.yaml");
+    
+    mBuilder.dumpLoaderInfo();
   }
 }

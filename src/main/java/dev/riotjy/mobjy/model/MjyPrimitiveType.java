@@ -15,6 +15,6 @@
  *******************************************************************************/
 package dev.riotjy.mobjy.model;
 
-public enum CollectionType {
+public enum MjyPrimitiveType {
 
 }
