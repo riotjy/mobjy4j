@@ -25,13 +25,18 @@ public class ModelBuilder {
 
   final static Logger log = LoggerFactory.getLogger(ModelBuilder.class);
 
-  ModelLoader modelLoader;
+  private ModelLoader modelLoader;
   
   public ModelBuilder() {
   }
   
   public ModelBuilder(String fileName) {
-    modelLoader = ModelLoader.getLoader(fileName);
+    modelLoader = ModelLoader.getLoadedLoader(fileName);
+  }
+  
+  public boolean buildModel() {
+    
+    return true;
   }
   
   public void dumpLoaderInfo() {

@@ -29,7 +29,7 @@ public interface ModelLoader {
   public Object getMapped(String key);
 
   
-  public static ModelLoader getLoader(String fileName) {
+  public static ModelLoader getLoadedLoader(String fileName) {
     
     if (null == fileName || fileName.equals("") || !fileName.contains(".")) {
       log.error("Invalid model file name.");
@@ -44,4 +44,5 @@ public interface ModelLoader {
     log.error("No model loader available for extension ." + ext);
     return null;
   }
+  
 }

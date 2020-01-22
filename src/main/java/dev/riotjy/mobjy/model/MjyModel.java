@@ -22,12 +22,14 @@ public class MjyModel {
   private String project;
   
   private MjyVersion version;
-  private MjyVersion earliestCompatibleVersion;
+  private MjyVersion compatVersion;
   
   private ArrayList<MjyClass> classes = new ArrayList<MjyClass>();
   
-  public boolean addClass(MjyClass cla55) {
-    classes.add(cla55);
+  MjyModel() {}
+  
+  public boolean addClass(MjyClass clazz) {
+    classes.add(clazz);
     return true;
   }
   
@@ -37,6 +39,15 @@ public class MjyModel {
   
   public MjyClass getClassByIndex(int index) {
     return classes.get(index);
+  }
+  
+  public MjyClass getClassByName(String name) {
+    for (MjyClass mjyClass : classes) {
+      if (mjyClass.getName().equals(name)) {
+        return mjyClass;
+      }
+    }
+    return null;
   }
   
   public String getProject() {
@@ -55,12 +66,11 @@ public class MjyModel {
     this.version = version;
   }
 
-  public MjyVersion getEarliestCompatibleVersion() {
-    return earliestCompatibleVersion;
+  public MjyVersion getCompatVersion() {
+    return compatVersion;
   }
 
-  public void setEarliestCompatibleVersion(MjyVersion earliestCompatibleVersion) {
-    this.earliestCompatibleVersion = earliestCompatibleVersion;
+  public void setCompatVersion(MjyVersion compatVersion) {
+    this.compatVersion = compatVersion;
   }
-  
 }

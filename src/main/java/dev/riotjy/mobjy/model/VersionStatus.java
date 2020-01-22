@@ -16,5 +16,20 @@
 package dev.riotjy.mobjy.model;
 
 public enum VersionStatus {
-  ALPHA, BETA, RELEASE
+  ALPHA, BETA, RELEASE, INVALID;
+  
+  public static VersionStatus getVersionStatus(String status) {
+    if (status.equals("alpha")) return ALPHA;
+    if (status.equals("beta")) return BETA;
+    if (status.equals("release")) return RELEASE;
+    return INVALID;
+  }
+  
+  @Override
+  public String toString() {
+    if (this == ALPHA) return "alpha";
+    if (this == BETA) return "beta";
+    if (this == RELEASE) return "release";
+    return "invalid";
+  }
 }

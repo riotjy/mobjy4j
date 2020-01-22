@@ -23,7 +23,7 @@ public class MjyVersion {
   private int candidate;
   private VersionStatus status;
   
-  public MjyVersion(
+  MjyVersion(
       int major, int minor, int revision, 
       int candidate, VersionStatus status) {
     super();
