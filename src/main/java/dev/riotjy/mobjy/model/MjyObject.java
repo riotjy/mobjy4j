@@ -18,6 +18,10 @@ package dev.riotjy.mobjy.model;
 public class MjyObject extends MjyType {
   
   private MjyClass reference;
+  
+  MjyObject(MjyClass ref) {
+    this.reference = ref;
+  }
 
   public MjyClass getReference() {
     return reference;

@@ -16,5 +16,14 @@
 package dev.riotjy.mobjy.model;
 
 public enum MjyCollectionType {
-
+  ARRAYLIST,
+  HASHMAP,
+  INVALID;
+  
+  public static MjyCollectionType getMjyCollectionType(String status) {
+    if (status.equals("arrayList")) return ARRAYLIST;
+    if (status.equals("hashMap")) return HASHMAP;
+    return INVALID;
+  }
+  
 }

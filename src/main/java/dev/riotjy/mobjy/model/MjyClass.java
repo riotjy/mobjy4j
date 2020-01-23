@@ -26,6 +26,11 @@ public class MjyClass {
   private ArrayList<MjyAttribute> attributes = new ArrayList<MjyAttribute>();
   private ArrayList<MjyCollection> collections = new ArrayList<MjyCollection>();
 
+  public MjyClass(String name) {
+    super();
+    this.name = name;
+  }
+
   public boolean addAttribute(MjyAttribute attribute) {
     attributes.add(attribute);
     return true;

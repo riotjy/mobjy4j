@@ -18,21 +18,26 @@ package dev.riotjy.mobjy.model;
 public class MjyAttribute {
 
   private MjyType type;
-  private String name;  
+  private String name; 
+  
+  MjyAttribute(String name, MjyType type) {
+    this.name = name;
+    this.type = type;
+  }
 
-    public MjyType getType() {
-      return type;
-    }
+  public MjyType getType() {
+    return type;
+  }
 
-    public void setType(MjyType type) {
-      this.type = type;
-    }
+  public void setType(MjyType type) {
+    this.type = type;
+  }
 
-    public String getName() {
-      return name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-      this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 }

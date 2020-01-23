@@ -21,6 +21,12 @@ public class MjyCollection {
   private String name;
   private MjyCollectionType collectionType;
 
+  MjyCollection(String name, MjyCollectionType collectionType, MjyType valueType) {
+    this.valueType = valueType;
+    this.name = name;
+    this.collectionType = collectionType;
+  }
+
   public MjyType getValueType() {
     return valueType;
   }

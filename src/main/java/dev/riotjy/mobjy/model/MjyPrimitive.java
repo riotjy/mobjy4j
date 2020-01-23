@@ -19,6 +19,11 @@ public class MjyPrimitive extends MjyType {
 
   private MjyPrimitiveType type;
 
+  MjyPrimitive(MjyPrimitiveType type) {
+    super();
+    this.type = type;
+  }
+
   public MjyPrimitiveType getType() {
     return type;
   }
