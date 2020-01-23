@@ -74,6 +74,9 @@ public class SnakeYamlLoader implements ModelLoader {
 
   @Override
   public Collection<? extends Object> getKeys() {
+    // keySet() returns a Set<String> but this may not
+    // be the case with other YAML or JSON libs, thus
+    // we return a generic Collection of Objects
     return yamlMap.keySet();
   }
 

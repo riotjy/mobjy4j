@@ -16,5 +16,21 @@
 package dev.riotjy.mobjy.model;
 
 public enum MjyPrimitiveType {
-
+  INT,FLOAT,DOUBLE,INVALID;
+  
+  
+  public static MjyPrimitiveType getMjyPrimitiveType(String type) {
+    if (type.equals("int")) return INT;
+    if (type.equals("float")) return FLOAT;
+    if (type.equals("double")) return DOUBLE;
+    return INVALID;
+  }
+  
+  @Override
+  public String toString() {
+    if (this == INT) return "int";
+    if (this == FLOAT) return "float";
+    if (this == DOUBLE) return "double";
+    return "invalid";
+  }
 }

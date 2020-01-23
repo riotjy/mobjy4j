@@ -20,9 +20,9 @@ public enum MjyCollectionType {
   HASHMAP,
   INVALID;
   
-  public static MjyCollectionType getMjyCollectionType(String status) {
-    if (status.equals("arrayList")) return ARRAYLIST;
-    if (status.equals("hashMap")) return HASHMAP;
+  public static MjyCollectionType getMjyCollectionType(String type) {
+    if (type.equals("arrayList")) return ARRAYLIST;
+    if (type.equals("hashMap")) return HASHMAP;
     return INVALID;
   }
   
