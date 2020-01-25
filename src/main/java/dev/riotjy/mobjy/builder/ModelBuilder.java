@@ -40,10 +40,11 @@ public class ModelBuilder {
   private ModelLoader modelLoader;
   private MjyModel theModel;
 
-  public ModelBuilder() {
+  private ModelBuilder() {
   }
 
   public ModelBuilder(String fileName) {
+    this();
     modelLoader = ModelLoader.getLoadedLoader(fileName);
   }
 
@@ -51,7 +52,7 @@ public class ModelBuilder {
     buildModel();
     buildClasses();
     buildInheritance();
-    if (cyclicInheritance())
+    if (cyclicInheritanceFound())
       throw new Exception("Cyclic inheritance found.");
     buildMembers();
     return theModel;
@@ -173,7 +174,7 @@ public class ModelBuilder {
     return true;
   }
 
-  private boolean cyclicInheritance() throws Exception {
+  private boolean cyclicInheritanceFound() throws Exception {
     HashSet<MjyClass> checkSet = new HashSet<>();
     HashSet<MjyClass> alreadyVerified = new HashSet<>();
     
@@ -181,15 +182,15 @@ public class ModelBuilder {
       foundCyclicInheritance = new Recursive<>();
     
     foundCyclicInheritance.func = (clazz) -> {
-      if (alreadyVerified.contains(clazz))
-        return Boolean.FALSE;
-      alreadyVerified.add(clazz);
-
       if(!checkSet.add(clazz) ) {
         String msg = "Found cyclic inheritance involving class <" + clazz.getName() + ">";
         log.error(msg);
         return Boolean.TRUE;
       }
+
+      if (alreadyVerified.contains(clazz))
+        return Boolean.FALSE;
+      alreadyVerified.add(clazz);
 
       MjyClass gener = clazz.getGeneralization();
       if (null == gener)
