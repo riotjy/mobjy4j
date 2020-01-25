@@ -1,4 +1,4 @@
-package dev.riotjy.mobjy;
+package dev.riotjy.mobjy.util;
 
 public enum StrConst {
 

@@ -16,18 +16,22 @@
 package dev.riotjy.mobjy.builder;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dev.riotjy.mobjy.model.MjyClass;
 import dev.riotjy.mobjy.model.MjyCollectionType;
 import dev.riotjy.mobjy.model.MjyModel;
 import dev.riotjy.mobjy.model.MjyModelFactory;
 import dev.riotjy.mobjy.model.MjyPrimitiveType;
 import dev.riotjy.mobjy.model.MjyVersion;
+import dev.riotjy.mobjy.util.Recursive;
 
 public class ModelBuilder {
 
@@ -43,19 +47,21 @@ public class ModelBuilder {
     modelLoader = ModelLoader.getLoadedLoader(fileName);
   }
 
-  public boolean build() throws Exception {
+  public MjyModel build() throws Exception {
     buildModel();
     buildClasses();
     buildInheritance();
-    checkCyclicInheritance();
+    if (cyclicInheritance())
+      throw new Exception("Cyclic inheritance found.");
     buildMembers();
-    return true;
+    return theModel;
   }
 
-  public boolean buildModel() throws Exception {
+  private boolean buildModel() throws Exception {
     String project = modelLoader.getMapped("project").toString();
-    Map ver = (Map)modelLoader.getMapped("version");
-    Map comver = (Map)modelLoader.getMapped("version");
+    //TODO: conversion from Object to Map
+    Map<String, Object> ver = (Map)modelLoader.getMapped("version");
+    Map<String, Object> comver = (Map)modelLoader.getMapped("compatver");
     MjyVersion version = MjyModelFactory.makeVersion(
         Integer.parseInt(ver.get("major").toString()), 
         Integer.parseInt(ver.get("minor").toString()), 
@@ -71,7 +77,8 @@ public class ModelBuilder {
     theModel = MjyModelFactory.makeModel(project, version, compatver);
     return true;
   }
-  public boolean buildClasses() throws Exception {
+  
+  private boolean buildClasses() throws Exception {
     Collection<? extends Object> keys = modelLoader.getKeys();
     for (Object key : keys) {
       if (key.toString().equals("project") ||
@@ -85,7 +92,7 @@ public class ModelBuilder {
     return true;
   }
   
-  public boolean buildInheritance() throws Exception {
+  private boolean buildInheritance() throws Exception {
     Collection<? extends Object> keys = modelLoader.getKeys();
     for (Object key : keys) {
       if (key.toString().equals("project") ||
@@ -95,18 +102,16 @@ public class ModelBuilder {
       }
       String className = key.toString();
       String extendsClass = (String)((Map)modelLoader.getMapped(key.toString())).get("extends");
-      theModel.getClassByName(className).setGeneralization(theModel.getClassByName(extendsClass));
+      if (null == extendsClass) {
+        continue;
+      }
+      MjyClass generalization = theModel.getClassByName(extendsClass);
+      theModel.getClassByName(className).setGeneralization(generalization);
     }
     return true;
   }
   
-  public boolean checkCyclicInheritance() throws Exception {
-    //TODO: recursive search up the inheritance tree for each derived class
-    // mark nodes already checked
-    return true;
-  }
-  
-  public boolean buildMembers() throws Exception {
+  private boolean buildMembers() throws Exception {
     Collection<? extends Object> keys = modelLoader.getKeys();
     for (Object key : keys) {
       if (key.toString().equals("project") ||
@@ -120,31 +125,88 @@ public class ModelBuilder {
     return true;
   }
   
-  public boolean buildMembers(String className) throws Exception {
-    Object classMap = (Map)modelLoader.getMapped(className);
-    Set<String> members = ((Map)classMap).keySet();
+  private boolean buildMembers(String className) throws Exception {
+    MjyClass theClass = theModel.getClassByName(className);
+    if (null == theClass) {
+      return false;
+    }
+
+    Map<String, Object> classMap = (Map)modelLoader.getMapped(className);
+    Set<String> members = classMap.keySet();
     for (String member : members) {
-      Object type = ((Map)classMap).get(member);
+      Object type = (classMap).get(member);
       if (type instanceof String) {
         if (type.toString().contains("[]")) {
-          theModel.getClassByName(className).addCollection(
+          theClass.addCollection(
               MjyModelFactory.makeCollection(member,
                   MjyCollectionType.ARRAYLIST,
                   MjyModelFactory.makePrimitive(
                       MjyPrimitiveType.getMjyPrimitiveType(type.toString().replace("[]", "")))));
+          continue;
         } else {
-          theModel.getClassByName(className).addAttribute(
+          theClass.addAttribute(
               MjyModelFactory.makeAttribute(member,
                   MjyModelFactory.makePrimitive(
                       MjyPrimitiveType.getMjyPrimitiveType(type.toString()))));
+          continue;
         }
       }
-      if (type instanceof Map) {
-        //TODO: add the objects, handle collections
+      if (type instanceof Map<?,?>) {
+        Map<String,String> mappedType = (Map)type;
+        String collectionType = mappedType.get("collection");
+        if (null == collectionType) {
+          theClass.addAttribute(
+              MjyModelFactory.makeAttribute(member,
+                  MjyModelFactory.makeObject(
+                      theModel.getClassByName(mappedType.get("references")))));
+          continue;
+        } else {
+          theClass.addCollection(
+              MjyModelFactory.makeCollection(member,
+                  MjyCollectionType.getMjyCollectionType(collectionType),
+                  MjyModelFactory.makeObject(
+                      theModel.getClassByName(mappedType.get("references")))));
+          continue;
+        }
       }
     }
     return true;
   }
+
+  private boolean cyclicInheritance() throws Exception {
+    HashSet<MjyClass> checkSet = new HashSet<>();
+    HashSet<MjyClass> alreadyVerified = new HashSet<>();
+    
+    Recursive<Function<MjyClass, Boolean>>
+      foundCyclicInheritance = new Recursive<>();
+    
+    foundCyclicInheritance.func = (clazz) -> {
+      if (alreadyVerified.contains(clazz))
+        return Boolean.FALSE;
+      alreadyVerified.add(clazz);
+
+      if(!checkSet.add(clazz) ) {
+        String msg = "Found cyclic inheritance involving class <" + clazz.getName() + ">";
+        log.error(msg);
+        return Boolean.TRUE;
+      }
+
+      MjyClass gener = clazz.getGeneralization();
+      if (null == gener)
+        return Boolean.FALSE;
+      return foundCyclicInheritance.func.apply(gener);
+    };
+    
+    Iterator<MjyClass> classIt = theModel.getClassIterator();
+    while( classIt.hasNext() ) {
+      MjyClass clazz = classIt.next();
+      checkSet.clear();
+      if (Boolean.TRUE == foundCyclicInheritance.func.apply(clazz))
+        return true;
+    }
+    
+    return false;
+  } 
 
   public void dumpLoaderInfo() {
 

@@ -19,12 +19,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dev.riotjy.mobjy.builder.ModelBuilder;
+import dev.riotjy.mobjy.model.MjyModel;
+import dev.riotjy.mobjy.util.MobjyConfig;
+import dev.riotjy.mobjy.util.StrConst;
 
 public class Mobjy {
 
   final static Logger log = LoggerFactory.getLogger(Mobjy.class);
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
     
     MobjyConfig cfg = MobjyConfig.getInst();
     
@@ -46,5 +49,9 @@ public class Mobjy {
     ModelBuilder mBuilder = new ModelBuilder(inFileName);
     
     mBuilder.dumpLoaderInfo();
+    
+    MjyModel theModel = mBuilder.build();
+    
+    log.info(theModel.toString());
   }
 }

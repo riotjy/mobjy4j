@@ -16,6 +16,8 @@
 package dev.riotjy.mobjy.model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Spliterator;
 
 public class MjyModel {
 
@@ -48,6 +50,14 @@ public class MjyModel {
       }
     }
     return null;
+  }
+  
+  public Spliterator<MjyClass> getClassSpliterator( ) {
+    return classes.spliterator();
+  }
+  
+  public Iterator<MjyClass> getClassIterator() {
+    return classes.iterator();
   }
   
   public String getProject() {
