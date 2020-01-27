@@ -17,7 +17,7 @@ Run class "Mobjy" with parameter -i set to full path to input YAML file
 (see examples/example.yaml in sister project mobjyArch)
 
 It turns this:
-```
+```YAML
 DervClassOne:   #creates class DervClassOne extending BaseClass
   extends: BaseClass  
  intOneDervOne: int
@@ -27,7 +27,7 @@ DervClassOne:   #creates class DervClassOne extending BaseClass
     collection: hashMap
 ```    
 into this:
-```
+```Java
 public  class DervClassOne extends BaseClass {
 
   public Integer intOneDervOne;
