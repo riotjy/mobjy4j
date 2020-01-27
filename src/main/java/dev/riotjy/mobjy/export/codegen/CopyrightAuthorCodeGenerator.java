@@ -15,25 +15,34 @@
  *******************************************************************************/
 package dev.riotjy.mobjy.export.codegen;
 
-public abstract class PackageCodeGenerator extends CodeGenerator {
+public abstract class CopyrightAuthorCodeGenerator extends CodeGenerator {
 
-  protected String packageName;
+  protected String copyright;
+  protected String author;
   
-  public PackageCodeGenerator() {
+  public CopyrightAuthorCodeGenerator() {
     super();
   }
 
-  public PackageCodeGenerator(String packageName) {
+  public CopyrightAuthorCodeGenerator(String copyright, String author) {
     super();
-    this.packageName = packageName;
+    this.copyright = copyright;
+    this.author = author;
   }
 
-  public String getPackageName() {
-    return packageName;
+  public String getCopyright() {
+    return copyright;
   }
 
-  public void setPackageName(String packageName) {
-    this.packageName = packageName;
+  public void setCopyright(String copyright) {
+    this.copyright = copyright;
   }
 
+  public String getAuthor() {
+    return author;
+  }
+
+  public void setAuthor(String author) {
+    this.author = author;
+  }
 }

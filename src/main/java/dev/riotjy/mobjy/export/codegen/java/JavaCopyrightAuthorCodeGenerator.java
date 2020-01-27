@@ -13,27 +13,22 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  *******************************************************************************/
-package dev.riotjy.mobjy.export.codegen;
+package dev.riotjy.mobjy.export.codegen.java;
 
-public abstract class PackageCodeGenerator extends CodeGenerator {
+import dev.riotjy.mobjy.export.codegen.CopyrightAuthorCodeGenerator;
 
-  protected String packageName;
-  
-  public PackageCodeGenerator() {
+public class JavaCopyrightAuthorCodeGenerator extends CopyrightAuthorCodeGenerator {
+
+  public JavaCopyrightAuthorCodeGenerator() {
     super();
   }
 
-  public PackageCodeGenerator(String packageName) {
-    super();
-    this.packageName = packageName;
+  public JavaCopyrightAuthorCodeGenerator(String copyright, String author) {
+    super(copyright, author);
   }
 
-  public String getPackageName() {
-    return packageName;
+  @Override
+  public String generate() {
+    return "/*\n" + copyright + "\n*/\n\n/* author: \n" + author + "*/\n";
   }
-
-  public void setPackageName(String packageName) {
-    this.packageName = packageName;
-  }
-
 }

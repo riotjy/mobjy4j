@@ -15,25 +15,24 @@
  *******************************************************************************/
 package dev.riotjy.mobjy.export.codegen;
 
-public abstract class PackageCodeGenerator extends CodeGenerator {
+public abstract class ResourceCodeGenerator extends CodeGenerator {
 
-  protected String packageName;
+  protected String resourceName;
   
-  public PackageCodeGenerator() {
+  public ResourceCodeGenerator() {
     super();
   }
 
-  public PackageCodeGenerator(String packageName) {
+  public ResourceCodeGenerator(String resourceName) {
     super();
-    this.packageName = packageName;
+    this.resourceName = resourceName;
   }
 
-  public String getPackageName() {
-    return packageName;
+  public String getResourceName() {
+    return resourceName;
   }
 
-  public void setPackageName(String packageName) {
-    this.packageName = packageName;
+  public void setResourceName(String resourceName) {
+    this.resourceName = resourceName;
   }
-
 }

@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dev.riotjy.mobjy.builder.ModelBuilder;
+import dev.riotjy.mobjy.export.ModelExporter;
 import dev.riotjy.mobjy.model.MjyModel;
 import dev.riotjy.mobjy.util.MobjyConfig;
 import dev.riotjy.mobjy.util.StrConst;
@@ -51,6 +52,10 @@ public class Mobjy {
     mBuilder.dumpLoaderInfo();
     
     MjyModel theModel = mBuilder.build();
+    
+    ModelExporter exporter = new ModelExporter(theModel);
+    
+    exporter.exportJava("");
     
     log.info(theModel.toString());
   }

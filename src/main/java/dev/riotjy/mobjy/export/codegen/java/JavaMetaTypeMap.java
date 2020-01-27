@@ -13,27 +13,30 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  *******************************************************************************/
-package dev.riotjy.mobjy.export.codegen;
+package dev.riotjy.mobjy.export.codegen.java;
 
-public abstract class PackageCodeGenerator extends CodeGenerator {
+import java.util.HashMap;
 
-  protected String packageName;
+import dev.riotjy.mobjy.model.MjyPrimitiveType;
+
+public class JavaMetaTypeMap {
+
+  public static final JavaMetaTypeMap inst = new JavaMetaTypeMap();
   
-  public PackageCodeGenerator() {
-    super();
+  private HashMap<String, String> map = new HashMap<>();
+  
+  private JavaMetaTypeMap() {
+    map.put(MjyPrimitiveType.INT.toString(), "Integer");
+    map.put(MjyPrimitiveType.FLOAT.toString(), "Float");
+    map.put(MjyPrimitiveType.DOUBLE.toString(), "Double");
+    map.put(MjyPrimitiveType.STRING.toString(), "String");
   }
 
-  public PackageCodeGenerator(String packageName) {
-    super();
-    this.packageName = packageName;
+  public static JavaMetaTypeMap instance() {
+    return JavaMetaTypeMap.inst;
   }
-
-  public String getPackageName() {
-    return packageName;
+  
+  public String get(String metaType) {
+    return map.get(metaType);
   }
-
-  public void setPackageName(String packageName) {
-    this.packageName = packageName;
-  }
-
 }

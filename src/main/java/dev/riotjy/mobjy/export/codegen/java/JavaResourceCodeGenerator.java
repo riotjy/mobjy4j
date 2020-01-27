@@ -13,27 +13,30 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  *******************************************************************************/
-package dev.riotjy.mobjy.export.codegen;
+package dev.riotjy.mobjy.export.codegen.java;
 
-public abstract class PackageCodeGenerator extends CodeGenerator {
+import dev.riotjy.mobjy.export.codegen.CodeGenerator;
+import dev.riotjy.mobjy.export.codegen.ResourceCodeGenerator;
 
-  protected String packageName;
-  
-  public PackageCodeGenerator() {
+public class JavaResourceCodeGenerator extends ResourceCodeGenerator {
+
+  public JavaResourceCodeGenerator() {
     super();
   }
 
-  public PackageCodeGenerator(String packageName) {
-    super();
-    this.packageName = packageName;
+  public JavaResourceCodeGenerator(String resourceName) {
+    super(resourceName);
   }
 
-  public String getPackageName() {
-    return packageName;
-  }
+  @Override
+  public String generate() {
 
-  public void setPackageName(String packageName) {
-    this.packageName = packageName;
+    String code = "";
+    for (CodeGenerator part : parts) {
+      code += part.generate() + "\n";
+    }
+    
+    return code;
   }
 
 }
