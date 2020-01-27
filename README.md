@@ -12,6 +12,7 @@ Contact Alex for access.
 WHAT DOES IT DO CURRENTLY
 
 It turns this:
+```
 
 DervClassOne:   #creates class DervClassOne extending BaseClass
   extends: BaseClass  
@@ -20,21 +21,13 @@ DervClassOne:   #creates class DervClassOne extending BaseClass
   mapOneDervOne:
     references: RefClassOne
     collection: hashMap
-    
+
+```    
 into this:
+```
 
 public  class DervClassOne extends BaseClass {
-  public null extends;
-
-  public null getExtends() {
-    return this.extends;
-  }
-
-  public void setExtends(null extends) {
-    this.extends = extends;
-  }
-
-
+  
   public Integer intOneDervOne;
 
   public Integer getIntOneDervOne() {
@@ -76,3 +69,4 @@ public  class DervClassOne extends BaseClass {
   }
 
 }
+```
