@@ -42,6 +42,7 @@ public class ModelExporter {
   private ModelExporter() {}
   
   public ModelExporter(MjyModel model) {
+    this();
     this.theModel = model;
   }
   

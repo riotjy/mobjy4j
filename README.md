@@ -9,25 +9,27 @@ TO CONTRIBUTORS:
 You are welcome to contribute if you're interested and agree to ApL2.0.
 Contact Alex for access.
 
-WHAT DOES IT DO CURRENTLY
+# What does it currently do
+
+RUNNING INSTRUCTIONS:
+
+Run class "Mobjy" with parameter -i set to full path to input YAML file
+(see examples/example.yaml in sister project mobjyArch)
 
 It turns this:
 ```
-
 DervClassOne:   #creates class DervClassOne extending BaseClass
   extends: BaseClass  
-  intOneDervOne: int
+ intOneDervOne: int
   strOneDervOne: string
   mapOneDervOne:
     references: RefClassOne
     collection: hashMap
-
 ```    
 into this:
 ```
-
 public  class DervClassOne extends BaseClass {
-  
+
   public Integer intOneDervOne;
 
   public Integer getIntOneDervOne() {
@@ -67,6 +69,5 @@ public  class DervClassOne extends BaseClass {
   public Set<String> keySetOfMapOneDervOne() {
     return this.mapOneDervOne.keySet();
   }
-
 }
 ```

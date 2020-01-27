@@ -135,6 +135,8 @@ public class ModelBuilder {
     Map<String, Object> classMap = (Map)modelLoader.getMapped(className);
     Set<String> members = classMap.keySet();
     for (String member : members) {
+      if (member.equals("extends"))
+        continue;
       Object type = (classMap).get(member);
       if (type instanceof String) {
         if (type.toString().contains("[]")) {
@@ -154,19 +156,26 @@ public class ModelBuilder {
       }
       if (type instanceof Map<?,?>) {
         Map<String,String> mappedType = (Map)type;
+        String references = mappedType.get("references");
+
+        MjyClass clazz = theModel.getClassByName(references);
+        if (null == clazz) {
+          // Programmer wants to use an external class, let it do
+          //TODO: some classes need importing from another package
+          clazz = MjyModelFactory.makeClass(references);
+        }
+
         String collectionType = mappedType.get("collection");
         if (null == collectionType) {
           theClass.addAttribute(
               MjyModelFactory.makeAttribute(member,
-                  MjyModelFactory.makeObject(
-                      theModel.getClassByName(mappedType.get("references")))));
+                  MjyModelFactory.makeObject(clazz)));
           continue;
         } else {
           theClass.addCollection(
               MjyModelFactory.makeCollection(member,
                   MjyCollectionType.getMjyCollectionType(collectionType),
-                  MjyModelFactory.makeObject(
-                      theModel.getClassByName(mappedType.get("references")))));
+                  MjyModelFactory.makeObject(clazz)));
           continue;
         }
       }
