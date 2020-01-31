@@ -29,7 +29,7 @@ public class JavaPackageCodeGenerator extends PackageCodeGenerator {
 
   @Override
   public String generate() {
-    return "package " + packageName + ";\n";
+    return "package " + packageName + ";\n\n";
   }
 
 }

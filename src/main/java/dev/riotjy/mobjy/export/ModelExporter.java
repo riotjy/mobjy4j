@@ -24,6 +24,7 @@ import dev.riotjy.mobjy.export.codegen.java.JavaArrayListCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaAttributeCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaClassCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaHashMapCodeGenerator;
+import dev.riotjy.mobjy.export.codegen.java.JavaImportsCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaMetaTypeMap;
 import dev.riotjy.mobjy.export.codegen.java.JavaResourceCodeGenerator;
 import dev.riotjy.mobjy.model.MjyAttribute;
@@ -70,7 +71,11 @@ public class ModelExporter {
           classGen.addPart(hashGen);
         }
       }
+      JavaImportsCodeGenerator importGen = 
+          new JavaImportsCodeGenerator(clazz.isUsesArrayList(), clazz.isUsesMap());
+      
       JavaResourceCodeGenerator resourceGen = new JavaResourceCodeGenerator(clazz.getName());
+      resourceGen.addPart(importGen);
       resourceGen.addPart(classGen);
       String code = resourceGen.generate();
       log.info("\n********\n" + code + "\n********\n\n");

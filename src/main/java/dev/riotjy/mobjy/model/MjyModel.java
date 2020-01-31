@@ -26,6 +26,7 @@ public class MjyModel {
   private MjyVersion version;
   private MjyVersion compatVersion;
   
+  
   private ArrayList<MjyClass> classes = new ArrayList<MjyClass>();
   
   MjyModel() {}
@@ -82,5 +83,13 @@ public class MjyModel {
 
   public void setCompatVersion(MjyVersion compatVersion) {
     this.compatVersion = compatVersion;
+  }
+
+  public ArrayList<MjyClass> getClasses() {
+    return classes;
+  }
+
+  public void setClasses(ArrayList<MjyClass> classes) {
+    this.classes = classes;
   }
 }

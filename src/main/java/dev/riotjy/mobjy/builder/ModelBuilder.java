@@ -145,6 +145,7 @@ public class ModelBuilder {
                   MjyCollectionType.ARRAYLIST,
                   MjyModelFactory.makePrimitive(
                       MjyPrimitiveType.getMjyPrimitiveType(type.toString().replace("[]", "")))));
+          theClass.setUsesArrayList(true);
           continue;
         } else {
           theClass.addAttribute(
@@ -172,10 +173,15 @@ public class ModelBuilder {
                   MjyModelFactory.makeObject(clazz)));
           continue;
         } else {
+          MjyCollectionType collType = MjyCollectionType.getMjyCollectionType(collectionType);
           theClass.addCollection(
-              MjyModelFactory.makeCollection(member,
-                  MjyCollectionType.getMjyCollectionType(collectionType),
+              MjyModelFactory.makeCollection(member, collType,
                   MjyModelFactory.makeObject(clazz)));
+          if (MjyCollectionType.ARRAYLIST == collType) {
+            theClass.setUsesArrayList(true);
+          } else if (MjyCollectionType.HASHMAP == collType) {
+            theClass.setUsesMap(true);
+          }
           continue;
         }
       }

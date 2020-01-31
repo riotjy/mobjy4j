@@ -21,6 +21,9 @@ public class MjyClass {
 
   private String name;
 
+  private boolean usesArrayList;
+  private boolean usesMap;
+
   private MjyClass generalization;
 
   private ArrayList<MjyAttribute> attributes = new ArrayList<MjyAttribute>();
@@ -71,5 +74,21 @@ public class MjyClass {
 
   public void setGeneralization(MjyClass generalization) {
     this.generalization = generalization;
+  }
+
+  public boolean isUsesArrayList() {
+    return usesArrayList;
+  }
+
+  public void setUsesArrayList(boolean usesArrayList) {
+    this.usesArrayList = usesArrayList;
+  }
+
+  public boolean isUsesMap() {
+    return usesMap;
+  }
+
+  public void setUsesMap(boolean usesMap) {
+    this.usesMap = usesMap;
   }
 }

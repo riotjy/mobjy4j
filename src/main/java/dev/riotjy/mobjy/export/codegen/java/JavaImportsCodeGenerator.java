@@ -31,12 +31,12 @@ public class JavaImportsCodeGenerator extends ImportsCodeGenerator {
   public String generate() {
     String code = "";
     if (usesList) {
-      code += "import java.util.ArrayList;\n";
       code += "import java.util.List;\n";
+      code += "import java.util.ArrayList;\n";
     }
     if (usesMap) {
-      code += "import java.util.HashMap;\n";
       code += "import java.util.Map;\n";
+      code += "import java.util.HashMap;\n";
     }
     return code;
   }
