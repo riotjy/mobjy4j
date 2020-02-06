@@ -30,22 +30,23 @@ public class CppHashMapCodeGenerator extends HashMapCodeGenerator {
   @Override
   public String generate() {
     String capitalized = name.substring(0,1).toUpperCase() + name.substring(1);
-    String code = "  public HashMap<String, " + valueType + "> " + name + " = new HashMap<>();\n\n";
+    String code = "public:\n"
+        + "  std::map<std::string, " + valueType + "> " + name + ";\n\n";
     // size
-    code += "  public int sizeOf" + capitalized + "() {\n";
-    code += "    return this." + name + ".size();\n";
+    code += "  size_type sizeOf" + capitalized + "() {\n";
+    code += "    return this->" + name + ".size();\n";
     code += "  }\n\n";
     // pop front
-    code += "  public " + valueType + " getFrom" + capitalized + "(String key) {\n";
-    code += "    return this." + name + ".get(key);\n";
+    code += "  " + valueType + " getFrom" + capitalized + "(String key) {\n";
+    code += "    return this->" + name + "[key];\n";
     code += "  }\n\n";
     // push back
-    code += "  public void putTo" + capitalized + "(String key, " + valueType + " " + name + ") {\n";
-    code += "    this." + name + ".put(" + name + ");\n";
+    code += "  void putTo" + capitalized + "(String key, " + valueType + " value) {\n";
+    code += "    this->" + name + ".emplace(key, value);\n";
     code += "  }\n\n";
     // iterator
-    code += "  public Set<String> keySetOf" + capitalized + "() {\n";
-    code += "    return this." + name + ".keySet();\n";
+    code += "  auto iteratorOf" + capitalized + "() {\n";
+    code += "    return this->" + name + ".cbegin();\n";
     code += "  }\n";
     return code;
   }

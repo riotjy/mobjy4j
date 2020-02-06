@@ -26,10 +26,10 @@ public class CppMetaTypeMap {
   private HashMap<String, String> map = new HashMap<>();
   
   private CppMetaTypeMap() {
-    map.put(MjyPrimitiveType.INT.toString(), "Integer");
-    map.put(MjyPrimitiveType.FLOAT.toString(), "Float");
-    map.put(MjyPrimitiveType.DOUBLE.toString(), "Double");
-    map.put(MjyPrimitiveType.STRING.toString(), "String");
+    map.put(MjyPrimitiveType.INT.toString(), "uint64_t");
+    map.put(MjyPrimitiveType.FLOAT.toString(), "float");
+    map.put(MjyPrimitiveType.DOUBLE.toString(), "double");
+    map.put(MjyPrimitiveType.STRING.toString(), "std::string");
   }
 
   public static CppMetaTypeMap instance() {

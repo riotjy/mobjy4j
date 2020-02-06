@@ -30,17 +30,16 @@ public class CppClassCodeGenerator extends ClassCodeGenerator {
 
   @Override
   public String generate() {
-    String code = "public " +
-        (isAbstract ? "abstract " : " ") + "class " +
+    String code = "class " +
         className +
-        (null == generalization ? "" : " extends " + generalization) +
+        (null == generalization ? "" : ": public " + generalization) +
         " {\n";
 
     for (CodeGenerator part : parts) {
       code += part.generate() + "\n";
     }
 
-    code += "}\n";
+    code += "}; // class " + className + "\n\n";
     return code;
   }
 

@@ -15,21 +15,29 @@
  *******************************************************************************/
 package dev.riotjy.mobjy.export.codegen.cpp;
 
+import dev.riotjy.mobjy.export.codegen.CodeGenerator;
 import dev.riotjy.mobjy.export.codegen.PackageCodeGenerator;
 
-public class CppPackageCodeGenerator extends PackageCodeGenerator {
+public class CppNamespaceCodeGenerator extends PackageCodeGenerator {
 
-  public CppPackageCodeGenerator() {
+  public CppNamespaceCodeGenerator() {
     super();
   }
 
-  public CppPackageCodeGenerator(String packageName) {
+  public CppNamespaceCodeGenerator(String packageName) {
     super(packageName);
   }
 
   @Override
   public String generate() {
-    return "package " + packageName + ";\n\n";
+    String code = "#namespace " + this.packageName + "{\n\n";
+
+    for (CodeGenerator part : parts) {
+      code += part.generate() + "\n";
+    }
+
+    code += "} // namespace " + this.packageName;
+    return code;
   }
 
 }

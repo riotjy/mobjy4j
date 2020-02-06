@@ -31,11 +31,21 @@ public class CppResourceCodeGenerator extends ResourceCodeGenerator {
   @Override
   public String generate() {
 
-    String code = "";
+    String code = 
+        "#inlcude <cstdint>\n" + 
+        "#inlcude <string>\n\n" + 
+        
+        "#pragma once\n" +
+        "#ifndef " + resourceName + "_hpp\n" +
+        "#define " + resourceName + "_hpp\n";
+    
     for (CodeGenerator part : parts) {
       code += part.generate() + "\n";
     }
     
+    code +=
+        "#endif // " + resourceName + "_hpp\n";
+
     return code;
   }
 

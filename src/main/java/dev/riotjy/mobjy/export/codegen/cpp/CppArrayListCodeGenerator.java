@@ -30,24 +30,27 @@ public class CppArrayListCodeGenerator extends ArrayListCodeGenerator {
   @Override
   public String generate() {
     String capitalized = name.substring(0,1).toUpperCase() + name.substring(1);
-    String code = "  public List<" + type + "> " + name + " = new ArrayList<>();\n\n";
+    String code = "public:" +
+        "  std::vector<" + type + "> " + name + ";\n\n";
     // size
-    code += "  public int sizeOf" + capitalized + "() {\n";
-    code += "    return this." + name + ".size();\n";
+    code += "  size_type sizeOf" + capitalized + "() {\n";
+    code += "    return this->" + name + ".size();\n";
     code += "  }\n\n";
     // pop front
-    code += "  public " + type + " popFrontFrom" + capitalized + "() {\n";
+    code += "  " + type + " popFrontFrom" + capitalized + "() {\n";
     code += "    if (0 == " + name + ".size())\n";
     code += "      return null;\n";
-    code += "    return this." + name + ".remove(0);\n";
+    code += "    " + type + " ret = this->" + name + ".front();\n";
+    code += "    this->" + name + ".erase(" + name + ".begin());\n";
+    code += "    return ret;\n";
     code += "  }\n\n";
     // push back
-    code += "  public void pushBackTo" + capitalized + "(" + type + " " + name + ") {\n";
-    code += "    this." + name + ".add(" + name + ");\n";
+    code += "  void pushBackTo" + capitalized + "(" + type + " value) {\n";
+    code += "    this->" + name + ".push_back(value);\n";
     code += "  }\n\n";
     // iterator
-    code += "  public Iterator iteratorOf" + capitalized + "() {\n";
-    code += "    return this." + name + ".iterator();\n";
+    code += "  auto iteratorOf" + capitalized + "() {\n";
+    code += "    return this->" + name + ".cbegin();\n";
     code += "  }\n";
     return code;
   }

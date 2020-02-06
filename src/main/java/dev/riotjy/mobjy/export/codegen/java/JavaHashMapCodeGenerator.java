@@ -40,8 +40,8 @@ public class JavaHashMapCodeGenerator extends HashMapCodeGenerator {
     code += "    return this." + name + ".get(key);\n";
     code += "  }\n\n";
     // push back
-    code += "  public void putTo" + capitalized + "(String key, " + valueType + " " + name + ") {\n";
-    code += "    this." + name + ".put(" + name + ");\n";
+    code += "  public void putTo" + capitalized + "(String key, " + valueType + " value) {\n";
+    code += "    this." + name + ".put(key, value);\n";
     code += "  }\n\n";
     // iterator
     code += "  public Set<String> keySetOf" + capitalized + "() {\n";

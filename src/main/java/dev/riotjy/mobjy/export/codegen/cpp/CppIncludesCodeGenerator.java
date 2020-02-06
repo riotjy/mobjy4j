@@ -31,12 +31,10 @@ public class CppIncludesCodeGenerator extends ImportsCodeGenerator {
   public String generate() {
     String code = "";
     if (usesList) {
-      code += "import java.util.List;\n";
-      code += "import java.util.ArrayList;\n";
+      code += "#include <list>\n";
     }
     if (usesMap) {
-      code += "import java.util.Map;\n";
-      code += "import java.util.HashMap;\n";
+      code += "#include <map>\n";
     }
     return code;
   }

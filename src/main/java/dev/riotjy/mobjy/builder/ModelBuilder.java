@@ -54,6 +54,7 @@ public class ModelBuilder {
     buildInheritance();
     if (cyclicInheritanceFound())
       throw new Exception("Cyclic inheritance found.");
+    buildImports();
     buildMembers();
     return theModel;
   }
@@ -112,6 +113,40 @@ public class ModelBuilder {
     return true;
   }
   
+  private boolean buildImports() throws Exception {
+    Collection<? extends Object> keys = modelLoader.getKeys();
+    for (Object key : keys) {
+      if (key.toString().equals("project") ||
+          key.toString().equals("version") ||
+          key.toString().equals("compatver") ) {
+          continue;
+      }
+      String className = key.toString();
+      buildImports(className);
+    }
+    return true;
+  }
+  
+  private boolean buildImports(String className) throws Exception {
+    MjyClass theClass = theModel.getClassByName(className);
+    if (null == theClass) {
+      return false;
+    }
+
+    Map<String, Object> classMap = (Map)modelLoader.getMapped(className);
+    Set<String> members = classMap.keySet();
+    for (String member : members) {
+      if (member.equals("import")) {
+        // is an imported class
+        theClass.setImportClass(classMap.get(member).toString());
+        return true;
+      } else {
+        continue;
+      }
+    }
+    return true;
+  }
+  
   private boolean buildMembers() throws Exception {
     Collection<? extends Object> keys = modelLoader.getKeys();
     for (Object key : keys) {
@@ -125,7 +160,7 @@ public class ModelBuilder {
     }
     return true;
   }
-  
+
   private boolean buildMembers(String className) throws Exception {
     MjyClass theClass = theModel.getClassByName(className);
     if (null == theClass) {
@@ -137,6 +172,11 @@ public class ModelBuilder {
     for (String member : members) {
       if (member.equals("extends"))
         continue;
+      if (member.equals("import")) {
+        // is an imported class
+        theClass.setImportClass(classMap.get(member).toString());
+        return true;
+      }
       Object type = (classMap).get(member);
       if (type instanceof String) {
         if (type.toString().contains("[]")) {
@@ -164,6 +204,11 @@ public class ModelBuilder {
           // Programmer wants to use an external class, let it do
           //TODO: some classes need importing from another package
           clazz = MjyModelFactory.makeClass(references);
+        }
+        
+        String reqImp  = clazz.getImportClass();
+        if (null != reqImp) {
+          theClass.addImport(reqImp + "." + clazz.getName());
         }
 
         String collectionType = mappedType.get("collection");

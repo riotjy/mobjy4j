@@ -15,11 +15,15 @@
  *******************************************************************************/
 package dev.riotjy.mobjy.export.codegen;
 
+import java.util.ArrayList;
+
 public abstract class ImportsCodeGenerator extends CodeGenerator {
 
   protected boolean usesList;
   protected boolean usesMap;
-  
+
+  protected ArrayList<String> requiredImports = new ArrayList<String>();
+
   public ImportsCodeGenerator() {
     super();
     this.usesList = false;
@@ -47,5 +51,19 @@ public abstract class ImportsCodeGenerator extends CodeGenerator {
     this.usesMap = usesMap;
   }
 
+  public boolean addImport(String requiredImport) {
+    if (requiredImports.contains(requiredImport)) {
+      return false;
+    }
+    requiredImports.add(requiredImport);
+    return true;
+  }
 
+  public int getImportCount() {
+    return requiredImports.size();
+  }
+
+  public String getImportByIndex(int index) {
+    return requiredImports.get(index);
+  }
 }

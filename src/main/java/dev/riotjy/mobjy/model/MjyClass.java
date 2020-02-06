@@ -26,8 +26,11 @@ public class MjyClass {
 
   private MjyClass generalization;
 
+  private String importClass = null;
+
   private ArrayList<MjyAttribute> attributes = new ArrayList<MjyAttribute>();
   private ArrayList<MjyCollection> collections = new ArrayList<MjyCollection>();
+  private ArrayList<String> requiredImports = new ArrayList<String>();
 
   public MjyClass(String name) {
     super();
@@ -90,5 +93,29 @@ public class MjyClass {
 
   public void setUsesMap(boolean usesMap) {
     this.usesMap = usesMap;
+  }
+
+  public String getImportClass() {
+    return importClass;
+  }
+
+  public void setImportClass(String importClass) {
+    this.importClass = importClass;
+  }
+
+  public boolean addImport(String requiredImport) {
+    if (requiredImports.contains(requiredImport)) {
+      return false;
+    }
+    requiredImports.add(requiredImport);
+    return true;
+  }
+
+  public int getImportCount() {
+    return requiredImports.size();
+  }
+
+  public String getImportByIndex(int index) {
+    return requiredImports.get(index);
   }
 }

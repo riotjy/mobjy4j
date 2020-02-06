@@ -20,6 +20,14 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dev.riotjy.mobjy.export.codegen.cpp.CppArrayListCodeGenerator;
+import dev.riotjy.mobjy.export.codegen.cpp.CppAttributeCodeGenerator;
+import dev.riotjy.mobjy.export.codegen.cpp.CppClassCodeGenerator;
+import dev.riotjy.mobjy.export.codegen.cpp.CppHashMapCodeGenerator;
+import dev.riotjy.mobjy.export.codegen.cpp.CppIncludesCodeGenerator;
+import dev.riotjy.mobjy.export.codegen.cpp.CppMetaTypeMap;
+import dev.riotjy.mobjy.export.codegen.cpp.CppNamespaceCodeGenerator;
+import dev.riotjy.mobjy.export.codegen.cpp.CppResourceCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaArrayListCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaAttributeCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaClassCodeGenerator;
@@ -73,6 +81,9 @@ public class ModelExporter {
       }
       JavaImportsCodeGenerator importGen = 
           new JavaImportsCodeGenerator(clazz.isUsesArrayList(), clazz.isUsesMap());
+      for (int idx = 0; idx < clazz.getImportCount(); ++idx) {
+        importGen.addImport(clazz.getImportByIndex(idx));
+      }
       
       JavaResourceCodeGenerator resourceGen = new JavaResourceCodeGenerator(clazz.getName());
       resourceGen.addPart(importGen);
@@ -87,5 +98,51 @@ public class ModelExporter {
       return type.getTypeName();
     }
     return JavaMetaTypeMap.instance().get(type.getTypeName());
+  }
+
+  public void exportCpp(String path) {
+    Iterator<MjyClass> itClass = theModel.getClassIterator();
+    while (itClass.hasNext()) {
+      MjyClass clazz = itClass.next();
+      MjyClass gener = clazz.getGeneralization();
+      CppClassCodeGenerator classGen = new CppClassCodeGenerator(clazz.getName(), false, null != gener ? gener.getName() : null);
+      int cnt = clazz.getAttributeCount();
+      for (int i = 0; i < cnt; ++i) {
+        MjyAttribute attr = clazz.getAttributeByIndex(i);
+        CppAttributeCodeGenerator attrGen = new CppAttributeCodeGenerator(attr.getName(), getCppTypeName(attr.getType()));
+        classGen.addPart(attrGen);
+      }
+      cnt = clazz.getCollectionCount();
+      for (int i = 0; i < cnt; ++i) {
+        MjyCollection coll = clazz.getCollectionByIndex(i);
+        if (coll.getCollectionType() == MjyCollectionType.ARRAYLIST) {
+          CppArrayListCodeGenerator arrGen = new CppArrayListCodeGenerator(coll.getName(), getCppTypeName(coll.getValueType()));
+          classGen.addPart(arrGen);
+        }
+        if (coll.getCollectionType() == MjyCollectionType.HASHMAP) {
+          CppHashMapCodeGenerator hashGen = new CppHashMapCodeGenerator(coll.getName(), getCppTypeName(coll.getValueType()));
+          classGen.addPart(hashGen);
+        }
+      }
+      CppIncludesCodeGenerator includeGen = 
+          new CppIncludesCodeGenerator(clazz.isUsesArrayList(), clazz.isUsesMap());
+
+      CppNamespaceCodeGenerator namspGen =
+          new CppNamespaceCodeGenerator(theModel.getProject());
+      namspGen.addPart(classGen);
+      
+      CppResourceCodeGenerator resourceGen = new CppResourceCodeGenerator(clazz.getName());
+      resourceGen.addPart(includeGen);
+      resourceGen.addPart(namspGen);
+      String code = resourceGen.generate();
+      log.info("\n+++++++++++\n" + code + "\n+++++++++++\n\n");
+    }
+  }
+  
+  private String getCppTypeName(MjyType type) {
+    if (MjyType.isObject(type)) {
+      return type.getTypeName();
+    }
+    return CppMetaTypeMap.instance().get(type.getTypeName());
   }
 }

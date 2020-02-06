@@ -57,6 +57,8 @@ public class Mobjy {
     
     exporter.exportJava("");
     
+    exporter.exportCpp("");
+    
     log.info(theModel.toString());
   }
 }

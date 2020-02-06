@@ -42,8 +42,8 @@ public class JavaArrayListCodeGenerator extends ArrayListCodeGenerator {
     code += "    return this." + name + ".remove(0);\n";
     code += "  }\n\n";
     // push back
-    code += "  public void pushBackTo" + capitalized + "(" + type + " " + name + ") {\n";
-    code += "    this." + name + ".add(" + name + ");\n";
+    code += "  public void pushBackTo" + capitalized + "(" + type + " value) {\n";
+    code += "    this." + name + ".add(value);\n";
     code += "  }\n\n";
     // iterator
     code += "  public Iterator iteratorOf" + capitalized + "() {\n";

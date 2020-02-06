@@ -38,6 +38,14 @@ public class JavaImportsCodeGenerator extends ImportsCodeGenerator {
       code += "import java.util.Map;\n";
       code += "import java.util.HashMap;\n";
     }
+    
+    if (!requiredImports.isEmpty()) {
+      code += "\n";
+      for (String impStr : requiredImports) {
+        code += "import " + impStr + ";\n";
+      }
+      code += "\n";
+    }
     return code;
   }
 
