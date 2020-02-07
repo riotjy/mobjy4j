@@ -87,7 +87,7 @@ public class MjyClass {
     this.generalization = generalization;
   }
 
-  public boolean isUsesArrayList() {
+  public boolean usesArrayList() {
     return usesArrayList;
   }
 
@@ -95,7 +95,7 @@ public class MjyClass {
     this.usesArrayList = usesArrayList;
   }
 
-  public boolean isUsesMap() {
+  public boolean usesMap() {
     return usesMap;
   }
 

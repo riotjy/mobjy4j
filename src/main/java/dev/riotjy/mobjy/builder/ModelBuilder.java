@@ -83,9 +83,7 @@ public class ModelBuilder {
   private boolean buildClasses() throws Exception {
     Collection<? extends Object> keys = modelLoader.getKeys();
     for (Object key : keys) {
-      if (key.toString().equals("project") ||
-          key.toString().equals("version") ||
-          key.toString().equals("compatver") ) {
+      if (isNotClass(key.toString())) {
           continue;
       }
       String className = key.toString();
@@ -97,10 +95,8 @@ public class ModelBuilder {
   private boolean buildInheritance() throws Exception {
     Collection<? extends Object> keys = modelLoader.getKeys();
     for (Object key : keys) {
-      if (key.toString().equals("project") ||
-          key.toString().equals("version") ||
-          key.toString().equals("compatver") ) {
-          continue;
+      if (isNotClass(key.toString())) {
+        continue;
       }
       String className = key.toString();
       String extendsClass = (String)((Map)modelLoader.getMapped(key.toString())).get("extends");
@@ -116,10 +112,8 @@ public class ModelBuilder {
   private boolean buildImports() throws Exception {
     Collection<? extends Object> keys = modelLoader.getKeys();
     for (Object key : keys) {
-      if (key.toString().equals("project") ||
-          key.toString().equals("version") ||
-          key.toString().equals("compatver") ) {
-          continue;
+      if (isNotClass(key.toString())) {
+        continue;
       }
       String className = key.toString();
       buildImports(className);
@@ -283,7 +277,19 @@ public class ModelBuilder {
     }
     
     return false;
-  } 
+  }
+  
+  private boolean isNotClass(String key) {
+    if (key.toString().equals("project") ||
+        key.toString().equals("version") ||
+        key.toString().equals("compatver") ||
+        key.toString().equals("java") ||
+        key.toString().equals("cpp") ||
+        key.toString().equals("golang")) {
+      return true;
+    }
+    return false;
+  }
 
   public void dumpLoaderInfo() {
 

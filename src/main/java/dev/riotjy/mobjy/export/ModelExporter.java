@@ -86,7 +86,7 @@ public class ModelExporter {
         }
       }
       JavaImportsCodeGenerator importGen = 
-          new JavaImportsCodeGenerator(clazz.isUsesArrayList(), clazz.isUsesMap());
+          new JavaImportsCodeGenerator(clazz.usesArrayList(), clazz.usesMap());
       Iterator<String> impIt = clazz.getLangImportsIter("java");
       if (null != impIt) {
         while (impIt.hasNext()) {
@@ -124,35 +124,51 @@ public class ModelExporter {
         continue;
       }
       
-      MjyClass gener = clazz.getGeneralization();
-      CppClassCodeGenerator classGen = new CppClassCodeGenerator(clazz.getName(), false, null != gener ? gener.getName() : null);
-      int cnt = clazz.getAttributeCount();
-      for (int i = 0; i < cnt; ++i) {
-        MjyAttribute attr = clazz.getAttributeByIndex(i);
-        CppAttributeCodeGenerator attrGen = new CppAttributeCodeGenerator(attr.getName(), getCppTypeName(attr.getType()));
-        classGen.addPart(attrGen);
-      }
-      cnt = clazz.getCollectionCount();
-      for (int i = 0; i < cnt; ++i) {
-        MjyCollection coll = clazz.getCollectionByIndex(i);
-        if (coll.getCollectionType() == MjyCollectionType.ARRAYLIST) {
-          CppArrayListCodeGenerator arrGen = new CppArrayListCodeGenerator(coll.getName(), getCppTypeName(coll.getValueType()));
-          classGen.addPart(arrGen);
-        }
-        if (coll.getCollectionType() == MjyCollectionType.HASHMAP) {
-          CppHashMapCodeGenerator hashGen = new CppHashMapCodeGenerator(coll.getName(), getCppTypeName(coll.getValueType()));
-          classGen.addPart(hashGen);
-        }
-      }
-
       CppIncludesCodeGenerator includeGen = 
-          new CppIncludesCodeGenerator(clazz.isUsesArrayList(), clazz.isUsesMap());
+          new CppIncludesCodeGenerator(clazz.usesArrayList(), clazz.usesMap());
       Iterator<String> impIt = clazz.getLangImportsIter("cpp");
       if (null != impIt) {
         while (impIt.hasNext()) {
           includeGen.addImport(impIt.next());
         }
       }
+
+      MjyClass gener = clazz.getGeneralization();
+      CppClassCodeGenerator classGen = new CppClassCodeGenerator(clazz.getName(), false, null != gener ? gener.getName() : null);
+      if (null != gener) {
+        includeGen.addImport("\"" + gener.getName() + ".hpp\"");
+      }
+      
+      int cnt = clazz.getAttributeCount();
+      for (int i = 0; i < cnt; ++i) {
+        MjyAttribute attr = clazz.getAttributeByIndex(i);
+        MjyType attrType = attr.getType();
+        CppAttributeCodeGenerator attrGen = new CppAttributeCodeGenerator(attr.getName(), getCppTypeName(attrType));
+        classGen.addPart(attrGen);
+        String needImp = getCppIncludeIfNeed(attrType);
+        if (null != needImp) {
+          includeGen.addImport(needImp);
+        }
+      }
+      
+      cnt = clazz.getCollectionCount();
+      for (int i = 0; i < cnt; ++i) {
+        MjyCollection coll = clazz.getCollectionByIndex(i);
+        MjyType collValType = coll.getValueType();
+        if (coll.getCollectionType() == MjyCollectionType.ARRAYLIST) {
+          CppArrayListCodeGenerator arrGen = new CppArrayListCodeGenerator(coll.getName(), getCppTypeName(collValType));
+          classGen.addPart(arrGen);
+        }
+        if (coll.getCollectionType() == MjyCollectionType.HASHMAP) {
+          CppHashMapCodeGenerator hashGen = new CppHashMapCodeGenerator(coll.getName(), getCppTypeName(collValType));
+          classGen.addPart(hashGen);
+        }
+        String needImp = getCppIncludeIfNeed(collValType);
+        if (null != needImp) {
+          includeGen.addImport(needImp);
+        }
+      }
+
       
       CppNamespaceCodeGenerator namspGen =
           new CppNamespaceCodeGenerator(theModel.getProject());
@@ -176,5 +192,15 @@ public class ModelExporter {
       return typeName;
     }
     return CppMetaTypeMap.instance().get(type.getTypeName());
+  }
+  
+  private String getCppIncludeIfNeed(MjyType type) {
+    if (MjyType.isObject(type)) {
+      String typeName = type.getTypeName();
+      if (!theModel.getClassByName(typeName).isExternal()) {
+        return "\"" + typeName + ".hpp\"";
+      }
+    }    
+    return null;
   }
 }

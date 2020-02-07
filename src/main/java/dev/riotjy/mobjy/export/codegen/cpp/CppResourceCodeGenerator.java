@@ -33,7 +33,7 @@ public class CppResourceCodeGenerator extends ResourceCodeGenerator {
 
     String code = 
         "#inlcude <cstdint>\n" + 
-        "#inlcude <string>\n\n";
+        "#inlcude <string>\n";
     
     code += parts.get(0).generate() + "\n";
     
