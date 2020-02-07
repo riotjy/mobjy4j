@@ -15,7 +15,6 @@
  *******************************************************************************/
 package dev.riotjy.mobjy.export.codegen.cpp;
 
-import dev.riotjy.mobjy.export.codegen.CodeGenerator;
 import dev.riotjy.mobjy.export.codegen.ResourceCodeGenerator;
 
 public class CppResourceCodeGenerator extends ResourceCodeGenerator {

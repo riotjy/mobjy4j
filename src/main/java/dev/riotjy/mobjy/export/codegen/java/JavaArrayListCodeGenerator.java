@@ -30,7 +30,7 @@ public class JavaArrayListCodeGenerator extends ArrayListCodeGenerator {
   @Override
   public String generate() {
     String capitalized = name.substring(0,1).toUpperCase() + name.substring(1);
-    String code = "  public List<" + type + "> " + name + " = new ArrayList<>();\n\n";
+    String code = "  protected List<" + type + "> " + name + " = new ArrayList<>();\n\n";
     // size
     code += "  public int sizeOf" + capitalized + "() {\n";
     code += "    return this." + name + ".size();\n";

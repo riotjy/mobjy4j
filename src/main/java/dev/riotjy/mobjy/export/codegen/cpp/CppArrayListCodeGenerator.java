@@ -30,8 +30,9 @@ public class CppArrayListCodeGenerator extends ArrayListCodeGenerator {
   @Override
   public String generate() {
     String capitalized = name.substring(0,1).toUpperCase() + name.substring(1);
-    String code = "public:\n" +
+    String code = "protected:\n" +
         "  std::vector<" + type + "> " + name + ";\n\n";
+    code += "public:\n";
     // size
     code += "  size_type sizeOf" + capitalized + "() {\n";
     code += "    return this->" + name + ".size();\n";

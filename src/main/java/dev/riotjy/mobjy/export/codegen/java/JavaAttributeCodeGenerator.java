@@ -30,7 +30,7 @@ public class JavaAttributeCodeGenerator extends AttributeCodeGenerator {
   @Override
   public String generate() {
     String capitalized = name.substring(0,1).toUpperCase() + name.substring(1);
-    String code = "  public " + type + " " + name + ";\n\n";
+    String code = "  protected " + type + " " + name + ";\n\n";
     // getter
     code += "  public " + type + " get" + capitalized + "() {\n";
     code += "    return this." + name + ";\n";
@@ -38,7 +38,7 @@ public class JavaAttributeCodeGenerator extends AttributeCodeGenerator {
     // setter
     code += "  public void set" + capitalized + "(" + type + " " + name + ") {\n";
     code += "    this." + name + " = " + name + ";\n";
-    code += "  }\n\n";
+    code += "  }\n";
 
     return code;
   }

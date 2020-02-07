@@ -34,6 +34,7 @@ import dev.riotjy.mobjy.export.codegen.java.JavaClassCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaHashMapCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaImportsCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaMetaTypeMap;
+import dev.riotjy.mobjy.export.codegen.java.JavaPackageCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaResourceCodeGenerator;
 import dev.riotjy.mobjy.model.MjyAttribute;
 import dev.riotjy.mobjy.model.MjyClass;
@@ -94,7 +95,11 @@ public class ModelExporter {
         }
       }
       
+      JavaPackageCodeGenerator packGen = new JavaPackageCodeGenerator(
+          theModel.getLanguageSettingValue("java", "package"));
+      
       JavaResourceCodeGenerator resourceGen = new JavaResourceCodeGenerator(clazz.getName());
+      resourceGen.addPart(packGen);
       resourceGen.addPart(importGen);
       resourceGen.addPart(classGen);
       String code = resourceGen.generate();
@@ -171,7 +176,7 @@ public class ModelExporter {
 
       
       CppNamespaceCodeGenerator namspGen =
-          new CppNamespaceCodeGenerator(theModel.getProject());
+          new CppNamespaceCodeGenerator(theModel.getLanguageSettingValue("cpp", "namespace"));
       namspGen.addPart(classGen);
       
       CppResourceCodeGenerator resourceGen = new CppResourceCodeGenerator(clazz.getName());

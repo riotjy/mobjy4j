@@ -50,6 +50,7 @@ public class ModelBuilder {
 
   public MjyModel build() throws Exception {
     buildModel();
+    buildLangSettings();
     buildClasses();
     buildInheritance();
     if (cyclicInheritanceFound())
@@ -77,6 +78,24 @@ public class ModelBuilder {
         Integer.parseInt(comver.get("candidate").toString()), 
         comver.get("status").toString());
     theModel = MjyModelFactory.makeModel(project, version, compatver);
+    return true;
+  }
+  
+  private boolean buildLangSettings() throws Exception {
+    Collection<? extends Object> keys = modelLoader.getKeys();
+    for (Object key : keys) {
+      if (isLangSettings(key.toString())) {
+          buildLangSettings(key.toString());
+      }
+    }
+    return true;
+  }
+  
+  private boolean buildLangSettings(String language) throws Exception {
+    Map<String, Object> langSettMap = (Map)modelLoader.getMapped(language);
+    for (String setting : langSettMap.keySet()) {
+      theModel.addLanguageSetting(language, setting, langSettMap.get(setting).toString());
+    }
     return true;
   }
   
@@ -130,10 +149,7 @@ public class ModelBuilder {
     Map<String, Object> classMap = (Map)modelLoader.getMapped(className);
     Set<String> keys = classMap.keySet();
     for (String key : keys) {
-      if (key.equals("java") ||
-          key.equals("cpp") ||
-          key.equals("golang")) {
-
+      if (isLangSettings(key)) {
         Object mapVal = classMap.get(key);
         if (mapVal instanceof Map<?,?>) {
           Object val = ((Map<?,?>)mapVal).get("class");
@@ -152,9 +168,7 @@ public class ModelBuilder {
   private boolean buildMembers() throws Exception {
     Collection<? extends Object> keys = modelLoader.getKeys();
     for (Object key : keys) {
-      if (key.toString().equals("project") ||
-          key.toString().equals("version") ||
-          key.toString().equals("compatver") ) {
+      if (isNotClass(key.toString())) {
           continue;
       }
       String className = key.toString();
@@ -252,11 +266,6 @@ public class ModelBuilder {
         log.error(msg);
         return Boolean.TRUE;
       }
-//    if (member.equals("import")) {
-//    // is an imported class
-//    theClass.setImportClass(classMap.get(member).toString());
-//    return true;
-//  }
 
       if (alreadyVerified.contains(clazz))
         return Boolean.FALSE;
@@ -279,13 +288,27 @@ public class ModelBuilder {
     return false;
   }
   
-  private boolean isNotClass(String key) {
-    if (key.toString().equals("project") ||
-        key.toString().equals("version") ||
-        key.toString().equals("compatver") ||
-        key.toString().equals("java") ||
+  private boolean isVersion(String key) {
+    if (key.toString().equals("version") ||
+        key.toString().equals("compatver")) {
+      return true;
+    }
+    return false;
+  }
+  
+  private boolean isLangSettings(String key) {
+    if (key.toString().equals("java") ||
         key.toString().equals("cpp") ||
         key.toString().equals("golang")) {
+      return true;
+    }
+    return false;
+  }
+
+  private boolean isNotClass(String key) {
+    if (key.toString().equals("project") ||
+        isVersion(key) ||
+        isLangSettings(key)) {
       return true;
     }
     return false;

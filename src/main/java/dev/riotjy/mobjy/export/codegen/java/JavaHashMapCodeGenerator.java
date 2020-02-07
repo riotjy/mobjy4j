@@ -30,7 +30,7 @@ public class JavaHashMapCodeGenerator extends HashMapCodeGenerator {
   @Override
   public String generate() {
     String capitalized = name.substring(0,1).toUpperCase() + name.substring(1);
-    String code = "  public HashMap<String, " + valueType + "> " + name + " = new HashMap<>();\n\n";
+    String code = "  protected HashMap<String, " + valueType + "> " + name + " = new HashMap<>();\n\n";
     // size
     code += "  public int sizeOf" + capitalized + "() {\n";
     code += "    return this." + name + ".size();\n";

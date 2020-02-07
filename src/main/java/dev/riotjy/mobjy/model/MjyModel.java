@@ -16,7 +16,9 @@
 package dev.riotjy.mobjy.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.Spliterator;
 
 public class MjyModel {
@@ -26,6 +28,7 @@ public class MjyModel {
   private MjyVersion version;
   private MjyVersion compatVersion;
   
+  private HashMap<String, MjyLanguageSettings> langSettings = new HashMap<>();
   
   private ArrayList<MjyClass> classes = new ArrayList<MjyClass>();
   
@@ -91,5 +94,32 @@ public class MjyModel {
 
   public void setClasses(ArrayList<MjyClass> classes) {
     this.classes = classes;
+  }
+
+  public MjyLanguageSettings getLanguageSettings(String language) {
+    return langSettings.get(language);
+  }
+  
+  public String getLanguageSettingValue(String language, String settName) {
+    MjyLanguageSettings langSett = getLanguageSettings(language);
+    if (null != langSett) {
+      return langSett.getSetting(settName);
+    }
+    return null;
+  }
+  
+  public void addLanguage(String language) {
+    if (langSettings.containsKey(language))
+      return;
+    langSettings.put(language, new MjyLanguageSettings(language));
+  }
+  
+  public void addLanguageSetting(String language, String settName, String settValue) {
+    addLanguage(language);
+    langSettings.get(language).addSetting(settName, settValue);
+  }
+
+  public Set<String> getLanguageKeySet() {
+    return langSettings.keySet();
   }
 }
