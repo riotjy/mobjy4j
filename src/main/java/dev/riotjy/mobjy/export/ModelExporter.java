@@ -59,6 +59,12 @@ public class ModelExporter {
     Iterator<MjyClass> itClass = theModel.getClassIterator();
     while (itClass.hasNext()) {
       MjyClass clazz = itClass.next();
+      
+      if (clazz.isExternal()) {
+        // no generation for this class
+        continue;
+      }
+      
       MjyClass gener = clazz.getGeneralization();
       JavaClassCodeGenerator classGen = new JavaClassCodeGenerator(clazz.getName(), false, null != gener ? gener.getName() : null);
       int cnt = clazz.getAttributeCount();
@@ -81,8 +87,11 @@ public class ModelExporter {
       }
       JavaImportsCodeGenerator importGen = 
           new JavaImportsCodeGenerator(clazz.isUsesArrayList(), clazz.isUsesMap());
-      for (int idx = 0; idx < clazz.getImportCount(); ++idx) {
-        importGen.addImport(clazz.getImportByIndex(idx));
+      Iterator<String> impIt = clazz.getLangImportsIter("java");
+      if (null != impIt) {
+        while (impIt.hasNext()) {
+          importGen.addImport(impIt.next());
+        }
       }
       
       JavaResourceCodeGenerator resourceGen = new JavaResourceCodeGenerator(clazz.getName());
@@ -95,7 +104,12 @@ public class ModelExporter {
   
   private String getJavaTypeName(MjyType type) {
     if (MjyType.isObject(type)) {
-      return type.getTypeName();
+      String typeName = type.getTypeName();
+      MjyClass clazz = theModel.getClassByName(typeName);
+      if (null != clazz && clazz.isExternal()) {
+        typeName = clazz.getLangDepClass("java");
+      }
+      return typeName;
     }
     return JavaMetaTypeMap.instance().get(type.getTypeName());
   }
@@ -104,6 +118,12 @@ public class ModelExporter {
     Iterator<MjyClass> itClass = theModel.getClassIterator();
     while (itClass.hasNext()) {
       MjyClass clazz = itClass.next();
+
+      if (clazz.isExternal()) {
+        // no generation for this class
+        continue;
+      }
+      
       MjyClass gener = clazz.getGeneralization();
       CppClassCodeGenerator classGen = new CppClassCodeGenerator(clazz.getName(), false, null != gener ? gener.getName() : null);
       int cnt = clazz.getAttributeCount();
@@ -124,9 +144,16 @@ public class ModelExporter {
           classGen.addPart(hashGen);
         }
       }
+
       CppIncludesCodeGenerator includeGen = 
           new CppIncludesCodeGenerator(clazz.isUsesArrayList(), clazz.isUsesMap());
-
+      Iterator<String> impIt = clazz.getLangImportsIter("cpp");
+      if (null != impIt) {
+        while (impIt.hasNext()) {
+          includeGen.addImport(impIt.next());
+        }
+      }
+      
       CppNamespaceCodeGenerator namspGen =
           new CppNamespaceCodeGenerator(theModel.getProject());
       namspGen.addPart(classGen);
@@ -141,7 +168,12 @@ public class ModelExporter {
   
   private String getCppTypeName(MjyType type) {
     if (MjyType.isObject(type)) {
-      return type.getTypeName();
+      String typeName = type.getTypeName();
+      MjyClass clazz = theModel.getClassByName(typeName);
+      if (null != clazz && clazz.isExternal()) {
+        typeName = clazz.getLangDepClass("cpp");
+      }
+      return typeName;
     }
     return CppMetaTypeMap.instance().get(type.getTypeName());
   }

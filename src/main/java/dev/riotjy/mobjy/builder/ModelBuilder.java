@@ -134,14 +134,22 @@ public class ModelBuilder {
     }
 
     Map<String, Object> classMap = (Map)modelLoader.getMapped(className);
-    Set<String> members = classMap.keySet();
-    for (String member : members) {
-      if (member.equals("import")) {
-        // is an imported class
-        theClass.setImportClass(classMap.get(member).toString());
-        return true;
-      } else {
-        continue;
+    Set<String> keys = classMap.keySet();
+    for (String key : keys) {
+      if (key.equals("java") ||
+          key.equals("cpp") ||
+          key.equals("golang")) {
+
+        Object mapVal = classMap.get(key);
+        if (mapVal instanceof Map<?,?>) {
+          Object val = ((Map<?,?>)mapVal).get("class");
+          theClass.addLangDepClass(key, val.toString());
+          val = ((Map<?,?>)mapVal).get("path");
+          theClass.addLangDepResource(key, val.toString());
+        } else {
+          log.error("External class specification error for class: " + className + " for language: " + key);
+        }
+        theClass.setExternal(true);
       }
     }
     return true;
@@ -166,17 +174,18 @@ public class ModelBuilder {
     if (null == theClass) {
       return false;
     }
+    if (theClass.isExternal()) {
+      // this class should not have members
+      return false;
+    }
 
     Map<String, Object> classMap = (Map)modelLoader.getMapped(className);
     Set<String> members = classMap.keySet();
     for (String member : members) {
+
       if (member.equals("extends"))
         continue;
-      if (member.equals("import")) {
-        // is an imported class
-        theClass.setImportClass(classMap.get(member).toString());
-        return true;
-      }
+
       Object type = (classMap).get(member);
       if (type instanceof String) {
         if (type.toString().contains("[]")) {
@@ -199,29 +208,31 @@ public class ModelBuilder {
         Map<String,String> mappedType = (Map)type;
         String references = mappedType.get("references");
 
-        MjyClass clazz = theModel.getClassByName(references);
-        if (null == clazz) {
+        MjyClass classTypeUsed = theModel.getClassByName(references);
+        if (null == classTypeUsed) {
           // Programmer wants to use an external class, let it do
           //TODO: some classes need importing from another package
-          clazz = MjyModelFactory.makeClass(references);
+          classTypeUsed = MjyModelFactory.makeClass(references);
         }
         
-        String reqImp  = clazz.getImportClass();
-        if (null != reqImp) {
-          theClass.addImport(reqImp + "." + clazz.getName());
+        if (classTypeUsed.isExternal()) {
+          // need to copy the imports and external class names for languages
+          for (String lang : classTypeUsed.getLangKeySet()) {
+            theClass.addLangImport(lang, classTypeUsed.getLangDepResource(lang));
+          }
         }
 
         String collectionType = mappedType.get("collection");
         if (null == collectionType) {
           theClass.addAttribute(
               MjyModelFactory.makeAttribute(member,
-                  MjyModelFactory.makeObject(clazz)));
+                  MjyModelFactory.makeObject(classTypeUsed)));
           continue;
         } else {
           MjyCollectionType collType = MjyCollectionType.getMjyCollectionType(collectionType);
           theClass.addCollection(
               MjyModelFactory.makeCollection(member, collType,
-                  MjyModelFactory.makeObject(clazz)));
+                  MjyModelFactory.makeObject(classTypeUsed)));
           if (MjyCollectionType.ARRAYLIST == collType) {
             theClass.setUsesArrayList(true);
           } else if (MjyCollectionType.HASHMAP == collType) {
@@ -247,6 +258,11 @@ public class ModelBuilder {
         log.error(msg);
         return Boolean.TRUE;
       }
+//    if (member.equals("import")) {
+//    // is an imported class
+//    theClass.setImportClass(classMap.get(member).toString());
+//    return true;
+//  }
 
       if (alreadyVerified.contains(clazz))
         return Boolean.FALSE;

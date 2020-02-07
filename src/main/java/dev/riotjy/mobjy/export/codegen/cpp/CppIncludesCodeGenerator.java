@@ -36,6 +36,14 @@ public class CppIncludesCodeGenerator extends ImportsCodeGenerator {
     if (usesMap) {
       code += "#include <map>\n";
     }
+
+    if (!requiredImports.isEmpty()) {
+      for (String impStr : requiredImports) {
+        code += "#include " + impStr + "\n";
+      }
+      code += "\n";
+    }
+
     return code;
   }
 

@@ -30,7 +30,7 @@ public class CppNamespaceCodeGenerator extends PackageCodeGenerator {
 
   @Override
   public String generate() {
-    String code = "#namespace " + this.packageName + "{\n\n";
+    String code = "#namespace " + this.packageName + " {\n\n";
 
     for (CodeGenerator part : parts) {
       code += part.generate() + "\n";

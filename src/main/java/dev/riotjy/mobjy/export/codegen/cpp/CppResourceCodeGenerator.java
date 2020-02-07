@@ -33,15 +33,20 @@ public class CppResourceCodeGenerator extends ResourceCodeGenerator {
 
     String code = 
         "#inlcude <cstdint>\n" + 
-        "#inlcude <string>\n\n" + 
-        
-        "#pragma once\n" +
-        "#ifndef " + resourceName + "_hpp\n" +
-        "#define " + resourceName + "_hpp\n";
+        "#inlcude <string>\n\n";
     
-    for (CodeGenerator part : parts) {
-      code += part.generate() + "\n";
+    code += parts.get(0).generate() + "\n";
+    
+    code += "#pragma once\n" +
+        "#ifndef " + resourceName + "_hpp\n" +
+        "#define " + resourceName + "_hpp\n\n";
+
+    for (int idx = 1; idx < parts.size(); ++idx) {
+      code += parts.get(idx).generate() + "\n";
     }
+//    for (CodeGenerator part : parts) {
+//      code += part.generate() + "\n";
+//    }
     
     code +=
         "#endif // " + resourceName + "_hpp\n";

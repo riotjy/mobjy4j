@@ -16,6 +16,9 @@
 package dev.riotjy.mobjy.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 public class MjyClass {
 
@@ -26,11 +29,16 @@ public class MjyClass {
 
   private MjyClass generalization;
 
-  private String importClass = null;
-
+  private boolean isExternal = false;
+  
   private ArrayList<MjyAttribute> attributes = new ArrayList<MjyAttribute>();
+
   private ArrayList<MjyCollection> collections = new ArrayList<MjyCollection>();
-  private ArrayList<String> requiredImports = new ArrayList<String>();
+  
+  private HashMap<String, String> langDepClasses = new HashMap<>();
+  private HashMap<String, String> langDepResources = new HashMap<>();
+  
+  private HashMap<String, ArrayList<String>> langRequiredImports = new HashMap<>();
 
   public MjyClass(String name) {
     super();
@@ -95,27 +103,48 @@ public class MjyClass {
     this.usesMap = usesMap;
   }
 
-  public String getImportClass() {
-    return importClass;
+  public boolean isExternal() {
+    return isExternal;
   }
 
-  public void setImportClass(String importClass) {
-    this.importClass = importClass;
+  public void setExternal(boolean isExternal) {
+    this.isExternal = isExternal;
   }
 
-  public boolean addImport(String requiredImport) {
-    if (requiredImports.contains(requiredImport)) {
-      return false;
+  public void addLangDepClass(String lang, String className) {
+    langDepClasses.put(lang, className);
+  }
+  
+  public String getLangDepClass(String lang) {
+    return langDepClasses.get(lang);
+  }
+  
+  public Set<String> getLangKeySet() {
+    return langDepClasses.keySet();
+  }
+  
+  public void addLangDepResource(String lang, String resName) {
+    langDepResources.put(lang, resName);
+  }
+  
+  public String getLangDepResource(String lang) {
+    return langDepResources.get(lang);
+  }
+  
+  public void addLangImport(String lang, String imps) {
+    ArrayList<String> langList = langRequiredImports.get(lang);
+    if (null == langList) {
+      langList = new ArrayList<>();
+      langRequiredImports.put(lang, langList);
     }
-    requiredImports.add(requiredImport);
-    return true;
+    langList.add(imps);
   }
-
-  public int getImportCount() {
-    return requiredImports.size();
-  }
-
-  public String getImportByIndex(int index) {
-    return requiredImports.get(index);
+  
+  public Iterator<String> getLangImportsIter(String lang) {
+    ArrayList<String> langList = langRequiredImports.get(lang);
+    if (null == langList) {
+      return null;
+    }
+    return langList.iterator();
   }
 }
