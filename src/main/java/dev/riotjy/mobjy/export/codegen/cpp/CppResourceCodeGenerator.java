@@ -31,8 +31,8 @@ public class CppResourceCodeGenerator extends ResourceCodeGenerator {
   public String generate() {
 
     String code = 
-        "#inlcude <cstdint>\n" + 
-        "#inlcude <string>\n";
+        "#include <cstdint>\n" + 
+        "#include <string>\n";
     
     code += parts.get(0).generate() + "\n";
     

@@ -35,16 +35,20 @@ public class JavaHashMapCodeGenerator extends HashMapCodeGenerator {
     code += "  public int sizeOf" + capitalized + "() {\n";
     code += "    return this." + name + ".size();\n";
     code += "  }\n\n";
-    // pop front
-    code += "  public " + valueType + " getFrom" + capitalized + "(String key) {\n";
+    // get
+    code += "  public " + valueType + " get" + capitalized + "(String key) {\n";
     code += "    return this." + name + ".get(key);\n";
     code += "  }\n\n";
-    // push back
-    code += "  public void putTo" + capitalized + "(String key, " + valueType + " value) {\n";
+    // put
+    code += "  public void put" + capitalized + "(String key, " + valueType + " value) {\n";
     code += "    this." + name + ".put(key, value);\n";
     code += "  }\n\n";
+    // get
+    code += "  public " + valueType + " remove" + capitalized + "(String key) {\n";
+    code += "    return this." + name + ".remove(key);\n";
+    code += "  }\n\n";
     // iterator
-    code += "  public Set<String> keySetOf" + capitalized + "() {\n";
+    code += "  public Set<String> keySet" + capitalized + "() {\n";
     code += "    return this." + name + ".keySet();\n";
     code += "  }\n";
     return code;

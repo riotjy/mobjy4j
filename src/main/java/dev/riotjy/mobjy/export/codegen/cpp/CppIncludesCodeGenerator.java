@@ -30,10 +30,15 @@ public class CppIncludesCodeGenerator extends ImportsCodeGenerator {
   @Override
   public String generate() {
     String code = "";
+    boolean exIncluded = false;
     if (usesList) {
-      code += "#include <list>\n";
+      code += "#include <stdexcept>\n";
+      exIncluded = true;
+      code += "#include <vector>\n";
     }
     if (usesMap) {
+      if (!exIncluded)
+        code += "#include <stdexcept>\n";
       code += "#include <map>\n";
     }
 

@@ -32,21 +32,39 @@ public class JavaArrayListCodeGenerator extends ArrayListCodeGenerator {
     String capitalized = name.substring(0,1).toUpperCase() + name.substring(1);
     String code = "  protected List<" + type + "> " + name + " = new ArrayList<>();\n\n";
     // size
-    code += "  public int sizeOf" + capitalized + "() {\n";
+    code += "  public int size" + capitalized + "() {\n";
     code += "    return this." + name + ".size();\n";
     code += "  }\n\n";
+    // get
+    code += "  public " + type + " get" + capitalized + "(int index) {\n";
+    code += "    if (index >= " + name + ".size())\n";
+    code += "      return null;\n";
+    code += "    return this." + name + ".get(index);\n";
+    code += "  }\n\n";
+    // set
+    code += "  public " + type + " set" + capitalized + "(int index, " + type + " value) {\n";
+    code += "    if (index >= " + name + ".size())\n";
+    code += "      return null;\n";
+    code += "    return this." + name + ".set(index, value);\n";
+    code += "  }\n\n";
+    // remove
+    code += "  public " + type + " get" + capitalized + "(int index) {\n";
+    code += "    if (index >= " + name + ".size())\n";
+    code += "      return null;\n";
+    code += "    return this." + name + ".remove(index);\n";
+    code += "  }\n\n";
     // pop front
-    code += "  public " + type + " popFrontFrom" + capitalized + "() {\n";
+    code += "  public " + type + " popFront" + capitalized + "() {\n";
     code += "    if (0 == " + name + ".size())\n";
     code += "      return null;\n";
     code += "    return this." + name + ".remove(0);\n";
     code += "  }\n\n";
     // push back
-    code += "  public void pushBackTo" + capitalized + "(" + type + " value) {\n";
+    code += "  public void pushBack" + capitalized + "(" + type + " value) {\n";
     code += "    this." + name + ".add(value);\n";
     code += "  }\n\n";
     // iterator
-    code += "  public Iterator iteratorOf" + capitalized + "() {\n";
+    code += "  public Iterator iterator" + capitalized + "() {\n";
     code += "    return this." + name + ".iterator();\n";
     code += "  }\n";
     return code;

@@ -34,23 +34,29 @@ public class CppArrayListCodeGenerator extends ArrayListCodeGenerator {
         "  std::vector<" + type + "> " + name + ";\n\n";
     code += "public:\n";
     // size
-    code += "  size_type sizeOf" + capitalized + "() {\n";
+    code += "  std::vector<" + type + ">::size_type size" + capitalized + "() {\n";
     code += "    return this->" + name + ".size();\n";
     code += "  }\n\n";
+    // at(pos)
+    code += "  " + type + " & at" + capitalized + "(std::vector<" + type + ">::size_type pos) {\n";
+    code += "    if (pos >= " + name + ".size())\n";
+    code += "      throw std::invalid_argument(\"Vector position/index out of bounds!\");\n";
+    code += "    return this->" + name + ".at(pos);\n";
+    code += "  }\n\n";
     // pop front
-    code += "  " + type + " popFrontFrom" + capitalized + "() {\n";
+    code += "  " + type + " & popFront" + capitalized + "() {\n";
     code += "    if (0 == " + name + ".size())\n";
-    code += "      return null;\n";
-    code += "    " + type + " ret = this->" + name + ".front();\n";
+    code += "      throw std::length_error(\"Vector is empty!\");\n";
+    code += "    " + type + " & ret = this->" + name + ".front();\n";
     code += "    this->" + name + ".erase(" + name + ".begin());\n";
     code += "    return ret;\n";
     code += "  }\n\n";
     // push back
-    code += "  void pushBackTo" + capitalized + "(" + type + " value) {\n";
+    code += "  void pushBack" + capitalized + "(" + type + " value) {\n";
     code += "    this->" + name + ".push_back(value);\n";
     code += "  }\n\n";
     // iterator
-    code += "  auto iteratorOf" + capitalized + "() {\n";
+    code += "  std::vector<" + type + ">::const_iterator iterator" + capitalized + "() {\n";
     code += "    return this->" + name + ".cbegin();\n";
     code += "  }\n";
     return code;

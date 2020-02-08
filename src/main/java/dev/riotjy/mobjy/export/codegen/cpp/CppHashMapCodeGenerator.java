@@ -34,19 +34,24 @@ public class CppHashMapCodeGenerator extends HashMapCodeGenerator {
         + "  std::map<std::string, " + valueType + "> " + name + ";\n\n";
     code += "public:\n";
     // size
-    code += "  size_type sizeOf" + capitalized + "() {\n";
+    code += "  std::map<std::string, " + valueType + ">::size_type size" + capitalized + "() {\n";
     code += "    return this->" + name + ".size();\n";
     code += "  }\n\n";
-    // pop front
-    code += "  " + valueType + " getFrom" + capitalized + "(String key) {\n";
+    // get
+    code += "  " + valueType + " & get" + capitalized + "(std::string key) {\n";
     code += "    return this->" + name + "[key];\n";
     code += "  }\n\n";
-    // push back
-    code += "  void putTo" + capitalized + "(String key, " + valueType + " value) {\n";
-    code += "    this->" + name + ".emplace(key, value);\n";
+    // put (using std::map::emplace)
+    code += "  bool put" + capitalized + "(std::string key, " + valueType + " value) {\n";
+    code += "    auto retPair = this->" + name + ".emplace(key, value);\n";
+    code += "    return retPair.second;\n";
+    code += "  }\n\n";
+    // remove
+    code += "  std::map<std::string, " + valueType + ">::size_type erase" + capitalized + "(std::string key) {\n";
+    code += "    return this->" + name + ".erase(key);\n";
     code += "  }\n\n";
     // iterator
-    code += "  auto iteratorOf" + capitalized + "() {\n";
+    code += "  std::map<std::string, " + valueType + ">::const_iterator iterator" + capitalized + "() {\n";
     code += "    return this->" + name + ".cbegin();\n";
     code += "  }\n";
     return code;
