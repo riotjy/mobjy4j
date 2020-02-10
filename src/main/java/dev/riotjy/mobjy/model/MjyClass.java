@@ -57,6 +57,12 @@ public class MjyClass {
   public MjyAttribute getAttributeByIndex(int index) {
     return attributes.get(index);
   }
+  
+  public ArrayList<String> getAttributeNames() {
+    ArrayList<String> names = new ArrayList<String>();
+    attributes.forEach(v -> names.add(v.getName()));
+    return names;
+  }
 
   public boolean addCollection(MjyCollection collection) {
     collections.add(collection);
@@ -69,6 +75,12 @@ public class MjyClass {
 
   public MjyCollection getCollectionByIndex(int index) {
     return collections.get(index);
+  }
+
+  public ArrayList<String> getCollectionNames() {
+    ArrayList<String> names = new ArrayList<String>();
+    collections.forEach(v -> names.add(v.getName()));
+    return names;
   }
 
   public String getName() {
@@ -146,5 +158,11 @@ public class MjyClass {
       return null;
     }
     return langList.iterator();
+  }
+  
+  public ArrayList<String> getFieldNames() {
+    ArrayList<String> ret = getAttributeNames();
+    collections.forEach(v -> ret.add(v.getName()));
+    return ret;
   }
 }

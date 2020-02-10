@@ -35,6 +35,11 @@ public class CppClassCodeGenerator extends ClassCodeGenerator {
         (null == generalization ? "" : ": public " + generalization) +
         " {\n";
 
+    code += "public:\n" +
+        "  std::string className() const {" +
+        "return \"" + className + "\";" +
+        "}\n\n";
+    
     for (CodeGenerator part : parts) {
       code += part.generate() + "\n";
     }

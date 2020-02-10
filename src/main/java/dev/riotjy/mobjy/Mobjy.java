@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import dev.riotjy.mobjy.builder.ModelBuilder;
 import dev.riotjy.mobjy.export.ModelExporter;
+import dev.riotjy.mobjy.export.SerializeExporter;
 import dev.riotjy.mobjy.model.MjyModel;
 import dev.riotjy.mobjy.util.MobjyConfig;
 import dev.riotjy.mobjy.util.StrConst;
@@ -58,6 +59,10 @@ public class Mobjy {
     exporter.exportJava("");
     
     exporter.exportCpp("");
+    
+    SerializeExporter serexp = new SerializeExporter(theModel);
+    
+    serexp.exportJava("");
     
     log.info(theModel.toString());
   }
