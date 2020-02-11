@@ -48,8 +48,8 @@ public class SerializeExporter {
       MjyClass gener = clazz.getGeneralization();
       
       JavaSerializeClassCodeGenerator clsGen  = 
-          new JavaSerializeClassCodeGenerator(clazz.getName(), (null != gener) ? gener.getName() : 
-            null, clazz.getFieldNames());
+          new JavaSerializeClassCodeGenerator(clazz.getName(), (null != gener) ? gener.getName() : null,
+            clazz.getAttributeNames(), clazz.getArrayNames(), clazz.getMapNames());
       classGen.addPart(clsGen);
     }
     classGen.addPart(valGen);

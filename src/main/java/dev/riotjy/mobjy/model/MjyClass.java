@@ -165,4 +165,22 @@ public class MjyClass {
     collections.forEach(v -> ret.add(v.getName()));
     return ret;
   }
+
+  public ArrayList<String> getArrayNames() {
+    ArrayList<String> names = new ArrayList<String>();
+    collections.forEach(v -> {
+      if (v.getCollectionType() == MjyCollectionType.ARRAYLIST)
+        names.add(v.getName());
+    });
+    return names;
+  }
+
+  public ArrayList<String> getMapNames() {
+    ArrayList<String> names = new ArrayList<String>();
+    collections.forEach(v -> {
+      if (v.getCollectionType() == MjyCollectionType.HASHMAP)
+        names.add(v.getName());
+    });
+    return names;
+  }
 }

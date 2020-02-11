@@ -11,12 +11,11 @@ public class JavaSerializeStaticCodeGenerator extends CodeGenerator {
   @Override
   public String generate() {
     return 
-        "  public static String serClass(String className, String fields) {\n" + 
+        "  private static String serClass(String className, String fields) {\n" + 
         "    return \"{\\\"cnid\\\":\\\"\" + className + \"\\\",\" + fields + \"}\";\n" + 
         "  }\n" + 
         "\n" + 
-        "  public static String serArr(ArrayList<?> arr) {\n" + 
-        "    int arrSize = arr.size();\n" + 
+        "  private static String serArr(ArrayList<?> arr) {\n" + 
         "    String json = \"[\";\n" + 
         "    Iterator<?> it = arr.iterator();\n" + 
         "    \n" + 
@@ -33,7 +32,7 @@ public class JavaSerializeStaticCodeGenerator extends CodeGenerator {
         "    return json;\n" + 
         "  }\n" + 
         "\n" + 
-        "  public static String serHMap(HashMap<String, ?> hm) {\n" + 
+        "  private static String serMap(HashMap<String, ?> hm) {\n" + 
         "    String json = \"{\";\n" + 
         "\n" + 
         "    Iterator<String> it = hm.keySet().iterator();\n" + 
@@ -52,16 +51,16 @@ public class JavaSerializeStaticCodeGenerator extends CodeGenerator {
         "    return json;\n" + 
         "  }\n" + 
         "  \n" + 
-        "  public static String qtd(String in) {\n" + 
+        "  private static String qtd(String in) {\n" + 
         "    return \"\\\"\" + in + \"\\\"\";\n" + 
         "  }\n" + 
-        "  public static String con(String first, String second) {\n" + 
+        "  private static String con(String first, String second) {\n" + 
         "    return first + \":\" + second;\n" + 
         "  }\n" + 
-        "  public static String lin(String in) {\n" + 
+        "  private static String lin(String in) {\n" + 
         "    return in + \",\";\n" + 
         "  }\n" + 
-        "  public static String crl(String in) {\n" + 
+        "  private static String crl(String in) {\n" + 
         "    return \"{\" + in + \"}\";\n" + 
         "  }\n";
   }
