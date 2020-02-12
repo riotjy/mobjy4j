@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dev.riotjy.mobjy.builder.ModelBuilder;
+import dev.riotjy.mobjy.export.DeserializeExporter;
 import dev.riotjy.mobjy.export.ModelExporter;
 import dev.riotjy.mobjy.export.SerializeExporter;
 import dev.riotjy.mobjy.model.MjyModel;
@@ -64,6 +65,10 @@ public class Mobjy {
     
     serexp.exportJava("");
     
+    DeserializeExporter deserexp = new DeserializeExporter(theModel);
+    
+    deserexp.exportJava("");
+
     log.info(theModel.toString());
   }
 }

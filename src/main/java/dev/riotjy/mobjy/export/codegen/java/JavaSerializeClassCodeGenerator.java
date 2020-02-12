@@ -40,26 +40,14 @@ public class JavaSerializeClassCodeGenerator extends SerializeClassCodeGenerator
       if (hasFields) {
         code += ") +\n";
       }
-    } else {
-      if (!hasAttributes) {
-        code += 
-            "        // TODO: REPLACE WITH SERIALIZATION CODE FOR CLASS " + className + "\n" +
-            "        \"\"";
-      }
+    } else if (!hasFields) {
+      code += 
+          "        // TODO: REPLACE WITH SERIALIZATION CODE FOR CLASS " + className + "\n" +
+          "        \"\"";
+      code += ";\n  }\n";
+      return code;
     }
-    
-//    for (int i = 0; i < attributeNames.size(); ++i) {
-//      code += "        ";
-//      boolean notLast = (i + 1) < attributeNames.size();
-//      if (notLast) {
-//        code += "lin(";
-//      }
-//      code += "con(qtd(" + attributeNames.get(i) + "), serValue(value." + attributeNames.get(i) + "))";
-//      if (notLast) {
-//        code += ") +\n";
-//      }
-//    }
-    
+
     Iterator<String> it = attributeNames.iterator();
     while (it.hasNext()) {
       String val = it.next();

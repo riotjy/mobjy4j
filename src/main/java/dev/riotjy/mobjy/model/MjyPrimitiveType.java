@@ -16,6 +16,7 @@
 package dev.riotjy.mobjy.model;
 
 public enum MjyPrimitiveType {
+  BOOLEAN,
   INT,
   FLOAT,
   DOUBLE,
@@ -24,6 +25,7 @@ public enum MjyPrimitiveType {
   
   
   public static MjyPrimitiveType getMjyPrimitiveType(String type) {
+    if (type.equals("bool")) return BOOLEAN;
     if (type.equals("int")) return INT;
     if (type.equals("float")) return FLOAT;
     if (type.equals("double")) return DOUBLE;
@@ -33,6 +35,7 @@ public enum MjyPrimitiveType {
   
   @Override
   public String toString() {
+    if (this == BOOLEAN) return "bool";
     if (this == INT) return "int";
     if (this == FLOAT) return "float";
     if (this == DOUBLE) return "double";

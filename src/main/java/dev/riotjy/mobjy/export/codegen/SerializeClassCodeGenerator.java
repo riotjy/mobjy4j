@@ -44,8 +44,4 @@ public abstract class SerializeClassCodeGenerator extends CodeGenerator {
   public void setGeneralizationName(String generalizationName) {
     this.generalizationName = generalizationName;
   }
-
-  public void addFieldName(String fieldName) {
-    attributeNames.add(fieldName);
-  }
 }

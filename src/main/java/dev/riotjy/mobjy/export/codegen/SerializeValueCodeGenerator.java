@@ -10,9 +10,9 @@ public abstract class SerializeValueCodeGenerator extends CodeGenerator {
   public SerializeValueCodeGenerator() {
   }
 
-  public SerializeValueCodeGenerator(Collection<String> fieldNames) {
+  public SerializeValueCodeGenerator(Collection<String> classNames) {
     this();
-    this.classNames.addAll(fieldNames);
+    this.classNames.addAll(classNames);
   }
 
   public void addClassName(String fieldName) {

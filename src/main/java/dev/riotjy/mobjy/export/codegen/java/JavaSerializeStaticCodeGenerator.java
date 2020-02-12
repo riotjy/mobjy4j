@@ -5,7 +5,6 @@ import dev.riotjy.mobjy.export.codegen.CodeGenerator;
 public class JavaSerializeStaticCodeGenerator extends CodeGenerator {
 
   public JavaSerializeStaticCodeGenerator() {
-    // TODO Auto-generated constructor stub
   }
 
   @Override
@@ -62,6 +61,10 @@ public class JavaSerializeStaticCodeGenerator extends CodeGenerator {
         "  }\n" + 
         "  private static String crl(String in) {\n" + 
         "    return \"{\" + in + \"}\";\n" + 
+        "  }\n" + 
+        "  \n" + 
+        "  public static String serialize(Object value) {\n" + 
+        "    return serValue(value);\n" + 
         "  }\n";
   }
 

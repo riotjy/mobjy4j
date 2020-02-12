@@ -8,7 +8,6 @@ public class JavaSerializeValueCodeGenerator extends SerializeValueCodeGenerator
 
   public JavaSerializeValueCodeGenerator() {
     super();
-    // TODO Auto-generated constructor stub
   }
 
   public JavaSerializeValueCodeGenerator(Collection<String> fieldNames) {
@@ -18,7 +17,7 @@ public class JavaSerializeValueCodeGenerator extends SerializeValueCodeGenerator
   @Override
   public String generate() {
     String code = 
-        "  public static String serValue(Object value) {\n" + 
+        "  private static String serValue(Object value) {\n" + 
         "    \n" + 
         "    if (null == value)\n" + 
         "      return \"null\";\n" + 

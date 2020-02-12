@@ -64,6 +64,12 @@ public class MjyClass {
     return names;
   }
 
+  public HashMap<String, MjyType> getAttributesInfo() {
+    HashMap<String, MjyType> info = new HashMap<String, MjyType>();
+    attributes.forEach(v -> info.put(v.getName(), v.getType()));
+    return info;
+  }
+
   public boolean addCollection(MjyCollection collection) {
     collections.add(collection);
     return true;
@@ -165,6 +171,12 @@ public class MjyClass {
     collections.forEach(v -> ret.add(v.getName()));
     return ret;
   }
+  
+  public HashMap<String, MjyType> getFieldsInfo() {
+    HashMap<String, MjyType> info = getAttributesInfo();
+    collections.forEach(v -> info.put(v.getName(), v.getValueType()));
+    return info;
+  }
 
   public ArrayList<String> getArrayNames() {
     ArrayList<String> names = new ArrayList<String>();
@@ -175,6 +187,15 @@ public class MjyClass {
     return names;
   }
 
+  public HashMap<String, MjyType> getArraysInfo() {
+    HashMap<String, MjyType> info = new HashMap<String, MjyType>();
+    collections.forEach(v -> {
+      if (v.getCollectionType() == MjyCollectionType.ARRAYLIST)
+        info.put(v.getName(), v.getValueType());
+    });;
+    return info;
+  }
+
   public ArrayList<String> getMapNames() {
     ArrayList<String> names = new ArrayList<String>();
     collections.forEach(v -> {
@@ -182,5 +203,14 @@ public class MjyClass {
         names.add(v.getName());
     });
     return names;
+  }
+
+  public HashMap<String, MjyType> getMapsInfo() {
+    HashMap<String, MjyType> info = new HashMap<String, MjyType>();
+    collections.forEach(v -> {
+      if (v.getCollectionType() == MjyCollectionType.HASHMAP)
+        info.put(v.getName(), v.getValueType());
+    });;
+    return info;
   }
 }
