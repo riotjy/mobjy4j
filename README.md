@@ -2,6 +2,8 @@
 
 A collection of utilities to generate java classes and de-/serializers from data model defined in YAML.
 
+TODOs: Add "boolean" type, CPP de-/serializers, cosmetics, testing...
+
 IMPORTANT NOTE:
 The project is in an early stage. Please be kind to it! ;-)
 
