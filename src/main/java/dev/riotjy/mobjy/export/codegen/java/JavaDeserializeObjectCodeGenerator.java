@@ -32,7 +32,7 @@ public class JavaDeserializeObjectCodeGenerator extends SerializeValueCodeGenera
   @Override
   public String generate() {
     String code = 
-        "  public static Object deserObject(JsonObject jo) {\n" + 
+        "  private static Object deserObject(JsonObject jo) {\n" + 
         "    \n" + 
         "    String cnid = jo.get(\"cnid\").getAsString();\n" + 
         "    \n" + 

@@ -24,7 +24,7 @@ public class JavaDeserializeStaticCodeGenerator extends CodeGenerator {
   @Override
   public String generate() {
     return 
-        "  public static Object deserPrimitive(JsonPrimitive jp, MjyPrimitiveType prType) {\n" + 
+        "  private static Object deserPrimitive(JsonPrimitive jp, MjyPrimitiveType prType) {\n" + 
         "    if (null == prType) {\n" + 
         "      return jp.getAsString();\n" + 
         "    }\n" + 
@@ -42,8 +42,8 @@ public class JavaDeserializeStaticCodeGenerator extends CodeGenerator {
         "    }\n" + 
         "    return null;\n" + 
         "  }\n" + 
-        "  \n" + 
-        "  public static ArrayList deserArr(JsonArray ja, MjyPrimitiveType prType) {\n" + 
+        "\n" + 
+        "  private static ArrayList deserArr(JsonArray ja, MjyPrimitiveType prType) {\n" + 
         "    ArrayList<Object> arr = new ArrayList<Object>();\n" + 
         "    \n" + 
         "    for (JsonElement el : ja) {\n" + 
@@ -59,8 +59,8 @@ public class JavaDeserializeStaticCodeGenerator extends CodeGenerator {
         "    \n" + 
         "    return arr;\n" + 
         "  }\n" + 
-        "  \n" + 
-        "  public static HashMap deserMap(JsonObject jo, MjyPrimitiveType prType) {\n" + 
+        "\n" + 
+        "  private static HashMap deserMap(JsonObject jo, MjyPrimitiveType prType) {\n" + 
         "    HashMap<String, Object> hm = new HashMap<>();\n" + 
         "    \n" + 
         "    Iterator<Entry<String, JsonElement>> it = jo.entrySet().iterator();\n" + 
@@ -78,7 +78,15 @@ public class JavaDeserializeStaticCodeGenerator extends CodeGenerator {
         "    }\n" + 
         "    \n" + 
         "    return hm;\n" + 
-        "  }";
+        "  }\n" +
+        "\n" +
+        "  public static Object deserialize(JsonObject jo) {\n" + 
+        "    return deserObject(jo);\n" + 
+        "  }\n" + 
+        "  \n" + 
+        "  public static Object deserialize(String json) {\n" + 
+        "    return deserialize(new JsonParser().parse(json).getAsJsonObject());\n" + 
+        "  }\n";
   }
 
 }

@@ -734,7 +734,7 @@ public  class TestProjectDeserializer {
     // TODO: ADD DESERIALIZATION CODE HERE IF NECESSARY
   }
 
-  public static Object deserObject(JsonObject jo) {
+  private static Object deserObject(JsonObject jo) {
     
     String cnid = jo.get("cnid").getAsString();
     
@@ -772,7 +772,7 @@ public  class TestProjectDeserializer {
     }
   }
 
-  public static Object deserPrimitive(JsonPrimitive jp, MjyPrimitiveType prType) {
+  private static Object deserPrimitive(JsonPrimitive jp, MjyPrimitiveType prType) {
     if (null == prType) {
       return jp.getAsString();
     }
@@ -790,8 +790,8 @@ public  class TestProjectDeserializer {
     }
     return null;
   }
-  
-  public static ArrayList deserArr(JsonArray ja, MjyPrimitiveType prType) {
+
+  private static ArrayList deserArr(JsonArray ja, MjyPrimitiveType prType) {
     ArrayList<Object> arr = new ArrayList<Object>();
     
     for (JsonElement el : ja) {
@@ -807,8 +807,8 @@ public  class TestProjectDeserializer {
     
     return arr;
   }
-  
-  public static HashMap deserMap(JsonObject jo, MjyPrimitiveType prType) {
+
+  private static HashMap deserMap(JsonObject jo, MjyPrimitiveType prType) {
     HashMap<String, Object> hm = new HashMap<>();
     
     Iterator<Entry<String, JsonElement>> it = jo.entrySet().iterator();
@@ -826,6 +826,14 @@ public  class TestProjectDeserializer {
     }
     
     return hm;
+  }
+
+  public static Object deserialize(JsonObject jo) {
+    return deserObject(jo);
+  }
+  
+  public static Object deserialize(String json) {
+    return deserialize(new JsonParser().parse(json).getAsJsonObject());
   }
 }
 ```
