@@ -59,8 +59,6 @@ public class Mobjy {
     
     exporter.exportJava("");
     
-    exporter.exportCpp("");
-    
     SerializeExporter serexp = new SerializeExporter(theModel);
     
     serexp.exportJava("");
@@ -69,6 +67,8 @@ public class Mobjy {
     
     deserexp.exportJava("");
 
+    exporter.exportCpp("");
+    
     log.info(theModel.toString());
   }
 }
