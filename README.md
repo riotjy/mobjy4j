@@ -1,8 +1,8 @@
 # mobjy for Java
 
-A collection of utilities to generate java classes and de-/serializers from data model defined in YAML.
+A collection of utilities to generate java, cpp (and in the future other) classes and de-/serializers from data model defined in YAML.
 
-TODOs: Add "boolean" type, CPP de-/serializers, cosmetics, testing...
+TODOs: Add "boolean" type, CPP de-/serializers, writing to files, cosmetics, testing, other languages...
 
 IMPORTANT NOTE:
 The project is in an early stage. Please be kind to it! ;-)
@@ -18,7 +18,7 @@ RUNNING INSTRUCTIONS:
 Run class "Mobjy" with parameter -i set to full path to input YAML file
 (see examples/example.yaml in sister project mobjyArch)
 
-Currently it turns this:
+Currently it turns this YAML class model definition:
 ```YAML
 # classes definition example
 BaseClass:            #creates class BaseClass
