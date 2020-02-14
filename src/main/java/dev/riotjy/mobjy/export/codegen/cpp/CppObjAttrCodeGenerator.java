@@ -17,13 +17,13 @@ package dev.riotjy.mobjy.export.codegen.cpp;
 
 import dev.riotjy.mobjy.export.codegen.AttributeCodeGenerator;
 
-public class CppAttributeCodeGenerator extends AttributeCodeGenerator {
+public class CppObjAttrCodeGenerator extends AttributeCodeGenerator {
 
-  public CppAttributeCodeGenerator() {
+  public CppObjAttrCodeGenerator() {
     super();
   }
 
-  public CppAttributeCodeGenerator(String name, String type) {
+  public CppObjAttrCodeGenerator(String name, String type) {
     super(name, type);
   }
 
@@ -31,14 +31,14 @@ public class CppAttributeCodeGenerator extends AttributeCodeGenerator {
   public String generate() {
     String capitalized = name.substring(0,1).toUpperCase() + name.substring(1);
     String code = "protected:\n" +
-        "  " + type + " " + name + ";\n";
+        "  std::shared_ptr<" + type + "> " + name + " = nullptr;\n";
     code += "public:\n";
     // getter
-    code += "  " + type + " get" + capitalized + "() {\n";
+    code += "  std::shared_ptr<" + type + "> get" + capitalized + "() {\n";
     code += "    return this->" + name + ";\n";
     code += "  }\n\n";
     // setter
-    code += "  void set" + capitalized + "(" + type + " " + name + ") {\n";
+    code += "  void set" + capitalized + "(std::shared_ptr<" + type + "> " + name + ") {\n";
     code += "    this->" + name + " = " + name + ";\n";
     code += "  }\n";
 

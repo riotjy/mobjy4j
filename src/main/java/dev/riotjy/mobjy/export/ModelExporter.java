@@ -20,13 +20,15 @@ import java.util.Iterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dev.riotjy.mobjy.export.codegen.AttributeCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.cpp.CppArrayListCodeGenerator;
-import dev.riotjy.mobjy.export.codegen.cpp.CppAttributeCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.cpp.CppClassCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.cpp.CppHashMapCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.cpp.CppIncludesCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.cpp.CppMetaTypeMap;
 import dev.riotjy.mobjy.export.codegen.cpp.CppNamespaceCodeGenerator;
+import dev.riotjy.mobjy.export.codegen.cpp.CppObjAttrCodeGenerator;
+import dev.riotjy.mobjy.export.codegen.cpp.CppPrimAttrCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.cpp.CppResourceCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaArrayListCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaAttributeCodeGenerator;
@@ -144,11 +146,19 @@ public class ModelExporter {
         includeGen.addImport("\"" + gener.getName() + ".hpp\"");
       }
       
+      boolean usesMemory = false;
+      
       int cnt = clazz.getAttributeCount();
       for (int i = 0; i < cnt; ++i) {
         MjyAttribute attr = clazz.getAttributeByIndex(i);
         MjyType attrType = attr.getType();
-        CppAttributeCodeGenerator attrGen = new CppAttributeCodeGenerator(attr.getName(), getCppTypeName(attrType));
+        AttributeCodeGenerator attrGen;
+        if (MjyType.isPrimitive(attrType)) {
+          attrGen = new CppPrimAttrCodeGenerator(attr.getName(), getCppTypeName(attrType));
+        } else {
+          attrGen = new CppObjAttrCodeGenerator(attr.getName(), getCppTypeName(attrType));
+          usesMemory = true;
+        }
         classGen.addPart(attrGen);
         String needImp = getCppIncludeIfNeed(attrType);
         if (null != needImp) {
@@ -174,6 +184,8 @@ public class ModelExporter {
         }
       }
 
+      if (usesMemory)
+        includeGen.addImport("<memory>");
       
       CppNamespaceCodeGenerator namspGen =
           new CppNamespaceCodeGenerator(theModel.getLanguageSettingValue("cpp", "namespace"));

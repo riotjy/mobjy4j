@@ -15,37 +15,35 @@
  *******************************************************************************/
 package dev.riotjy.mobjy.export.codegen.cpp;
 
-import dev.riotjy.mobjy.export.codegen.ClassCodeGenerator;
-import dev.riotjy.mobjy.export.codegen.CodeGenerator;
+import dev.riotjy.mobjy.export.codegen.AttributeCodeGenerator;
 
-public class CppClassCodeGenerator extends ClassCodeGenerator {
+public class CppPrimAttrCodeGenerator extends AttributeCodeGenerator {
 
-  public CppClassCodeGenerator() {
+  public CppPrimAttrCodeGenerator() {
     super();
   }
 
-  public CppClassCodeGenerator(String className, boolean isAbstract, String generalization) {
-    super(className, isAbstract, generalization);
+  public CppPrimAttrCodeGenerator(String name, String type) {
+    super(name, type);
   }
 
   @Override
   public String generate() {
-    String code = "class " +
-        className +
-        (null == generalization ? "" : ": public " + generalization) +
-        " {\n";
+    String capitalized = name.substring(0,1).toUpperCase() + name.substring(1);
+    String code = "protected:\n" +
+        "  " + type + " " + name + ";\n";
+    code += "public:\n";
+    // getter
+    code += "  " + type + " get" + capitalized + "() {\n";
+    code += "    return this->" + name + ";\n";
+    code += "  }\n\n";
+    // setter
+    code += "  void set" + capitalized + "(" + type + " " + name + ") {\n";
+    code += "    this->" + name + " = " + name + ";\n";
+    code += "  }\n";
 
-    code += "public:\n" +
-        "  virtual std::string className() const {" +
-        "return \"" + className + "\";" +
-        "}\n\n";
-    
-    for (CodeGenerator part : parts) {
-      code += part.generate() + "\n";
-    }
-
-    code += "}; // class " + className + "\n\n";
     return code;
   }
 
+  
 }
