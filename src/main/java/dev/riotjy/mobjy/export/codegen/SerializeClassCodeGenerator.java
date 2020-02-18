@@ -22,11 +22,6 @@ public abstract class SerializeClassCodeGenerator extends CodeGenerator {
   protected String className;
   protected String generalizationName;
 
-  protected ArrayList<String> attributeNames = new ArrayList<String>();
-  protected ArrayList<String> arrayNames = new ArrayList<String>();
-  protected ArrayList<String> mapNames = new ArrayList<String>();
-  
-
   public SerializeClassCodeGenerator() {
   }
 
@@ -34,14 +29,6 @@ public abstract class SerializeClassCodeGenerator extends CodeGenerator {
     this();
     this.className = className;
     this.generalizationName = generalizationName;
-  }
-  
-  public SerializeClassCodeGenerator(String className, String generalizationName, ArrayList<String> attributeNames,
-      ArrayList<String> arrayNames, ArrayList<String> mapNames) {
-    this(className, generalizationName);
-    this.attributeNames = attributeNames;
-    this.arrayNames = arrayNames;
-    this.mapNames = mapNames;
   }
 
   public String getClassName() {

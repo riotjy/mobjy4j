@@ -68,6 +68,8 @@ public class Mobjy {
     deserexp.exportJava("");
 
     exporter.exportCpp("");
+
+    serexp.exportCpp("");
     
     log.info(theModel.toString());
   }

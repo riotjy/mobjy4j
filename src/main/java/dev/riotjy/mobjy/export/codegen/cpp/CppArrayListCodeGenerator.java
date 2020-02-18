@@ -44,10 +44,10 @@ public class CppArrayListCodeGenerator extends ArrayListCodeGenerator {
     code += "    return this->" + name + ".at(pos);\n";
     code += "  }\n\n";
     // pop front
-    code += "  " + type + " & popFront" + capitalized + "() {\n";
+    code += "  " + type + " popFront" + capitalized + "() {\n";
     code += "    if (0 == " + name + ".size())\n";
     code += "      throw std::length_error(\"Vector is empty!\");\n";
-    code += "    " + type + " & ret = this->" + name + ".front();\n";
+    code += "    " + type + " ret = this->" + name + ".front();\n";
     code += "    this->" + name + ".erase(" + name + ".begin());\n";
     code += "    return ret;\n";
     code += "  }\n\n";

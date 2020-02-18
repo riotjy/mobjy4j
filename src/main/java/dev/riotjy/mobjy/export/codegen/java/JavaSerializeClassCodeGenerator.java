@@ -29,9 +29,16 @@ public class JavaSerializeClassCodeGenerator extends SerializeClassCodeGenerator
     super(className, generalizationName);
   }
 
+  protected ArrayList<String> attributeNames = new ArrayList<String>();
+  protected ArrayList<String> arrayNames = new ArrayList<String>();
+  protected ArrayList<String> mapNames = new ArrayList<String>();
+
   public JavaSerializeClassCodeGenerator(String className, String generalizationName, ArrayList<String> attributeNames,
       ArrayList<String> arrayNames, ArrayList<String> mapNames) {
-    super(className, generalizationName, attributeNames, arrayNames, mapNames);
+    this(className, generalizationName);
+    this.attributeNames = attributeNames;
+    this.arrayNames = arrayNames;
+    this.mapNames = mapNames;
   }
 
   @Override

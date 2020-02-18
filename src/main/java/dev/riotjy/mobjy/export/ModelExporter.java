@@ -30,6 +30,7 @@ import dev.riotjy.mobjy.export.codegen.cpp.CppNamespaceCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.cpp.CppObjAttrCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.cpp.CppPrimAttrCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.cpp.CppResourceCodeGenerator;
+import dev.riotjy.mobjy.export.codegen.cpp.CppRootInterfaceCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaArrayListCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaAttributeCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaClassCodeGenerator;
@@ -122,6 +123,7 @@ public class ModelExporter {
   }
 
   public void exportCpp(String path) {
+    generateRootInterface();
     Iterator<MjyClass> itClass = theModel.getClassIterator();
     while (itClass.hasNext()) {
       MjyClass clazz = itClass.next();
@@ -170,12 +172,17 @@ public class ModelExporter {
       for (int i = 0; i < cnt; ++i) {
         MjyCollection coll = clazz.getCollectionByIndex(i);
         MjyType collValType = coll.getValueType();
+        String cppTypeName = getCppTypeName(collValType);
+        if (MjyType.isObject(collValType)) {
+          cppTypeName = "std::shared_ptr<" + cppTypeName + ">";
+          usesMemory = true;
+        }
         if (coll.getCollectionType() == MjyCollectionType.ARRAYLIST) {
-          CppArrayListCodeGenerator arrGen = new CppArrayListCodeGenerator(coll.getName(), getCppTypeName(collValType));
+          CppArrayListCodeGenerator arrGen = new CppArrayListCodeGenerator(coll.getName(), cppTypeName);
           classGen.addPart(arrGen);
         }
         if (coll.getCollectionType() == MjyCollectionType.HASHMAP) {
-          CppHashMapCodeGenerator hashGen = new CppHashMapCodeGenerator(coll.getName(), getCppTypeName(collValType));
+          CppHashMapCodeGenerator hashGen = new CppHashMapCodeGenerator(coll.getName(), cppTypeName);
           classGen.addPart(hashGen);
         }
         String needImp = getCppIncludeIfNeed(collValType);
@@ -197,6 +204,12 @@ public class ModelExporter {
       String code = resourceGen.generate();
       log.info("\n+++++++++++\n" + code + "\n+++++++++++\n\n");
     }
+  }
+
+  private void generateRootInterface() {
+    CppResourceCodeGenerator resourceGen = new CppResourceCodeGenerator("IMjyRoot");
+    resourceGen.addPart(new CppRootInterfaceCodeGenerator());
+    log.info("\n+++++++++++\n" + resourceGen.generate() + "\n+++++++++++\n\n");
   }
   
   private String getCppTypeName(MjyType type) {

@@ -32,11 +32,11 @@ public class CppClassCodeGenerator extends ClassCodeGenerator {
   public String generate() {
     String code = "class " +
         className +
-        (null == generalization ? "" : ": public " + generalization) +
+        (null == generalization ? ": public IMjyRoot" : ": public " + generalization) +
         " {\n";
 
     code += "public:\n" +
-        "  virtual std::string className() const {" +
+        "  virtual std::string className() {" +
         "return \"" + className + "\";" +
         "}\n\n";
     
