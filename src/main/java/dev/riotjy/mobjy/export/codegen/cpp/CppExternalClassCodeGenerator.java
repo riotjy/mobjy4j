@@ -13,25 +13,37 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  *******************************************************************************/
-package dev.riotjy.mobjy.export.codegen.java;
+package dev.riotjy.mobjy.export.codegen.cpp;
 
+import dev.riotjy.mobjy.export.codegen.ClassCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.CodeGenerator;
 
-public class JavaPrimitiveTypesStaticCodeGenerator extends CodeGenerator {
+public class CppExternalClassCodeGenerator extends ClassCodeGenerator {
 
-  public JavaPrimitiveTypesStaticCodeGenerator() {}
+  public CppExternalClassCodeGenerator() {
+    super();
+  }
+
+  public CppExternalClassCodeGenerator(String className, boolean isAbstract, String generalization) {
+    super(className, isAbstract, generalization);
+  }
 
   @Override
   public String generate() {
-    return 
-        "public enum MjyPrimitiveType {\n" + 
-        "  BOOLEAN,\n" + 
-        "  INT,\n" + 
-        "  FLOAT,\n" + 
-        "  DOUBLE,\n" + 
-        "  STRING,\n" + 
-        "  INVALID;\n" + 
-        "}";
+    String code = "class " + className + " : public IMjyRoot, " + generalization + " {\n";
+
+    code += "public:\n" +
+        "  virtual std::string className() {" +
+        "return \"" + className + "\";" +
+        "}\n\n";
+    
+    for (CodeGenerator part : parts) {
+      code += part.generate() + "\n";
+    }
+
+    code += "  // TODO: ADD ANY NECESSARY CODE FOR DE-/SERIALIZATION OF " + generalization +"\n\n";
+    code += "}; // class " + className + "\n\n";
+    return code;
   }
 
 }

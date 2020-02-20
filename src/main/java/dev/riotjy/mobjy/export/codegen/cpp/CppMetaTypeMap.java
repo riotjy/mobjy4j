@@ -26,6 +26,7 @@ public class CppMetaTypeMap {
   private HashMap<String, String> map = new HashMap<>();
   
   private CppMetaTypeMap() {
+    map.put(MjyPrimitiveType.BOOLEAN.toString(), "bool");
     map.put(MjyPrimitiveType.INT.toString(), "uint64_t");
     map.put(MjyPrimitiveType.FLOAT.toString(), "float");
     map.put(MjyPrimitiveType.DOUBLE.toString(), "double");

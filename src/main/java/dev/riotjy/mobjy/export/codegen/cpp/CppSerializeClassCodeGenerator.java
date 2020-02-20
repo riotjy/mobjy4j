@@ -24,7 +24,6 @@ import dev.riotjy.mobjy.export.codegen.SerializeClassCodeGenerator;
 public class CppSerializeClassCodeGenerator extends SerializeClassCodeGenerator {
 
   public CppSerializeClassCodeGenerator() {
-    // TODO Auto-generated constructor stub
   }
 
   protected HashMap<String, CppValCat> attributesInfo = new HashMap<String, CppValCat>();
@@ -67,7 +66,7 @@ public class CppSerializeClassCodeGenerator extends SerializeClassCodeGenerator 
       }
     } else if (!hasFields) {
       code += 
-          "        // TODO: REPLACE WITH SERIALIZATION CODE FOR CLASS " + className + "\n" +
+          "        // TODO: REPLACE WITH SERIALIZATION CODE FOR CLASS " + className + " AS NECESSARY! VERIFY CLASS DEFINITION.\n" +
           "        \"\"";
       code += ";\n  }\n";
       return code;

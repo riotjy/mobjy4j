@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import dev.riotjy.mobjy.export.codegen.AttributeCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.cpp.CppArrayListCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.cpp.CppClassCodeGenerator;
+import dev.riotjy.mobjy.export.codegen.cpp.CppExternalClassCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.cpp.CppHashMapCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.cpp.CppIncludesCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.cpp.CppMetaTypeMap;
@@ -38,6 +39,7 @@ import dev.riotjy.mobjy.export.codegen.java.JavaHashMapCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaImportsCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaMetaTypeMap;
 import dev.riotjy.mobjy.export.codegen.java.JavaPackageCodeGenerator;
+import dev.riotjy.mobjy.export.codegen.java.JavaPrimitiveTypesStaticCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaResourceCodeGenerator;
 import dev.riotjy.mobjy.model.MjyAttribute;
 import dev.riotjy.mobjy.model.MjyClass;
@@ -108,6 +110,20 @@ public class ModelExporter {
       String code = resourceGen.generate();
       log.info("\n********\n" + code + "\n********\n\n");
     }
+
+    exportMjyPrimitiveTypes(path);
+  }
+  
+  private void exportMjyPrimitiveTypes(String path) {
+    JavaResourceCodeGenerator resourceGen = new JavaResourceCodeGenerator("MjyPrimitiveType");
+
+    JavaPackageCodeGenerator packGen = new JavaPackageCodeGenerator(
+        theModel.getLanguageSettingValue("java", "package"));
+    resourceGen.addPart(packGen);
+    resourceGen.addPart(new JavaPrimitiveTypesStaticCodeGenerator());
+    
+    String code = resourceGen.generate();
+    log.info("\n********\n" + code + "\n********\n\n");
   }
   
   private String getJavaTypeName(MjyType type) {
@@ -129,81 +145,109 @@ public class ModelExporter {
       MjyClass clazz = itClass.next();
 
       if (clazz.isExternal()) {
-        // no generation for this class
-        continue;
+        generateExtClassCppCode(clazz, path);
+      } else {
+        generateClassCppCode(clazz, path);
       }
-      
-      CppIncludesCodeGenerator includeGen = 
-          new CppIncludesCodeGenerator(clazz.usesArrayList(), clazz.usesMap());
-      Iterator<String> impIt = clazz.getLangImportsIter("cpp");
-      if (null != impIt) {
-        while (impIt.hasNext()) {
-          includeGen.addImport(impIt.next());
-        }
-      }
-
-      MjyClass gener = clazz.getGeneralization();
-      CppClassCodeGenerator classGen = new CppClassCodeGenerator(clazz.getName(), false, null != gener ? gener.getName() : null);
-      if (null != gener) {
-        includeGen.addImport("\"" + gener.getName() + ".hpp\"");
-      }
-      
-      boolean usesMemory = false;
-      
-      int cnt = clazz.getAttributeCount();
-      for (int i = 0; i < cnt; ++i) {
-        MjyAttribute attr = clazz.getAttributeByIndex(i);
-        MjyType attrType = attr.getType();
-        AttributeCodeGenerator attrGen;
-        if (MjyType.isPrimitive(attrType)) {
-          attrGen = new CppPrimAttrCodeGenerator(attr.getName(), getCppTypeName(attrType));
-        } else {
-          attrGen = new CppObjAttrCodeGenerator(attr.getName(), getCppTypeName(attrType));
-          usesMemory = true;
-        }
-        classGen.addPart(attrGen);
-        String needImp = getCppIncludeIfNeed(attrType);
-        if (null != needImp) {
-          includeGen.addImport(needImp);
-        }
-      }
-      
-      cnt = clazz.getCollectionCount();
-      for (int i = 0; i < cnt; ++i) {
-        MjyCollection coll = clazz.getCollectionByIndex(i);
-        MjyType collValType = coll.getValueType();
-        String cppTypeName = getCppTypeName(collValType);
-        if (MjyType.isObject(collValType)) {
-          cppTypeName = "std::shared_ptr<" + cppTypeName + ">";
-          usesMemory = true;
-        }
-        if (coll.getCollectionType() == MjyCollectionType.ARRAYLIST) {
-          CppArrayListCodeGenerator arrGen = new CppArrayListCodeGenerator(coll.getName(), cppTypeName);
-          classGen.addPart(arrGen);
-        }
-        if (coll.getCollectionType() == MjyCollectionType.HASHMAP) {
-          CppHashMapCodeGenerator hashGen = new CppHashMapCodeGenerator(coll.getName(), cppTypeName);
-          classGen.addPart(hashGen);
-        }
-        String needImp = getCppIncludeIfNeed(collValType);
-        if (null != needImp) {
-          includeGen.addImport(needImp);
-        }
-      }
-
-      if (usesMemory)
-        includeGen.addImport("<memory>");
-      
-      CppNamespaceCodeGenerator namspGen =
-          new CppNamespaceCodeGenerator(theModel.getLanguageSettingValue("cpp", "namespace"));
-      namspGen.addPart(classGen);
-      
-      CppResourceCodeGenerator resourceGen = new CppResourceCodeGenerator(clazz.getName());
-      resourceGen.addPart(includeGen);
-      resourceGen.addPart(namspGen);
-      String code = resourceGen.generate();
-      log.info("\n+++++++++++\n" + code + "\n+++++++++++\n\n");
     }
+  }
+  
+  private void generateClassCppCode(MjyClass clazz, String path) {
+    CppIncludesCodeGenerator includeGen = 
+        new CppIncludesCodeGenerator(clazz.usesArrayList(), clazz.usesMap());
+    Iterator<String> impIt = clazz.getLangImportsIter("cpp");
+    if (null != impIt) {
+      while (impIt.hasNext()) {
+        includeGen.addImport(impIt.next());
+      }
+    }
+
+    MjyClass gener = clazz.getGeneralization();
+    CppClassCodeGenerator classGen = new CppClassCodeGenerator(clazz.getName(), false, null != gener ? gener.getName() : null);
+    if (null != gener) {
+      includeGen.addImport("\"" + gener.getName() + ".hpp\"");
+    }
+    
+    boolean usesMemory = false;
+    
+    int cnt = clazz.getAttributeCount();
+    for (int i = 0; i < cnt; ++i) {
+      MjyAttribute attr = clazz.getAttributeByIndex(i);
+      MjyType attrType = attr.getType();
+      AttributeCodeGenerator attrGen;
+      if (MjyType.isPrimitive(attrType)) {
+        attrGen = new CppPrimAttrCodeGenerator(attr.getName(), getCppTypeName(attrType));
+      } else {
+        attrGen = new CppObjAttrCodeGenerator(attr.getName(), getCppTypeName(attrType));
+        usesMemory = true;
+      }
+      classGen.addPart(attrGen);
+      String needImp = getCppIncludeIfNeed(attrType);
+      if (null != needImp) {
+        includeGen.addImport(needImp);
+      }
+    }
+    
+    cnt = clazz.getCollectionCount();
+    for (int i = 0; i < cnt; ++i) {
+      MjyCollection coll = clazz.getCollectionByIndex(i);
+      MjyType collValType = coll.getValueType();
+      String cppTypeName = getCppTypeName(collValType);
+      if (MjyType.isObject(collValType)) {
+        cppTypeName = "std::shared_ptr<" + cppTypeName + ">";
+        usesMemory = true;
+      }
+      if (coll.getCollectionType() == MjyCollectionType.ARRAYLIST) {
+        CppArrayListCodeGenerator arrGen = new CppArrayListCodeGenerator(coll.getName(), cppTypeName);
+        classGen.addPart(arrGen);
+      }
+      if (coll.getCollectionType() == MjyCollectionType.HASHMAP) {
+        CppHashMapCodeGenerator hashGen = new CppHashMapCodeGenerator(coll.getName(), cppTypeName);
+        classGen.addPart(hashGen);
+      }
+      String needImp = getCppIncludeIfNeed(collValType);
+      if (null != needImp) {
+        includeGen.addImport(needImp);
+      }
+    }
+
+    if (usesMemory)
+      includeGen.addImport("<memory>");
+    
+    CppNamespaceCodeGenerator namspGen =
+        new CppNamespaceCodeGenerator(theModel.getLanguageSettingValue("cpp", "namespace"));
+    namspGen.addPart(classGen);
+    
+    CppResourceCodeGenerator resourceGen = new CppResourceCodeGenerator(clazz.getName());
+    resourceGen.addPart(includeGen);
+    resourceGen.addPart(namspGen);
+    String code = resourceGen.generate();
+    log.info("\n+++++++++++\n" + code + "\n+++++++++++\n\n");
+  }
+
+  private void generateExtClassCppCode(MjyClass clazz, String path) {
+
+    CppIncludesCodeGenerator includeGen = 
+        new CppIncludesCodeGenerator(false, false);
+    
+    includeGen.addImport(clazz.getLangDepResource("cpp"));
+
+    String className = clazz.getName();
+    String genName = clazz.getLangDepClass("cpp");
+    CppExternalClassCodeGenerator classGen = 
+        new CppExternalClassCodeGenerator(className, false, 
+            genName);
+    
+    CppNamespaceCodeGenerator namspGen =
+        new CppNamespaceCodeGenerator(theModel.getLanguageSettingValue("cpp", "namespace"));
+    namspGen.addPart(classGen);
+    
+    CppResourceCodeGenerator resourceGen = new CppResourceCodeGenerator(clazz.getName());
+
+    resourceGen.addPart(includeGen);
+    resourceGen.addPart(namspGen);
+    String code = resourceGen.generate();
+    log.info("\n+++++++++++\n" + code + "\n+++++++++++\n\n");
   }
 
   private void generateRootInterface() {

@@ -26,6 +26,7 @@ public class JavaMetaTypeMap {
   private HashMap<String, String> map = new HashMap<>();
   
   private JavaMetaTypeMap() {
+    map.put(MjyPrimitiveType.BOOLEAN.toString(), "Boolean");
     map.put(MjyPrimitiveType.INT.toString(), "Integer");
     map.put(MjyPrimitiveType.FLOAT.toString(), "Float");
     map.put(MjyPrimitiveType.DOUBLE.toString(), "Double");

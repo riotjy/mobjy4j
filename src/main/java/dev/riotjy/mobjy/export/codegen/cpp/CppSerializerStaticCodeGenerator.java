@@ -20,7 +20,6 @@ import dev.riotjy.mobjy.export.codegen.CodeGenerator;
 public class CppSerializerStaticCodeGenerator extends CodeGenerator {
 
   public CppSerializerStaticCodeGenerator() {
-    // TODO Auto-generated constructor stub
   }
 
   @Override

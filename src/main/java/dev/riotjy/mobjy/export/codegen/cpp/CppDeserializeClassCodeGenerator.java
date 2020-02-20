@@ -44,7 +44,8 @@ public class CppDeserializeClassCodeGenerator extends DeserializeClassCodeGenera
         attributesInfo.isEmpty() &&
         arraysInfo.isEmpty() &&
         mapsInfo.isEmpty()) {
-      code += "    // TODO: ADD DESERIALIZATION CODE HERE IF NECESSARY\n";
+      code += 
+          "        // TODO: REPLACE WITH SERIALIZATION CODE FOR CLASS " + className + " AS NECESSARY! VERIFY CLASS DEFINITION.\n";
     }
     
     if (null != generalizationName) {

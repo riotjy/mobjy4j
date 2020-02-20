@@ -106,14 +106,15 @@ public class SerializeExporter {
     CppSerializeObjValueCodeGenerator valGen = new CppSerializeObjValueCodeGenerator();
     for (MjyClass clazz : theModel.getClasses()) {
       String className = clazz.getName();
-      if (clazz.isExternal()) {
-        className = clazz.getLangDepClass("cpp");
-        includeGen.addImport(clazz.getLangDepResource("cpp"));
-      }
+//      if (clazz.isExternal()) {
+//        className = clazz.getLangDepClass("cpp");
+//        includeGen.addImport(clazz.getLangDepResource("cpp"));
+//      }
       
       valGen.addClassName(className);
       
-      MjyClass gener = clazz.isExternal() ? null : clazz.getGeneralization();
+//      MjyClass gener = clazz.isExternal() ? null : clazz.getGeneralization();
+      MjyClass gener = clazz.getGeneralization();
       
       CppSerializeClassCodeGenerator clsGen  = 
           new CppSerializeClassCodeGenerator(className, (null != gener) ? gener.getName() : null,

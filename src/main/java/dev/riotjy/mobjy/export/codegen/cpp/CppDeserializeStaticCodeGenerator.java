@@ -20,12 +20,10 @@ import dev.riotjy.mobjy.export.codegen.CodeGenerator;
 public class CppDeserializeStaticCodeGenerator extends CodeGenerator {
 
   public CppDeserializeStaticCodeGenerator() {
-    // TODO Auto-generated constructor stub
   }
 
   @Override
   public String generate() {
-    // TODO Auto-generated method stub
     return
         "  template <typename T>\n" + 
         "  void deserArray(jsonl::json jo, std::vector<T> & vec) {\n" + 

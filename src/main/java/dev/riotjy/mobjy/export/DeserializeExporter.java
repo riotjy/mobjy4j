@@ -109,12 +109,13 @@ public class DeserializeExporter {
 
     for (MjyClass clazz : theModel.getClasses()) {
       String className = clazz.getName();
-      if (clazz.isExternal()) {
-        className = clazz.getLangDepClass("cpp");
-        includeGen.addImport(clazz.getLangDepResource("cpp"));
-      }
+//      if (clazz.isExternal()) {
+//        className = clazz.getLangDepClass("cpp");
+//        includeGen.addImport(clazz.getLangDepResource("cpp"));
+//      }
       
-      MjyClass gener = clazz.isExternal() ? null : clazz.getGeneralization();
+//      MjyClass gener = clazz.isExternal() ? null : clazz.getGeneralization();
+      MjyClass gener = clazz.getGeneralization();
 
       objGen.addClassName(className);
       

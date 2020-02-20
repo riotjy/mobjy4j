@@ -17,12 +17,10 @@ package dev.riotjy.mobjy.builder;
 
 public enum PrimitiveType {
 
+  BOOLEAN("bool"),
   INT("int"),
-  INT_ARR("int[]"),
   FLOAT("float"),
-  FLOAT_ARR("float[]"),
   DOUBLE("double"),
-  DOUBLE_ARR("double[]"),
   STRING("string");
   
   private final String type;
