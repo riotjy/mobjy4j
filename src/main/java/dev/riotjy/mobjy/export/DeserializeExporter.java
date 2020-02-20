@@ -18,6 +18,12 @@ package dev.riotjy.mobjy.export;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dev.riotjy.mobjy.export.codegen.cpp.CppClassCodeGenerator;
+import dev.riotjy.mobjy.export.codegen.cpp.CppDeserializeClassCodeGenerator;
+import dev.riotjy.mobjy.export.codegen.cpp.CppDeserializeObjectCodeGenerator;
+import dev.riotjy.mobjy.export.codegen.cpp.CppDeserializeStaticCodeGenerator;
+import dev.riotjy.mobjy.export.codegen.cpp.CppIncludesCodeGenerator;
+import dev.riotjy.mobjy.export.codegen.cpp.CppResourceCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaClassCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaDeserializeClassCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaDeserializeObjectCodeGenerator;
@@ -64,12 +70,19 @@ public class DeserializeExporter {
     JavaDeserializeObjectCodeGenerator objGen = new JavaDeserializeObjectCodeGenerator();
 
     for (MjyClass clazz : theModel.getClasses()) {
-      objGen.addClassName(clazz.getName());
+
+      String className = clazz.getName();
+      if (clazz.isExternal()) {
+        className = clazz.getLangDepClass("java");
+        importGen.addImport(clazz.getLangDepResource("java"));
+      }
       
-      MjyClass gener = clazz.getGeneralization();
+      MjyClass gener = clazz.isExternal() ? null : clazz.getGeneralization();
+      
+      objGen.addClassName(className);
       
       JavaDeserializeClassCodeGenerator clsGen  = 
-          new JavaDeserializeClassCodeGenerator(clazz.getName(), (null != gener) ? gener.getName() : null,
+          new JavaDeserializeClassCodeGenerator(className, (null != gener) ? gener.getName() : null,
             clazz.getAttributesInfo(), clazz.getArraysInfo(), clazz.getMapsInfo());
       classGen.addPart(clsGen);
     }
@@ -79,6 +92,43 @@ public class DeserializeExporter {
 
     String code = resourceGen.generate();
     log.info("\n#########################\n" + code + "\n#########################\n\n");
+  }
+  
+  public void exportCpp(String path) {
+    CppResourceCodeGenerator resourceGen = new CppResourceCodeGenerator(theModel.getProject() + "Deserializer");
+
+    CppIncludesCodeGenerator includeGen = new CppIncludesCodeGenerator(true, true);
+    includeGen.addImport("<iterator>");
+    
+    resourceGen.addPart(includeGen);
+
+    String capitalized = theModel.getProject().substring(0,1).toUpperCase() + theModel.getProject().substring(1);
+    CppClassCodeGenerator classGen = new CppClassCodeGenerator(capitalized + "Deserializer", false, null);
+    
+    CppDeserializeObjectCodeGenerator objGen = new CppDeserializeObjectCodeGenerator();
+
+    for (MjyClass clazz : theModel.getClasses()) {
+      String className = clazz.getName();
+      if (clazz.isExternal()) {
+        className = clazz.getLangDepClass("cpp");
+        includeGen.addImport(clazz.getLangDepResource("cpp"));
+      }
+      
+      MjyClass gener = clazz.isExternal() ? null : clazz.getGeneralization();
+
+      objGen.addClassName(className);
+      
+      CppDeserializeClassCodeGenerator clsGen  = 
+          new CppDeserializeClassCodeGenerator(className, (null != gener) ? gener.getName() : null,
+            clazz.getAttributesInfo(), clazz.getArraysInfo(), clazz.getMapsInfo());
+      classGen.addPart(clsGen);
+    }
+    classGen.addPart(objGen);
+    classGen.addPart(new CppDeserializeStaticCodeGenerator());
+    resourceGen.addPart(classGen);
+
+    String code = resourceGen.generate();
+    log.info("\n~~~~~~~~~~~~~~~~~~~~~\n" + code + "\n~~~~~~~~~~~~~~~~~~~~~\n\n");
   }
 
 }

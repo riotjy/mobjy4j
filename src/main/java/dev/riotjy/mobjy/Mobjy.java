@@ -71,6 +71,8 @@ public class Mobjy {
 
     serexp.exportCpp("");
     
+    deserexp.exportCpp("");
+
     log.info(theModel.toString());
   }
 }

@@ -71,12 +71,18 @@ public class SerializeExporter {
     JavaSerializeValueCodeGenerator valGen = new JavaSerializeValueCodeGenerator();
 
     for (MjyClass clazz : theModel.getClasses()) {
-      valGen.addClassName(clazz.getName());
+      String className = clazz.getName();
+      if (clazz.isExternal()) {
+        className = clazz.getLangDepClass("java");
+        importGen.addImport(clazz.getLangDepResource("java"));
+      }
       
-      MjyClass gener = clazz.getGeneralization();
+      valGen.addClassName(className);
+      
+      MjyClass gener = clazz.isExternal() ? null : clazz.getGeneralization();
       
       JavaSerializeClassCodeGenerator clsGen  = 
-          new JavaSerializeClassCodeGenerator(clazz.getName(), (null != gener) ? gener.getName() : null,
+          new JavaSerializeClassCodeGenerator(className, (null != gener) ? gener.getName() : null,
             clazz.getAttributeNames(), clazz.getArrayNames(), clazz.getMapNames());
       classGen.addPart(clsGen);
     }
@@ -99,12 +105,18 @@ public class SerializeExporter {
     
     CppSerializeObjValueCodeGenerator valGen = new CppSerializeObjValueCodeGenerator();
     for (MjyClass clazz : theModel.getClasses()) {
-      valGen.addClassName(clazz.getName());
+      String className = clazz.getName();
+      if (clazz.isExternal()) {
+        className = clazz.getLangDepClass("cpp");
+        includeGen.addImport(clazz.getLangDepResource("cpp"));
+      }
       
-      MjyClass gener = clazz.getGeneralization();
+      valGen.addClassName(className);
+      
+      MjyClass gener = clazz.isExternal() ? null : clazz.getGeneralization();
       
       CppSerializeClassCodeGenerator clsGen  = 
-          new CppSerializeClassCodeGenerator(clazz.getName(), (null != gener) ? gener.getName() : null,
+          new CppSerializeClassCodeGenerator(className, (null != gener) ? gener.getName() : null,
               getFieldsInfo(clazz.getAttributesInfo()), getFieldsInfo(clazz.getArraysInfo()), 
               getFieldsInfo(clazz.getMapsInfo()));
       classGen.addPart(clsGen);
