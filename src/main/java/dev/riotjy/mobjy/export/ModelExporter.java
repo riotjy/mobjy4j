@@ -47,6 +47,7 @@ import dev.riotjy.mobjy.model.MjyCollection;
 import dev.riotjy.mobjy.model.MjyCollectionType;
 import dev.riotjy.mobjy.model.MjyModel;
 import dev.riotjy.mobjy.model.MjyType;
+import dev.riotjy.mobjy.util.ResourceWriter;
 
 public class ModelExporter {
 
@@ -109,6 +110,8 @@ public class ModelExporter {
       resourceGen.addPart(classGen);
       String code = resourceGen.generate();
       log.info("\n********\n" + code + "\n********\n\n");
+      ResourceWriter.mkdirs(path + "/java");
+      ResourceWriter.write(path + "/java/" + clazz.getName() + ".java", code);
     }
 
     exportMjyPrimitiveTypes(path);
@@ -124,6 +127,9 @@ public class ModelExporter {
     
     String code = resourceGen.generate();
     log.info("\n********\n" + code + "\n********\n\n");
+    path += "/java";
+    ResourceWriter.mkdirs(path);
+    ResourceWriter.write(path + "/MjyPrimitiveType.java", code);
   }
   
   private String getJavaTypeName(MjyType type) {
@@ -139,7 +145,7 @@ public class ModelExporter {
   }
 
   public void exportCpp(String path) {
-    generateRootInterface();
+    generateRootInterfaceCppCode(path);
     Iterator<MjyClass> itClass = theModel.getClassIterator();
     while (itClass.hasNext()) {
       MjyClass clazz = itClass.next();
@@ -223,6 +229,9 @@ public class ModelExporter {
     resourceGen.addPart(namspGen);
     String code = resourceGen.generate();
     log.info("\n+++++++++++\n" + code + "\n+++++++++++\n\n");
+    path += "/cpp";
+    ResourceWriter.mkdirs(path);
+    ResourceWriter.write(path + "/" + clazz.getName() + ".hpp", code);
   }
 
   private void generateExtClassCppCode(MjyClass clazz, String path) {
@@ -248,12 +257,19 @@ public class ModelExporter {
     resourceGen.addPart(namspGen);
     String code = resourceGen.generate();
     log.info("\n+++++++++++\n" + code + "\n+++++++++++\n\n");
+    path += "/cpp";
+    ResourceWriter.mkdirs(path);
+    ResourceWriter.write(path + "/" + clazz.getName() + ".hpp", code);
   }
 
-  private void generateRootInterface() {
+  private void generateRootInterfaceCppCode(String path) {
     CppResourceCodeGenerator resourceGen = new CppResourceCodeGenerator("IMjyRoot");
     resourceGen.addPart(new CppRootInterfaceCodeGenerator());
-    log.info("\n+++++++++++\n" + resourceGen.generate() + "\n+++++++++++\n\n");
+    String code = resourceGen.generate();
+    log.info("\n+++++++++++\n" + code + "\n+++++++++++\n\n");
+    path += "/cpp";
+    ResourceWriter.mkdirs(path);
+    ResourceWriter.write(path + "/IMjyRoot.hpp", code);
   }
   
   private String getCppTypeName(MjyType type) {

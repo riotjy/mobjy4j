@@ -49,6 +49,11 @@ public class Mobjy {
       return;
     }
     
+    String outPath = "~/mobjyout";
+    if (cfg.hasOption(StrConst.CLI_OUT_PATH)) {
+      outPath = cfg.getCmdStr(StrConst.CLI_OUT_PATH);
+    }
+    
     ModelBuilder mBuilder = new ModelBuilder(inFileName);
     
     mBuilder.dumpLoaderInfo();
@@ -57,21 +62,21 @@ public class Mobjy {
     
     ModelExporter exporter = new ModelExporter(theModel);
     
-    exporter.exportJava("");
+    exporter.exportJava(outPath);
     
     SerializeExporter serexp = new SerializeExporter(theModel);
     
-    serexp.exportJava("");
+    serexp.exportJava(outPath);
     
     DeserializeExporter deserexp = new DeserializeExporter(theModel);
     
-    deserexp.exportJava("");
+    deserexp.exportJava(outPath);
 
-    exporter.exportCpp("");
+    exporter.exportCpp(outPath);
 
-    serexp.exportCpp("");
+    serexp.exportCpp(outPath);
     
-    deserexp.exportCpp("");
+    deserexp.exportCpp(outPath);
 
     log.info(theModel.toString());
   }

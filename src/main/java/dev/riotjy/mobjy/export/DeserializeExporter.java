@@ -33,6 +33,7 @@ import dev.riotjy.mobjy.export.codegen.java.JavaPackageCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaResourceCodeGenerator;
 import dev.riotjy.mobjy.model.MjyClass;
 import dev.riotjy.mobjy.model.MjyModel;
+import dev.riotjy.mobjy.util.ResourceWriter;
 
 public class DeserializeExporter {
 
@@ -49,7 +50,7 @@ public class DeserializeExporter {
   
   public void exportJava (String path) {
 
-    JavaResourceCodeGenerator resourceGen = new JavaResourceCodeGenerator(theModel.getProject() + "Serializer");
+    JavaResourceCodeGenerator resourceGen = new JavaResourceCodeGenerator(theModel.getProject() + "Deserializer");
 
     resourceGen.addPart(new JavaPackageCodeGenerator(theModel.getLanguageSettingValue("java", "package")));
 
@@ -92,6 +93,9 @@ public class DeserializeExporter {
 
     String code = resourceGen.generate();
     log.info("\n#########################\n" + code + "\n#########################\n\n");
+    path += "/java";
+    ResourceWriter.mkdirs(path);
+    ResourceWriter.write(path + "/" + capitalized + "Deserializer" + ".java", code);
   }
   
   public void exportCpp(String path) {
@@ -130,6 +134,9 @@ public class DeserializeExporter {
 
     String code = resourceGen.generate();
     log.info("\n~~~~~~~~~~~~~~~~~~~~~\n" + code + "\n~~~~~~~~~~~~~~~~~~~~~\n\n");
-  }
+    path += "/cpp";
+    ResourceWriter.mkdirs(path);
+    ResourceWriter.write(path + "/" + capitalized + "Deserializer" + ".hpp", code);
+ }
 
 }

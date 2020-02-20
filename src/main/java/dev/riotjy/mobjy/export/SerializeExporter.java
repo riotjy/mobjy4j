@@ -40,6 +40,7 @@ import dev.riotjy.mobjy.model.MjyModel;
 import dev.riotjy.mobjy.model.MjyPrimitive;
 import dev.riotjy.mobjy.model.MjyPrimitiveType;
 import dev.riotjy.mobjy.model.MjyType;
+import dev.riotjy.mobjy.util.ResourceWriter;
 
 public class SerializeExporter {
   
@@ -92,6 +93,9 @@ public class SerializeExporter {
 
     String code = resourceGen.generate();
     log.info("\n$$$$$$$$$$$$$$$$$$$$$$$\n" + code + "\n$$$$$$$$$$$$$$$$$$$$$$$\n\n");
+    path += "/java";
+    ResourceWriter.mkdirs(path);
+    ResourceWriter.write(path + "/" + capitalized + "Serializer" + ".java", code);
   }
   
   public void exportCpp(String path) {
@@ -131,6 +135,9 @@ public class SerializeExporter {
     
     String code = resourceGen.generate();
     log.info("\n@@@@@@@@@@@@@@@@@@@@\n" + code + "\n@@@@@@@@@@@@@@@@@@@@\n\n");
+    path += "/cpp";
+    ResourceWriter.mkdirs(path);
+    ResourceWriter.write(path + "/" + capitalized + "Serializer" + ".hpp", code);
   }
   
   private HashMap<String, CppValCat> getFieldsInfo(HashMap<String, MjyType> fieldsInfo)  {
