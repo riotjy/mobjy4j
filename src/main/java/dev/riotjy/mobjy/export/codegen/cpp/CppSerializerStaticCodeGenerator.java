@@ -25,8 +25,10 @@ public class CppSerializerStaticCodeGenerator extends CodeGenerator {
         "    return \"{\" + in + \"}\";\n" + 
         "  }\n" + 
         "  \n" + 
-        "  std::string serCValue(IMjyRoot * value);\n" + 
-        "  \n" + 
+        "  std::string serClass(std::string className, std::string fields) {\n" + 
+        "    return \"{\\\"cnid\\\":\\\"\" + className + \"\\\",\" + fields + \"}\";\n" + 
+        "  }\n" +
+        "  \n" +
         "  std::string serArr(std::vector<std::shared_ptr<IMjyRoot>> arr) {\n" + 
         "    std::string json = \"[\";\n" + 
         "    std::vector<std::shared_ptr<IMjyRoot>>::const_iterator it = arr.cbegin();\n" + 

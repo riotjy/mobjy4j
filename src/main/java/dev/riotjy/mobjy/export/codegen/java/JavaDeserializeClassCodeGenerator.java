@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import dev.riotjy.mobjy.export.codegen.DeserializeClassCodeGenerator;
+import dev.riotjy.mobjy.model.MjyObject;
 import dev.riotjy.mobjy.model.MjyPrimitive;
 import dev.riotjy.mobjy.model.MjyType;
 
@@ -60,20 +61,29 @@ public class JavaDeserializeClassCodeGenerator extends DeserializeClassCodeGener
       if (type instanceof MjyPrimitive) {
         code += "    value." + val + " = jo.get(\"" + val + "\").getAs" + getPrmAsTypeStr(type) + "();\n";
       } else {
-        code += "    value." + val + " = (" + type.getTypeName() +")deserObject(jo.get(\"" + val + "\").getAsJsonObject());\n";
+        String typeName = type.getTypeName();
+        if (((MjyObject)type).getReference().isExternal())
+          typeName = ((MjyObject)type).getReference().getLangDepClass("java");
+        code += "    value." + val + " = (" + typeName +")deserObject(jo.get(\"" + val + "\").getAsJsonObject());\n";
       }
     }
 
     it = arraysInfo.keySet().iterator();
     while (it.hasNext()) {
       String val = it.next();
-      code += "    value." + val + " = deserArr(jo.get(\"" + val + "\").getAsJsonArray(), " + getPrmTypeStr(attributesInfo.get(val)) + ");\n";
+      String primInfo = getPrmTypeStr(arraysInfo.get(val));
+      if ("null" != primInfo)
+        primInfo = "MjyPrimitiveType." + primInfo;
+      code += "    value." + val + " = deserArr(jo.get(\"" + val + "\").getAsJsonArray(), " + primInfo + ");\n";
     }
 
     it = mapsInfo.keySet().iterator();
     while (it.hasNext()) {
       String val = it.next();
-      code += "    value." + val + " = deserMap(jo.get(\"" + val + "\").getAsJsonObject(), " + getPrmTypeStr(attributesInfo.get(val)) + ");\n";
+      String primInfo = getPrmTypeStr(mapsInfo.get(val));
+      if ("null" != primInfo)
+        primInfo = "MjyPrimitiveType." + primInfo;
+      code += "    value." + val + " = deserMap(jo.get(\"" + val + "\").getAsJsonObject(), " + primInfo + ");\n";
     }
 
     code += "  }\n";
