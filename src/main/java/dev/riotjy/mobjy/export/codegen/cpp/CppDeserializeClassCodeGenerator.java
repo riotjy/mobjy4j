@@ -39,7 +39,7 @@ public class CppDeserializeClassCodeGenerator extends DeserializeClassCodeGenera
   @Override
   public String generate() {
     String code = 
-        "  void deser" + className + "(jsonl::json & jo," + className + " value) {\n";
+        "  void deser" + className + "(jsonl::json & jo," + className + " * value) {\n";
     if (null == generalizationName &&
         attributesInfo.isEmpty() &&
         arraysInfo.isEmpty() &&
@@ -67,14 +67,16 @@ public class CppDeserializeClassCodeGenerator extends DeserializeClassCodeGenera
     while (it.hasNext()) {
       String val = it.next();
 //      code += "    value->" + val + " = deserArr(jo[" + val + "], value->" + attributesInfo.get(val) + ");\n";
-      code += "    deserArr(jo[\"" + val + "\"], value->" + val + ");\n";
+        code += "    deserArr(jo[\"" + val + "\"], value->" + val + ");\n";
+        
     }
 
     it = mapsInfo.keySet().iterator();
     while (it.hasNext()) {
       String val = it.next();
 //      code += "    value->" + val + " = deserMap(jo[\"" + val + "\"], " + getPrmTypeStr(attributesInfo.get(val)) + ");\n";
-      code += "    deserMap(jo[\"" + val + "\"], " + val + ");\n";
+        code += "    deserMapT(jo[\"" + val + "\"], value->" + val + ");\n";
+        
     }
 
     code += "  }\n";

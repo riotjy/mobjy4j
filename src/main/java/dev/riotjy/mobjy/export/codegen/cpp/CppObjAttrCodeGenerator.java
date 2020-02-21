@@ -30,7 +30,7 @@ public class CppObjAttrCodeGenerator extends AttributeCodeGenerator {
   @Override
   public String generate() {
     String capitalized = name.substring(0,1).toUpperCase() + name.substring(1);
-    String code = "protected:\n" +
+    String code = "public:\n" +
         "  std::shared_ptr<" + type + "> " + name + " = nullptr;\n";
     code += "public:\n";
     // getter

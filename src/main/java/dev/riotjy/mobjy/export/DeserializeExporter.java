@@ -23,6 +23,7 @@ import dev.riotjy.mobjy.export.codegen.cpp.CppDeserializeClassCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.cpp.CppDeserializeObjectCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.cpp.CppDeserializeStaticCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.cpp.CppIncludesCodeGenerator;
+import dev.riotjy.mobjy.export.codegen.cpp.CppNamespaceCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.cpp.CppResourceCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaClassCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaDeserializeClassCodeGenerator;
@@ -73,6 +74,7 @@ public class DeserializeExporter {
     for (MjyClass clazz : theModel.getClasses()) {
 
       String className = clazz.getName();
+
       if (clazz.isExternal()) {
         className = clazz.getLangDepClass("java");
         importGen.addImport(clazz.getLangDepResource("java"));
@@ -103,6 +105,8 @@ public class DeserializeExporter {
 
     CppIncludesCodeGenerator includeGen = new CppIncludesCodeGenerator(true, true);
     includeGen.addImport("<iterator>");
+    includeGen.addImport("<memory>");
+    includeGen.addImport("\"json.hpp\"");
     
     resourceGen.addPart(includeGen);
 
@@ -113,12 +117,8 @@ public class DeserializeExporter {
 
     for (MjyClass clazz : theModel.getClasses()) {
       String className = clazz.getName();
-//      if (clazz.isExternal()) {
-//        className = clazz.getLangDepClass("cpp");
-//        includeGen.addImport(clazz.getLangDepResource("cpp"));
-//      }
-      
-//      MjyClass gener = clazz.isExternal() ? null : clazz.getGeneralization();
+      includeGen.addImport("\"" + className + ".hpp\"");
+
       MjyClass gener = clazz.getGeneralization();
 
       objGen.addClassName(className);
@@ -130,7 +130,12 @@ public class DeserializeExporter {
     }
     classGen.addPart(objGen);
     classGen.addPart(new CppDeserializeStaticCodeGenerator());
-    resourceGen.addPart(classGen);
+
+    CppNamespaceCodeGenerator namspGen =
+        new CppNamespaceCodeGenerator(theModel.getLanguageSettingValue("cpp", "namespace"));
+    namspGen.addPart(classGen);
+
+    resourceGen.addPart(namspGen);
 
     String code = resourceGen.generate();
     log.info("\n~~~~~~~~~~~~~~~~~~~~~\n" + code + "\n~~~~~~~~~~~~~~~~~~~~~\n\n");

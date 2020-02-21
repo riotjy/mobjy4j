@@ -61,7 +61,7 @@ public class CppSerializerStaticCodeGenerator extends CodeGenerator {
         "  }\n" + 
         "  \n" + 
         "  template <typename T>\n" + 
-        "  std::string serPrimArr(std::vector<T> arr) {\n" + 
+        "  std::string serArrT(std::vector<T> arr) {\n" + 
         "  \n" + 
         "    int arrSize = arr.size();\n" + 
         "    std::string json = \"[\";\n" + 
@@ -79,7 +79,7 @@ public class CppSerializerStaticCodeGenerator extends CodeGenerator {
         "    return json;\n" + 
         "  }\n" + 
         "  \n" + 
-        "  std::string serStrArr(std::vector<std::string> arr) {\n" + 
+        "  std::string serArrS(std::vector<std::string> arr) {\n" + 
         "  \n" + 
         "    int arrSize = arr.size();\n" + 
         "    std::string json = \"[\";\n" + 
@@ -117,7 +117,7 @@ public class CppSerializerStaticCodeGenerator extends CodeGenerator {
         "  \n" + 
         "  \n" + 
         "  template <typename T>\n" + 
-        "  std::string serPrimMap(std::map<std::string, T> map) {\n" + 
+        "  std::string serMapT(std::map<std::string, T> map) {\n" + 
         "    std::string json = \"{\";\n" + 
         "  \n" + 
         "    typename std::map<std::string, T>::const_iterator it = map.cbegin();\n" + 
@@ -135,7 +135,7 @@ public class CppSerializerStaticCodeGenerator extends CodeGenerator {
         "    return json;\n" + 
         "  }\n" + 
         "  \n" + 
-        "  std::string serStrMap(std::map<std::string, std::string> map) {\n" + 
+        "  std::string serMapS(std::map<std::string, std::string> map) {\n" + 
         "    std::string json = \"{\";\n" + 
         "  \n" + 
         "    std::map<std::string, std::string>::const_iterator it = map.cbegin();\n" + 
@@ -154,7 +154,7 @@ public class CppSerializerStaticCodeGenerator extends CodeGenerator {
         "  }\n" +
         "public:\n" +
         "  std::string serialize(IMjyRoot& val) {\n" +
-        "    return serCValue(&val)\n" +
+        "    return serCValue(&val);\n" +
         "  }\n";
   }
 

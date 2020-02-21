@@ -26,7 +26,7 @@ public class CppDeserializeStaticCodeGenerator extends CodeGenerator {
   public String generate() {
     return
         "  template <typename T>\n" + 
-        "  void deserArray(jsonl::json jo, std::vector<T> & vec) {\n" + 
+        "  void deserArr(jsonl::json jo, std::vector<T> & vec) {\n" + 
         "    std::size_t size = jo.size();\n" + 
         "    vec.clear();\n" + 
         "    for (std::size_t i = 0; i < size; ++i) {\n" + 
@@ -34,16 +34,17 @@ public class CppDeserializeStaticCodeGenerator extends CodeGenerator {
         "    }\n" + 
         "  }\n" + 
         "\n" + 
-        "  void deserArray(jsonl::json jo, std::vector<shared_ptr<IMjyRoot>> & vec) {\n" + 
+        "  template <typename T>\n" + 
+        "  void deserArr(jsonl::json jo, std::vector<std::shared_ptr<T>> & vec) {\n" + 
         "    std::size_t size = jo.size();\n" + 
         "    vec.clear();\n" + 
         "    for (std::size_t i = 0; i < size; ++i) {\n" + 
-        "      vec.push_back(deserObject(jo[i]));\n" + 
+        "      vec.push_back(std::dynamic_pointer_cast<T>(deserObject(jo[i])));\n" + 
         "    }\n" + 
         "  }\n" + 
         "\n" + 
         "  template <typename T>\n" + 
-        "  void deserMap(jsonl::json jo, std::map<std::string, T> & map) {\n" + 
+        "  void deserMapT(jsonl::json jo, std::map<std::string, T> & map) {\n" + 
         "    map.clear();\n" + 
         "    auto it = jo.cbegin();\n" + 
         "    while (it != jo.cend()) {\n" + 
@@ -52,11 +53,12 @@ public class CppDeserializeStaticCodeGenerator extends CodeGenerator {
         "    }\n" + 
         "  }\n" + 
         "\n" + 
-        "  void deserMap(jsonl::json jo, std::map<std::string, shared_ptr<IMjyRoot>> & map) {\n" + 
+        "  template <typename T>\n" + 
+        "  void deserMap(jsonl::json jo, std::map<std::string, std::shared_ptr<T>> & map) {\n" + 
         "    map.clear();\n" + 
         "    auto it = jo.cbegin();\n" + 
         "    while (it != jo.cend()) {\n" + 
-        "      map.emplace(it.key(), deserObject(jo[it.key()]));\n" + 
+        "      map.emplace(it.key(), std::dynamic_pointer_cast<T>(deserObject(jo[it.key()])));\n" + 
         "      ++it;\n" + 
         "    }\n" + 
         "  }\n" +

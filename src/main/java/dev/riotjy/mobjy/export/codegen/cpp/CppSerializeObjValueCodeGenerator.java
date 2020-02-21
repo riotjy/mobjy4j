@@ -37,7 +37,7 @@ public class CppSerializeObjValueCodeGenerator extends SerializeValueCodeGenerat
     for (String className : classNames) {
       code += 
           "    if(val->className() == \"" + className + "\") {\n" + 
-          "        return serClass(val->className(), ser" + className + "(dynamic_cast<" + className + ">(val)));\n" +
+          "        return serClass(val->className(), ser" + className + "(dynamic_cast<" + className + "*>(val)));\n" +
           "    }\n";
     }
     

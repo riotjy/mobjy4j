@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import dev.riotjy.mobjy.export.codegen.cpp.CppClassCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.cpp.CppIncludesCodeGenerator;
+import dev.riotjy.mobjy.export.codegen.cpp.CppNamespaceCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.cpp.CppResourceCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.cpp.CppSerializeClassCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.cpp.CppSerializeObjValueCodeGenerator;
@@ -103,6 +104,7 @@ public class SerializeExporter {
     
     CppIncludesCodeGenerator includeGen = new CppIncludesCodeGenerator(true, true);
     includeGen.addImport("<iterator>");
+    includeGen.addImport("\"json.hpp\"");
 
     String capitalized = theModel.getProject().substring(0,1).toUpperCase() + theModel.getProject().substring(1);
     CppClassCodeGenerator classGen = new CppClassCodeGenerator(capitalized+"Serializer", false, null);
@@ -110,14 +112,10 @@ public class SerializeExporter {
     CppSerializeObjValueCodeGenerator valGen = new CppSerializeObjValueCodeGenerator();
     for (MjyClass clazz : theModel.getClasses()) {
       String className = clazz.getName();
-//      if (clazz.isExternal()) {
-//        className = clazz.getLangDepClass("cpp");
-//        includeGen.addImport(clazz.getLangDepResource("cpp"));
-//      }
+      includeGen.addImport("\"" + className + ".hpp\"");
       
       valGen.addClassName(className);
       
-//      MjyClass gener = clazz.isExternal() ? null : clazz.getGeneralization();
       MjyClass gener = clazz.getGeneralization();
       
       CppSerializeClassCodeGenerator clsGen  = 
@@ -130,8 +128,12 @@ public class SerializeExporter {
     classGen.addPart(valGen);
     classGen.addPart(new CppSerializerStaticCodeGenerator());
 
+    CppNamespaceCodeGenerator namspGen =
+        new CppNamespaceCodeGenerator(theModel.getLanguageSettingValue("cpp", "namespace"));
+    namspGen.addPart(classGen);
+
     resourceGen.addPart(includeGen);
-    resourceGen.addPart(classGen);
+    resourceGen.addPart(namspGen);
     
     String code = resourceGen.generate();
     log.info("\n@@@@@@@@@@@@@@@@@@@@\n" + code + "\n@@@@@@@@@@@@@@@@@@@@\n\n");

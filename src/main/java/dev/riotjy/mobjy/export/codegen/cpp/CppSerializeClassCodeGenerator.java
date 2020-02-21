@@ -52,7 +52,7 @@ public class CppSerializeClassCodeGenerator extends SerializeClassCodeGenerator 
     
     String code = 
         "private:\n" +
-        "  static std::string ser" + className + "(" + className + " value) {\n" +
+        "  std::string ser" + className + "(" + className + " * value) {\n" +
         "    return\n";
     
     if (null != generalizationName) {
@@ -60,7 +60,7 @@ public class CppSerializeClassCodeGenerator extends SerializeClassCodeGenerator 
       if (hasFields) {
         code += "lin(";
       }
-      code += "ser" + generalizationName + "(" + generalizationName + " value)"; 
+      code += "ser" + generalizationName + "(value)"; 
       if (hasFields) {
         code += ") +\n";
       }
@@ -82,9 +82,9 @@ public class CppSerializeClassCodeGenerator extends SerializeClassCodeGenerator 
         serFuncCall = "value->" + val;
       code += "        ";
       if (it.hasNext() || hasArrays || hasMaps) {
-        code += "lin(con(qtd(" + val + "), " + serFuncCall + ")) +\n";
+        code += "lin(con(qtd(\"" + val + "\"), " + serFuncCall + ")) +\n";
       } else {
-        code += "con(qtd(" + val + "), " + serFuncCall + ")";
+        code += "con(qtd(\"" + val + "\"), " + serFuncCall + ")";
       }
     }
 
@@ -98,9 +98,9 @@ public class CppSerializeClassCodeGenerator extends SerializeClassCodeGenerator 
         serFuncName = "serStrArr";
       code += "        ";
       if (it.hasNext() || hasMaps) {
-        code += "lin(con(qtd(" + val + "), " + serFuncName + "(value." + val + "))) +\n";
+        code += "lin(con(qtd(\"" + val + "\"), " + serFuncName + "(value->" + val + "))) +\n";
       } else {
-        code += "con(qtd(" + val + "), " + serFuncName + "(value." + val + "))";
+        code += "con(qtd(\"" + val + "\"), " + serFuncName + "(value->" + val + "))";
       }
     }
 
@@ -114,9 +114,9 @@ public class CppSerializeClassCodeGenerator extends SerializeClassCodeGenerator 
         serFuncName = "serStrMap";
       code += "        ";
       if (it.hasNext()) {
-        code += "lin(con(qtd(" + val + "), " + serFuncName + "(value." + val + "))) +\n";
+        code += "lin(con(qtd(\"" + val + "\"), " + serFuncName + "(value->" + val + "))) +\n";
       } else {
-        code += "con(qtd(" + val + "), " + serFuncName + "(value." + val + "))";
+        code += "con(qtd(\"" + val + "\"), " + serFuncName + "(value->" + val + "))";
       }
     }
 

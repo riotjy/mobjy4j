@@ -170,9 +170,6 @@ public class ModelExporter {
 
     MjyClass gener = clazz.getGeneralization();
     CppClassCodeGenerator classGen = new CppClassCodeGenerator(clazz.getName(), false, null != gener ? gener.getName() : null);
-    if (null != gener) {
-      includeGen.addImport("\"" + gener.getName() + ".hpp\"");
-    }
     
     boolean usesMemory = false;
     
@@ -185,7 +182,10 @@ public class ModelExporter {
         attrGen = new CppPrimAttrCodeGenerator(attr.getName(), getCppTypeName(attrType));
       } else {
         attrGen = new CppObjAttrCodeGenerator(attr.getName(), getCppTypeName(attrType));
-        usesMemory = true;
+        if (!usesMemory) {
+          includeGen.addImport("<memory>");
+          usesMemory = true;
+        }
       }
       classGen.addPart(attrGen);
       String needImp = getCppIncludeIfNeed(attrType);
@@ -201,7 +201,10 @@ public class ModelExporter {
       String cppTypeName = getCppTypeName(collValType);
       if (MjyType.isObject(collValType)) {
         cppTypeName = "std::shared_ptr<" + cppTypeName + ">";
-        usesMemory = true;
+        if (!usesMemory) {
+          includeGen.addImport("<memory>");
+          usesMemory = true;
+        }
       }
       if (coll.getCollectionType() == MjyCollectionType.ARRAYLIST) {
         CppArrayListCodeGenerator arrGen = new CppArrayListCodeGenerator(coll.getName(), cppTypeName);
@@ -217,9 +220,12 @@ public class ModelExporter {
       }
     }
 
-    if (usesMemory)
-      includeGen.addImport("<memory>");
-    
+    if (null != gener) {
+      includeGen.addImport("\"" + gener.getName() + ".hpp\"");
+    } else {
+      includeGen.addImport("\"IMjyRoot.hpp\"");
+    }
+
     CppNamespaceCodeGenerator namspGen =
         new CppNamespaceCodeGenerator(theModel.getLanguageSettingValue("cpp", "namespace"));
     namspGen.addPart(classGen);
