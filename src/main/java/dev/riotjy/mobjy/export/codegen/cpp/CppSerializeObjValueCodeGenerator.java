@@ -41,7 +41,8 @@ public class CppSerializeObjValueCodeGenerator extends SerializeValueCodeGenerat
           "    }\n";
     }
     
-    code += 
+    code +=
+        "    return \"\";" +
         "  }\n";
     return code;
   }

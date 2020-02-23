@@ -151,6 +151,8 @@ public class SerializeExporter {
         MjyPrimitive mjyPrim = (MjyPrimitive) fieldsInfo.get(fieldName);
         if (mjyPrim.getType() == MjyPrimitiveType.STRING) {
           valCat = CppValCat.STRING;
+        } else if(mjyPrim.getType() == MjyPrimitiveType.BOOLEAN) {
+          valCat = CppValCat.BOOLEAN;
         } else {
           valCat = CppValCat.PRIMITIVE;
         }

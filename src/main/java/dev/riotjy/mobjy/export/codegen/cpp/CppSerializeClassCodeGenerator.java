@@ -79,7 +79,10 @@ public class CppSerializeClassCodeGenerator extends SerializeClassCodeGenerator 
       if (attributesInfo.get(val) == CppValCat.OBJECT)
         serFuncCall = "serCValue(value->" + val + ".get())";
       if (attributesInfo.get(val) == CppValCat.STRING)
-        serFuncCall = "value->" + val;
+        serFuncCall = "qtd(value->" + val + ")";
+      if (attributesInfo.get(val) == CppValCat.BOOLEAN) {
+        serFuncCall = "serBool(value->" + val + ")";
+      }
       code += "        ";
       if (it.hasNext() || hasArrays || hasMaps) {
         code += "lin(con(qtd(\"" + val + "\"), " + serFuncCall + ")) +\n";
@@ -92,10 +95,6 @@ public class CppSerializeClassCodeGenerator extends SerializeClassCodeGenerator 
     while (it.hasNext()) {
       String val = it.next();
       String serFuncName = "serArr";
-      if (mapsInfo.get(val) == CppValCat.PRIMITIVE)
-        serFuncName = "serPrimArr";
-      if (mapsInfo.get(val) == CppValCat.STRING)
-        serFuncName = "serStrArr";
       code += "        ";
       if (it.hasNext() || hasMaps) {
         code += "lin(con(qtd(\"" + val + "\"), " + serFuncName + "(value->" + val + "))) +\n";
@@ -108,10 +107,6 @@ public class CppSerializeClassCodeGenerator extends SerializeClassCodeGenerator 
     while (it.hasNext()) {
       String val = it.next();
       String serFuncName = "serMap";
-      if (mapsInfo.get(val) == CppValCat.PRIMITIVE)
-        serFuncName = "serPrimMap";
-      if (mapsInfo.get(val) == CppValCat.STRING)
-        serFuncName = "serStrMap";
       code += "        ";
       if (it.hasNext()) {
         code += "lin(con(qtd(\"" + val + "\"), " + serFuncName + "(value->" + val + "))) +\n";

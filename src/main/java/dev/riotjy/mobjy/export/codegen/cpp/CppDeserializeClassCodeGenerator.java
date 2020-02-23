@@ -75,7 +75,7 @@ public class CppDeserializeClassCodeGenerator extends DeserializeClassCodeGenera
     while (it.hasNext()) {
       String val = it.next();
 //      code += "    value->" + val + " = deserMap(jo[\"" + val + "\"], " + getPrmTypeStr(attributesInfo.get(val)) + ");\n";
-        code += "    deserMapT(jo[\"" + val + "\"], value->" + val + ");\n";
+        code += "    deserMap(jo[\"" + val + "\"], value->" + val + ");\n";
         
     }
 

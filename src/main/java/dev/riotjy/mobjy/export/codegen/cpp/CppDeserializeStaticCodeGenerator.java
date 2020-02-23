@@ -44,7 +44,7 @@ public class CppDeserializeStaticCodeGenerator extends CodeGenerator {
         "  }\n" + 
         "\n" + 
         "  template <typename T>\n" + 
-        "  void deserMapT(jsonl::json jo, std::map<std::string, T> & map) {\n" + 
+        "  void deserMap(jsonl::json jo, std::map<std::string, T> & map) {\n" + 
         "    map.clear();\n" + 
         "    auto it = jo.cbegin();\n" + 
         "    while (it != jo.cend()) {\n" + 
@@ -68,7 +68,8 @@ public class CppDeserializeStaticCodeGenerator extends CodeGenerator {
         "  }\n" + 
         "  \n" + 
         "  std::shared_ptr<IMjyRoot> deserialize(std::string jsonStr) {\n" + 
-        "    return deserialize(jsonl::json::parse(jsonStr));\n" + 
+        "    jsonl::json jo = jsonl::json::parse(jsonStr);\n" + 
+        "    return deserialize(jo);\n" + 
         "  }\n" +
         "\n";
   }

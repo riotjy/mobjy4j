@@ -30,6 +30,10 @@ public class CppArrayListCodeGenerator extends ArrayListCodeGenerator {
   @Override
   public String generate() {
     String capitalized = name.substring(0,1).toUpperCase() + name.substring(1);
+    String retByRef = " &";
+    if ("bool" == type) {
+      retByRef = "";
+    }
     String code = "public:\n" +
         "  std::vector<" + type + "> " + name + ";\n\n";
     code += "public:\n";
@@ -38,7 +42,7 @@ public class CppArrayListCodeGenerator extends ArrayListCodeGenerator {
     code += "    return this->" + name + ".size();\n";
     code += "  }\n\n";
     // at(pos)
-    code += "  " + type + " & at" + capitalized + "(std::vector<" + type + ">::size_type pos) {\n";
+    code += "  " + type + retByRef +" at" + capitalized + "(std::vector<" + type + ">::size_type pos) {\n";
     code += "    if (pos >= " + name + ".size())\n";
     code += "      throw std::invalid_argument(\"Vector position/index out of bounds!\");\n";
     code += "    return this->" + name + ".at(pos);\n";

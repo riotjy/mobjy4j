@@ -161,12 +161,6 @@ public class ModelExporter {
   private void generateClassCppCode(MjyClass clazz, String path) {
     CppIncludesCodeGenerator includeGen = 
         new CppIncludesCodeGenerator(clazz.usesArrayList(), clazz.usesMap());
-    Iterator<String> impIt = clazz.getLangImportsIter("cpp");
-    if (null != impIt) {
-      while (impIt.hasNext()) {
-        includeGen.addImport(impIt.next());
-      }
-    }
 
     MjyClass gener = clazz.getGeneralization();
     CppClassCodeGenerator classGen = new CppClassCodeGenerator(clazz.getName(), false, null != gener ? gener.getName() : null);
@@ -280,12 +274,7 @@ public class ModelExporter {
   
   private String getCppTypeName(MjyType type) {
     if (MjyType.isObject(type)) {
-      String typeName = type.getTypeName();
-      MjyClass clazz = theModel.getClassByName(typeName);
-      if (null != clazz && clazz.isExternal()) {
-        typeName = clazz.getLangDepClass("cpp");
-      }
-      return typeName;
+      return type.getTypeName();
     }
     return CppMetaTypeMap.instance().get(type.getTypeName());
   }
@@ -293,9 +282,7 @@ public class ModelExporter {
   private String getCppIncludeIfNeed(MjyType type) {
     if (MjyType.isObject(type)) {
       String typeName = type.getTypeName();
-      if (!theModel.getClassByName(typeName).isExternal()) {
-        return "\"" + typeName + ".hpp\"";
-      }
+      return "\"" + typeName + ".hpp\"";
     }    
     return null;
   }

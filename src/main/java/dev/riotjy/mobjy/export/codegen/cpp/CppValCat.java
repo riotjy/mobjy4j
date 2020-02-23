@@ -16,6 +16,7 @@
 package dev.riotjy.mobjy.export.codegen.cpp;
 
 public enum CppValCat {
+  BOOLEAN,
   PRIMITIVE,
   OBJECT,
   STRING,

@@ -40,12 +40,22 @@ public class CppSerializerStaticCodeGenerator extends CodeGenerator {
         "  }\n" + 
         "  \n" + 
         "  std::string serClass(std::string className, std::string fields) {\n" + 
-        "    return \"{\\\"cnid\\\":\\\"\" + className + \"\\\",\" + fields + \"}\";\n" + 
+        "    std::string json =  \"{\\\"cnid\\\":\\\"\" + className + \"\\\"\";\n" + 
+        "    if (!fields.empty()) {\n" + 
+        "      json += \",\" + fields;\n" + 
+        "    }\n" + 
+        "    json += \"}\";\n" + 
+        "    return json;\n" + 
         "  }\n" +
-        "  \n" +
-        "  std::string serArr(std::vector<std::shared_ptr<IMjyRoot>> arr) {\n" + 
+        "  \n" + 
+        "  std::string serBool(bool val) {\n" + 
+        "    return val ? \"true\" : \"false\";\n" + 
+        "  }\n" + 
+        "\n" + 
+        "  template <typename T>\n" + 
+        "  std::string serArr(std::vector<std::shared_ptr<T>> arr) {\n" + 
         "    std::string json = \"[\";\n" + 
-        "    std::vector<std::shared_ptr<IMjyRoot>>::const_iterator it = arr.cbegin();\n" + 
+        "    typename std::vector<std::shared_ptr<T>>::const_iterator it = arr.cbegin();\n" + 
         "  \n" + 
         "    while (it != arr.cend()) {\n" + 
         "      if (it != --arr.cend()) {\n" + 
@@ -61,7 +71,7 @@ public class CppSerializerStaticCodeGenerator extends CodeGenerator {
         "  }\n" + 
         "  \n" + 
         "  template <typename T>\n" + 
-        "  std::string serArrT(std::vector<T> arr) {\n" + 
+        "  std::string serArr(std::vector<T> arr) {\n" + 
         "  \n" + 
         "    int arrSize = arr.size();\n" + 
         "    std::string json = \"[\";\n" + 
@@ -78,8 +88,26 @@ public class CppSerializerStaticCodeGenerator extends CodeGenerator {
         "    json += \"]\";\n" + 
         "    return json;\n" + 
         "  }\n" + 
+        "\n" + 
+        "  std::string serArr(std::vector<bool> arr) {\n" + 
+        "\n" + 
+        "    int arrSize = arr.size();\n" + 
+        "    std::string json = \"[\";\n" + 
+        "\n" + 
+        "    for (int i = 0; i < arrSize; ++i) {\n" + 
+        "      bool val = arr[i];\n" + 
+        "      if (i < arrSize - 1) {\n" + 
+        "        json += lin(serBool(val));\n" + 
+        "      } else {\n" + 
+        "        json += serBool(val);\n" + 
+        "      }\n" + 
+        "    }\n" + 
+        "\n" + 
+        "    json += \"]\";\n" + 
+        "    return json;\n" + 
+        "  }\n" +
         "  \n" + 
-        "  std::string serArrS(std::vector<std::string> arr) {\n" + 
+        "  std::string serArr(std::vector<std::string> arr) {\n" + 
         "  \n" + 
         "    int arrSize = arr.size();\n" + 
         "    std::string json = \"[\";\n" + 
@@ -97,10 +125,11 @@ public class CppSerializerStaticCodeGenerator extends CodeGenerator {
         "    return json;\n" + 
         "  }\n" + 
         "  \n" + 
-        "  std::string serMap(std::map<std::string, std::shared_ptr<IMjyRoot>> hm) {\n" + 
+        "  template <typename T>\n" + 
+        "  std::string serMap(std::map<std::string, std::shared_ptr<T>> hm) {\n" + 
         "    std::string json = \"{\";\n" + 
         "  \n" + 
-        "    std::map<std::string, std::shared_ptr<IMjyRoot>>::const_iterator it = hm.cbegin();\n" + 
+        "    typename std::map<std::string, std::shared_ptr<T>>::const_iterator it = hm.cbegin();\n" + 
         "  \n" + 
         "    while (it != hm.cend()) {\n" + 
         "      if (it != --hm.cend()) {\n" + 
@@ -117,7 +146,7 @@ public class CppSerializerStaticCodeGenerator extends CodeGenerator {
         "  \n" + 
         "  \n" + 
         "  template <typename T>\n" + 
-        "  std::string serMapT(std::map<std::string, T> map) {\n" + 
+        "  std::string serMap(std::map<std::string, T> map) {\n" + 
         "    std::string json = \"{\";\n" + 
         "  \n" + 
         "    typename std::map<std::string, T>::const_iterator it = map.cbegin();\n" + 
@@ -135,7 +164,22 @@ public class CppSerializerStaticCodeGenerator extends CodeGenerator {
         "    return json;\n" + 
         "  }\n" + 
         "  \n" + 
-        "  std::string serMapS(std::map<std::string, std::string> map) {\n" + 
+        "  std::string serMap(std::map<std::string, bool> map) {\n" + 
+        "    std::string json = \"{\";\n" + 
+        "\n" + 
+        "    std::map<std::string, bool>::const_iterator it = map.cbegin();\n" + 
+        "\n" + 
+        "    while (it != map.cend()) {\n" + 
+        "      if (it != --map.cend()) {\n" + 
+        "        json += lin(con(qtd(it->first), serBool(it->second)));\n" + 
+        "      } else {\n" + 
+        "        json += con(qtd(it->first), serBool(it->second));\n" + 
+        "      }\n" + 
+        "      ++it;\n" + 
+        "    }\n" +
+        "  }\n" + 
+        "\n"+
+        "  std::string serMap(std::map<std::string, std::string> map) {\n" + 
         "    std::string json = \"{\";\n" + 
         "  \n" + 
         "    std::map<std::string, std::string>::const_iterator it = map.cbegin();\n" + 
