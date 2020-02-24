@@ -13,8 +13,6 @@ It avoids using automatic object creation provided by these libraries in order t
 
 **mobjy** is intended to be extended for other languages too (golang, python, etc...), this depends on available time and resources to continue development.
 
-**"mobjy"** loosely stands for **m**odelling **ob**jects for **j**son with **y**aml.  
-
 KEYWORDS: JSON inheritance support, JSON data model, JSON data modelling, JSON object hierarchy, JSON serialize deserialize,
 Oject Oriented JSON
 
@@ -23,7 +21,12 @@ The project is in an early stage. Please be kind to it! ;-)
 
 TO CONTRIBUTORS:
 You are welcome to contribute if you're interested and agree to ApL2.0.
-Contact Alex for access. Message to [ r i o t j y   p r o t o n m a i l   c o m ] (fill in missing info).
+Contact Alex Savulov for access. Message to [ r i o t j y ][ p r o t o n m a i l ][ c o m ] (fill in missing).
+
+ABOUT:
+**mobjy** is the first part of the **riotjy** open source suite, an initiative, to produce tools, utilities, servers and clients for IoT with emphasis on multilanguage, cross-platform development. 
+**"mobjy"** loosely stands for **m**odelling **ob**jects **j**son **y**aml.
+**"riotjy"** loosely stands for **r**apid (or **r**esources for)  **iot** **j**son **y**aml.
 
 ## What does it currently do
 
