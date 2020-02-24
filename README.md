@@ -23,7 +23,9 @@ IMPORTANT NOTE:The project is in an early stage. Please be kind to it! ;-)
 TO CONTRIBUTORS:
 
 You are welcome to contribute if you're interested and agree to ApL2.0.
-Contact Alex Savulov for access. Message to [ r i o t j y ][ p r o t o n m a i l ][ c o m ] (fill in missing).
+Contact Alex Savulov for access. 
+
+Message to [ r i o t j y ] [ p r o t o n m a i l ] [ c o m ] (fill in missing).
 
 ABOUT:
 
