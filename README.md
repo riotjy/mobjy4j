@@ -33,7 +33,7 @@ ABOUT:
 **"mobjy"** loosely stands for **m**odelling **ob**jects **j**son **y**aml.
 **"riotjy"** loosely stands for **r**apid (or **r**esources for)  **iot** **j**son **y**aml.
 
-## What does it currently do
+## Using mobjy
 
 BUILD INSTRUCTIONS:
 
