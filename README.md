@@ -13,7 +13,7 @@ It avoids using automatic object creation provided by these libraries in order t
 
 **mobjy** is intended to be extended for other languages too (golang, python, etc...), this depends on available time and resources to continue development.
 
-**"mobjy"** loosely stands for **m**odelling **o**bjects for **j**son with **y**aml.  
+**"mobjy"** loosely stands for **m**odelling **ob**jects for **j**son with **y**aml.  
 
 KEYWORDS: JSON inheritance support, JSON data model, JSON data modelling, JSON object hierarchy, JSON serialize deserialize,
 Oject Oriented JSON
