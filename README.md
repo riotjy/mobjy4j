@@ -23,13 +23,13 @@ IMPORTANT NOTE:The project is in an early stage. Please be kind to it! ;-)
 TO CONTRIBUTORS:
 
 You are welcome to contribute if you're interested and agree to ApL2.0.
-Contact Alex Savulov for access. 
+Contact **Alex Savulov** for access. 
 
 Message to [ r i o t j y ] [ p r o t o n m a i l ] [ c o m ] (fill in missing).
 
 ABOUT:
 
-**riotjy** was initiated in Jan 2020 and is currently maintained by Alex Savulov (he is still the sole contributor as of Feb 2020).
+**riotjy** was initiated in Jan 2020 and is currently maintained by **Alex Savulov** (he is still the sole contributor as of Feb 2020).
 
 **mobjy** is the first part of the **riotjy** open source suite, an initiative, to produce tools, utilities, servers and clients for IoT with emphasis on multilanguage, cross-platform development. 
 **"mobjy"** loosely stands for **m**odelling **ob**jects **j**son **y**aml.
