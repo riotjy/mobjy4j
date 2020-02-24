@@ -13,6 +13,8 @@ It avoids using automatic object creation provided by these libraries in order t
 
 **mobjy** is intended to be extended for other languages too (golang, python, etc...), this depends on available time and resources to continue development.
 
+**"mobjy"** loosely stands for **m**odelling **o**bjects for **j**son with **y**aml.  
+
 KEYWORDS: JSON inheritance support, JSON data model, JSON data modelling, JSON object hierarchy, JSON serialize deserialize,
 Oject Oriented JSON
 
@@ -30,7 +32,8 @@ Gradle: run gradlew.* script, specify desired task
 Eclipse: install buildship extension for Gradle support, import as existing gradle project, build project
 
 RUNNING INSTRUCTIONS:
-Run class "Mobjy" with parameter -i set to the full/relative path to input YAML file and -o parameter to the output directory/folder. 
+Run class "Mobjy" with parameter -i set to the full/relative path to input YAML file and -o parameter to the output directory/folder.
+**mpbjy** will generate a bunch of java and cpp files. In order to use them, the gson library for java and the nlohmann/json (json.hpp) library for cpp are needed.
 
 Using ./examples/example.yaml in project directory, currently it turns this YAML class model definition:
 ```YAML
