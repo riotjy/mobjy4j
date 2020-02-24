@@ -62,8 +62,6 @@ public class JavaDeserializeClassCodeGenerator extends DeserializeClassCodeGener
         code += "    value." + val + " = jo.get(\"" + val + "\").getAs" + getPrmAsTypeStr(type) + "();\n";
       } else {
         String typeName = type.getTypeName();
-        if (((MjyObject)type).getReference().isExternal())
-          typeName = ((MjyObject)type).getReference().getLangDepClass("java");
         code += "    value." + val + " = (" + typeName +")deserObject(jo.get(\"" + val + "\").getAsJsonObject());\n";
       }
     }

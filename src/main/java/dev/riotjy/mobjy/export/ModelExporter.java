@@ -67,13 +67,16 @@ public class ModelExporter {
     while (itClass.hasNext()) {
       MjyClass clazz = itClass.next();
       
-      if (clazz.isExternal()) {
-        // no generation for this class
-        continue;
-      }
+      String generName = null;
       
       MjyClass gener = clazz.getGeneralization();
-      JavaClassCodeGenerator classGen = new JavaClassCodeGenerator(clazz.getName(), false, null != gener ? gener.getName() : null);
+      if (null != gener) {
+        generName = gener.getName();
+      } else if (clazz.isExternal()) {
+        generName = clazz.getLangDepClass("java");
+      }
+      
+      JavaClassCodeGenerator classGen = new JavaClassCodeGenerator(clazz.getName(), false, null != generName ? generName : null);
       int cnt = clazz.getAttributeCount();
       for (int i = 0; i < cnt; ++i) {
         MjyAttribute attr = clazz.getAttributeByIndex(i);
@@ -94,6 +97,10 @@ public class ModelExporter {
       }
       JavaImportsCodeGenerator importGen = 
           new JavaImportsCodeGenerator(clazz.usesArrayList(), clazz.usesMap());
+      String genImp = clazz.getLangDepResource("java");
+      if (null != genImp) {
+        importGen.addImport(genImp);
+      }
       Iterator<String> impIt = clazz.getLangImportsIter("java");
       if (null != impIt) {
         while (impIt.hasNext()) {
@@ -136,9 +143,9 @@ public class ModelExporter {
     if (MjyType.isObject(type)) {
       String typeName = type.getTypeName();
       MjyClass clazz = theModel.getClassByName(typeName);
-      if (null != clazz && clazz.isExternal()) {
-        typeName = clazz.getLangDepClass("java");
-      }
+//      if (null != clazz && clazz.isExternal()) {
+//        typeName = clazz.getLangDepClass("java");
+//      }
       return typeName;
     }
     return JavaMetaTypeMap.instance().get(type.getTypeName());

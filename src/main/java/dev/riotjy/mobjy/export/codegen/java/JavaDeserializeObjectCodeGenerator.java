@@ -40,10 +40,10 @@ public class JavaDeserializeObjectCodeGenerator extends SerializeValueCodeGenera
 
     for (String className : classNames) {
       code += 
-          "    case \"" + className + "\":\n" + 
+          "    case \"" + className + "\": {\n" + 
           "      " + className + " obj = new " + className + "();\n" +
           "      deser" + className + "(jo ,obj);\n" +
-          "      return obj;\n";
+          "      return obj; }\n";
     }
 
     code +=

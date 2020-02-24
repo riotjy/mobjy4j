@@ -26,7 +26,12 @@ public class JavaSerializeStaticCodeGenerator extends CodeGenerator {
   public String generate() {
     return 
         "  private static String serClass(String className, String fields) {\n" + 
-        "    return \"{\\\"cnid\\\":\\\"\" + className + \"\\\",\" + fields + \"}\";\n" + 
+        "    String code = \"{\\\"cnid\\\":\" + qtd(className) + \"\";\n" + 
+        "    if (null != fields && !fields.isEmpty()) {\n" + 
+        "      code += \",\" + fields;\n" + 
+        "    }\n" + 
+        "    code += \"}\";\n" + 
+        "    return code;\n" + 
         "  }\n" + 
         "\n" + 
         "  private static String serArr(ArrayList<?> arr) {\n" + 

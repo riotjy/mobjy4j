@@ -57,7 +57,6 @@ public class DeserializeExporter {
 
     JavaImportsCodeGenerator importGen = 
         new JavaImportsCodeGenerator(true, true);
-    importGen.addImport("java.util.Iterator");
     importGen.addImport("java.util.Map.Entry");
     importGen.addImport("com.google.gson.JsonArray");
     importGen.addImport("com.google.gson.JsonElement");
@@ -76,7 +75,6 @@ public class DeserializeExporter {
       String className = clazz.getName();
 
       if (clazz.isExternal()) {
-        className = clazz.getLangDepClass("java");
         importGen.addImport(clazz.getLangDepResource("java"));
       }
       

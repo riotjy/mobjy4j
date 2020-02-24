@@ -58,7 +58,7 @@ public class JavaSerializeClassCodeGenerator extends SerializeClassCodeGenerator
       if (hasFields) {
         code += "lin(";
       }
-      code += "ser" + generalizationName + "(" + generalizationName + " value)"; 
+      code += "ser" + generalizationName + "(value)"; 
       if (hasFields) {
         code += ") +\n";
       }
@@ -75,9 +75,9 @@ public class JavaSerializeClassCodeGenerator extends SerializeClassCodeGenerator
       String val = it.next();
       code += "        ";
       if (it.hasNext() || hasArrays || hasMaps) {
-        code += "lin(con(qtd(" + val + "), serValue(value." + val + "))) +\n";
+        code += "lin(con(qtd(\"" + val + "\"), serValue(value." + val + "))) +\n";
       } else {
-        code += "con(qtd(" + val + "), serValue(value." + val + "))";
+        code += "con(qtd(\"" + val + "\"), serValue(value." + val + "))";
       }
     }
 
@@ -86,9 +86,9 @@ public class JavaSerializeClassCodeGenerator extends SerializeClassCodeGenerator
       String val = it.next();
       code += "        ";
       if (it.hasNext() || hasMaps) {
-        code += "lin(con(qtd(" + val + "), serArr(value." + val + "))) +\n";
+        code += "lin(con(qtd(\"" + val + "\"), serArr(value." + val + "))) +\n";
       } else {
-        code += "con(qtd(" + val + "), serArr(value." + val + "))";
+        code += "con(qtd(\"" + val + "\"), serArr(value." + val + "))";
       }
     }
 
@@ -97,9 +97,9 @@ public class JavaSerializeClassCodeGenerator extends SerializeClassCodeGenerator
       String val = it.next();
       code += "        ";
       if (it.hasNext()) {
-        code += "lin(con(qtd(" + val + "), serMap(value." + val + "))) +\n";
+        code += "lin(con(qtd(\"" + val + "\"), serMap(value." + val + "))) +\n";
       } else {
-        code += "con(qtd(" + val + "), serMap(value." + val + "))";
+        code += "con(qtd(\"" + val + "\"), serMap(value." + val + "))";
       }
     }
 

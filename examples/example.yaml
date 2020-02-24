@@ -1,0 +1,111 @@
+%YAML 1.1
+---
+# YAML defined model example
+project: testProject
+
+version:
+  major: 1
+  minor: 0
+  revision: 3
+  status: release     # alpha | beta | release
+  candidate: 0
+
+compatver:
+  major: 1
+  minor: 0
+  revision: 0
+  status: release
+  candidate: 0
+
+java:
+  package: dev.riotjy.testProject
+  
+cpp:
+  namespace: testproject
+  
+golang:
+  somesetting: notimplementedyet
+
+#NOTES:
+#keywords: 
+#  class, extends, references, collection, key, value, 
+#  bool, int, string, float, double, version, compatver, project
+#  java, cpp, path, resource
+#all members are supplied with getters and setters
+#all arrayList members are supplied with getSize, append, remove(index), getAt(index), setAt(index)
+#all hashMap members are supplied with getSize, put(key,value), get(key), remove(key)
+
+# classes definition example
+BaseClass:            #creates class BaseClass
+  boolOneBase: bool
+  boolArrOne: bool[]
+  intOneBase: int
+  intTwoBase: int
+  intArrOne: int[]    #creates an array of integer primitives
+  strOneBase: string
+  strArrOne: string[] #creates an array list of strings
+  flOneBase: float
+  dblOneBase: double #creates an array list of single precision float primitives
+  flArrBase: float[]
+  dblArrOne: double[] #creates an array list of double precision floats primitives
+  objOneBase:         #creates an object of type RefClassOne
+    references: RefClassOne
+  objArrTwoBase:      #creates an array list of objects of type RefClassTwo
+    references: RefClassTwo
+    collection: arrayList 
+  objMapThreeBase:    #creates a hash map <string, RefClassTwo>
+    references: RefClassTwo
+    collection: hashMap
+    
+DervClassOne:   #creates class DervClassOne extending BaseClass
+  extends: BaseClass  
+#  intOneDervOne: int
+#  strOneDervOne: string
+  objOneDervOne:
+    references: RefClassOne
+    collection: arrayList
+  mapOneDervOne:
+    references: RefClassTwo
+    collection: hashMap
+  
+
+DervClassTwo:   #creates class DervClassOne extending DervClassTwo
+  extends: DervClassOne
+  intOneDervTwo: int
+  strOneDervTwo: string
+  objOneDervTwo:
+    references: ExternalClassType
+  mapOneDervTwo:
+    references: ExternalClassType4Coll
+    collection: hashMap
+
+RefClassOne:    #creates class RefClassOne
+  intOneRefOne: int
+  strOneRefOne: string
+
+RefClassTwo:    #creates class RefClassTwo
+  intOneRefTwo: int
+  strOneRefTwo: string
+  
+ExternalClassType:    # an external class to be imported and used as type
+   java:
+      path: dev.riotjy.demo.extclass.ExtClassJ  # import directive string
+      class: ExtClassJ                         # actuall language dependent class name
+   cpp:
+      path: '"ext/ExtClassCpp.hpp"'            # include directive string
+      class: ExtClassCpp                       # actuall language dependent class name
+   golang:
+      path: dirA/dirB/ExtClassGo               # import directive string
+      class: ExtClassGo                        # actuall language dependent class name
+
+ExternalClassType4Coll:    # an external class to be imported and used as type
+   java:
+      path: dev.riotjy.demo.extclass.ExtClass4CollJ
+      class: ExtClass4CollJ
+   cpp:
+      path: '"ext/ExtClass4CollCpp.hpp"'     # using single quotes to specify relative path
+      class: ExtClass4CollCpp
+   golang:
+      path: dirA/dirB/ExtClass4CollGo
+      class: ExtClass4CollGo
+  

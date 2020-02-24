@@ -1,0 +1,46 @@
+%YAML 1.1
+---
+# YAML defined model example
+project: testProject
+
+version:
+  major: 1
+  minor: 0
+  revision: 3
+  status: release     #alpha | beta | release
+  candidate: 0
+
+compatver:
+  major: 1
+  minor: 0
+  revision: 0
+  status: release
+  candidate: 0
+
+#NOTES:
+#keywords: class, extends, references, collection, key, value, int, string, float, double, version, compatver, project
+#all members are supplied with getters and setters
+#all arrayList members are supplied with getSize, append, remove(index), getAt(index), setAt(index)
+#all hashMap members are supplied with getSize, put(key,value), get(key), remove(key)
+
+# classes definition example
+
+DerTwo:
+  extends: DerOne
+  int1: int
+  
+DerOne:
+  extends: DerFour
+  int1: int
+
+DerFour:
+  extends: DerThree
+  int1: int
+
+DerThree:
+  extends: DerTwo
+  int1: int
+
+
+
+  

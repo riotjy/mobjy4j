@@ -223,13 +223,6 @@ public class ModelBuilder {
           classTypeUsed = MjyModelFactory.makeClass(references);
         }
         
-        if (classTypeUsed.isExternal()) {
-          // need to copy the imports and external class names for languages
-          for (String lang : classTypeUsed.getLangKeySet()) {
-            theClass.addLangImport(lang, classTypeUsed.getLangDepResource(lang));
-          }
-        }
-
         String collectionType = mappedType.get("collection");
         if (null == collectionType) {
           theClass.addAttribute(

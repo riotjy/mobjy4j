@@ -1,34 +1,51 @@
-# mobjy for Java
+# **mobjy** for Java
 
-A collection of utilities to generate java, cpp (and in the future other) classes and de-/serializers from data model defined in YAML.
+**mobjy** for Java is a tool that accepts a data model specification in YAML, and outputs Java and CPP embeddable code comprised of
+- the data model entities hierarchy as OOP classes
+- a serializer utility to convert in process data objects to JSON 
+- a deserializer utility to convert from JSON to in process data objects
 
-TODOs: Add "boolean" type, CPP de-/serializers, writing to files, cosmetics, testing, other languages...
+**mobjy** supports object oriented hierarchies (inheritance) making the conversion between in process data objects and JSON data possible while ensuring the creation of the intended in process class instances.
+This is somethig that existing JSON libraries don't support automatically. Mobjy makes this possible by embedding a class identifier with each JSON data object.
+
+In its current verison **mobjy** is using the *gson* and *nlohmann/json* for parsing JSON data.
+It avoids using automatic object creation provided by these libraries in order to provide interchangeable parsers in the future (e.g. *jackson*, *jsoncpp*).
+
+**mobjy** is intended to be extended for other languages too (golang, python, etc...), this depends on available time and resources to continue development.
+
+KEYWORDS: JSON inheritance support, JSON data model, JSON data modelling, JSON object hierarchy, JSON serialize deserialize,
+Oject Oriented JSON
 
 IMPORTANT NOTE:
 The project is in an early stage. Please be kind to it! ;-)
 
 TO CONTRIBUTORS:
 You are welcome to contribute if you're interested and agree to ApL2.0.
-Contact Alex for access.
+Contact Alex for access. Message to [ r i o t j y   p r o t o n m a i l   c o m ] (fill in missing info).
 
 ## What does it currently do
 
+BUILD INSTRUCTIONS:
+Gradle: run gradlew.* script, specify desired task
+Eclipse: install buildship extension for Gradle support, import as existing gradle project, build project
+
 RUNNING INSTRUCTIONS:
+Run class "Mobjy" with parameter -i set to the full/relative path to input YAML file and -o parameter to the output directory/folder. 
 
-Run class "Mobjy" with parameter -i set to full path to input YAML file
-(see examples/example.yaml in sister project mobjyArch)
-
-Currently it turns this YAML class model definition:
+Using ./examples/example.yaml in project directory, currently it turns this YAML class model definition:
 ```YAML
+
 # classes definition example
 BaseClass:            #creates class BaseClass
+  boolOneBase: bool
+  boolArrOne: bool[]
   intOneBase: int
   intTwoBase: int
   intArrOne: int[]    #creates an array of integer primitives
   strOneBase: string
   strArrOne: string[] #creates an array list of strings
   flOneBase: float
-  dblArrOne: double[] #creates an array list of single precision float primitives
+  dblOneBase: double #creates an array list of single precision float primitives
   flArrBase: float[]
   dblArrOne: double[] #creates an array list of double precision floats primitives
   objOneBase:         #creates an object of type RefClassOne
@@ -42,12 +59,13 @@ BaseClass:            #creates class BaseClass
     
 DervClassOne:   #creates class DervClassOne extending BaseClass
   extends: BaseClass  
-  intOneDervOne: int
-  strOneDervOne: string
+#  intOneDervOne: int
+#  strOneDervOne: string
   objOneDervOne:
-    references: ExternalClassType
+    references: RefClassOne
+    collection: arrayList
   mapOneDervOne:
-    references: ExternalClassType4Coll
+    references: RefClassTwo
     collection: hashMap
   
 
@@ -55,6 +73,11 @@ DervClassTwo:   #creates class DervClassOne extending DervClassTwo
   extends: DervClassOne
   intOneDervTwo: int
   strOneDervTwo: string
+  objOneDervTwo:
+    references: ExternalClassType
+  mapOneDervTwo:
+    references: ExternalClassType4Coll
+    collection: hashMap
 
 RefClassOne:    #creates class RefClassOne
   intOneRefOne: int
@@ -66,37 +89,41 @@ RefClassTwo:    #creates class RefClassTwo
   
 ExternalClassType:    # an external class to be imported and used as type
    java:
-      path: dev.riotj.demo.extclass.ExtClassJ  # import directive string
+      path: dev.riotjy.demo.extclass.ExtClassJ  # import directive string
       class: ExtClassJ                         # actuall language dependent class name
    cpp:
-      path: <dir1/dir2/ExtClassCpp>            # include directive string
+      path: '"ext/ExtClassCpp.hpp"'            # include directive string
       class: ExtClassCpp                       # actuall language dependent class name
-   golang:
-      path: dirA/dirB/ExtClassGo               # import directive string
-      class: ExtClassGo                        # actuall language dependent class name
 
 ExternalClassType4Coll:    # an external class to be imported and used as type
    java:
-      path: dev.riotj.demo.extclass.ExtClass4CollJ
+      path: dev.riotjy.demo.extclass.ExtClass4CollJ
       class: ExtClass4CollJ
    cpp:
-      path: <dir1/dir2/ExtClass4CollCpp>
+      path: '"ext/ExtClass4CollCpp.hpp"'     # using single quotes to specify relative path
       class: ExtClass4CollCpp
-   golang:
-      path: dirA/dirB/ExtClass4CollGo
-      class: ExtClass4CollGo
 ```    
 into this Java code: 
 
 ```Java
 package dev.riotjy.testProject;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Set;
 
 public  class BaseClass {
+  protected Boolean boolOneBase;
+
+  public Boolean getBoolOneBase() {
+    return this.boolOneBase;
+  }
+
+  public void setBoolOneBase(Boolean boolOneBase) {
+    this.boolOneBase = boolOneBase;
+  }
+
   protected Integer intOneBase;
 
   public Integer getIntOneBase() {
@@ -137,6 +164,16 @@ public  class BaseClass {
     this.flOneBase = flOneBase;
   }
 
+  protected Double dblOneBase;
+
+  public Double getDblOneBase() {
+    return this.dblOneBase;
+  }
+
+  public void setDblOneBase(Double dblOneBase) {
+    this.dblOneBase = dblOneBase;
+  }
+
   protected RefClassOne objOneBase;
 
   public RefClassOne getObjOneBase() {
@@ -147,7 +184,45 @@ public  class BaseClass {
     this.objOneBase = objOneBase;
   }
 
-  protected List<Integer> intArrOne = new ArrayList<>();
+  protected ArrayList<Boolean> boolArrOne = new ArrayList<>();
+
+  public int sizeBoolArrOne() {
+    return this.boolArrOne.size();
+  }
+
+  public Boolean getBoolArrOne(int index) {
+    if (index >= boolArrOne.size())
+      return null;
+    return this.boolArrOne.get(index);
+  }
+
+  public Boolean setBoolArrOne(int index, Boolean value) {
+    if (index >= boolArrOne.size())
+      return null;
+    return this.boolArrOne.set(index, value);
+  }
+
+  public Boolean removeBoolArrOne(int index) {
+    if (index >= boolArrOne.size())
+      return null;
+    return this.boolArrOne.remove(index);
+  }
+
+  public Boolean popFrontBoolArrOne() {
+    if (0 == boolArrOne.size())
+      return null;
+    return this.boolArrOne.remove(0);
+  }
+
+  public void pushBackBoolArrOne(Boolean value) {
+    this.boolArrOne.add(value);
+  }
+
+  public Iterator iteratorBoolArrOne() {
+    return this.boolArrOne.iterator();
+  }
+
+  protected ArrayList<Integer> intArrOne = new ArrayList<>();
 
   public int sizeIntArrOne() {
     return this.intArrOne.size();
@@ -165,7 +240,7 @@ public  class BaseClass {
     return this.intArrOne.set(index, value);
   }
 
-  public Integer getIntArrOne(int index) {
+  public Integer removeIntArrOne(int index) {
     if (index >= intArrOne.size())
       return null;
     return this.intArrOne.remove(index);
@@ -185,7 +260,7 @@ public  class BaseClass {
     return this.intArrOne.iterator();
   }
 
-  protected List<String> strArrOne = new ArrayList<>();
+  protected ArrayList<String> strArrOne = new ArrayList<>();
 
   public int sizeStrArrOne() {
     return this.strArrOne.size();
@@ -203,7 +278,7 @@ public  class BaseClass {
     return this.strArrOne.set(index, value);
   }
 
-  public String getStrArrOne(int index) {
+  public String removeStrArrOne(int index) {
     if (index >= strArrOne.size())
       return null;
     return this.strArrOne.remove(index);
@@ -223,7 +298,7 @@ public  class BaseClass {
     return this.strArrOne.iterator();
   }
 
-  protected List<Float> flArrBase = new ArrayList<>();
+  protected ArrayList<Float> flArrBase = new ArrayList<>();
 
   public int sizeFlArrBase() {
     return this.flArrBase.size();
@@ -241,7 +316,7 @@ public  class BaseClass {
     return this.flArrBase.set(index, value);
   }
 
-  public Float getFlArrBase(int index) {
+  public Float removeFlArrBase(int index) {
     if (index >= flArrBase.size())
       return null;
     return this.flArrBase.remove(index);
@@ -261,7 +336,7 @@ public  class BaseClass {
     return this.flArrBase.iterator();
   }
 
-  protected List<Double> dblArrOne = new ArrayList<>();
+  protected ArrayList<Double> dblArrOne = new ArrayList<>();
 
   public int sizeDblArrOne() {
     return this.dblArrOne.size();
@@ -279,7 +354,7 @@ public  class BaseClass {
     return this.dblArrOne.set(index, value);
   }
 
-  public Double getDblArrOne(int index) {
+  public Double removeDblArrOne(int index) {
     if (index >= dblArrOne.size())
       return null;
     return this.dblArrOne.remove(index);
@@ -299,7 +374,7 @@ public  class BaseClass {
     return this.dblArrOne.iterator();
   }
 
-  protected List<RefClassTwo> objArrTwoBase = new ArrayList<>();
+  protected ArrayList<RefClassTwo> objArrTwoBase = new ArrayList<>();
 
   public int sizeObjArrTwoBase() {
     return this.objArrTwoBase.size();
@@ -317,7 +392,7 @@ public  class BaseClass {
     return this.objArrTwoBase.set(index, value);
   }
 
-  public RefClassTwo getObjArrTwoBase(int index) {
+  public RefClassTwo removeObjArrTwoBase(int index) {
     if (index >= objArrTwoBase.size())
       return null;
     return this.objArrTwoBase.remove(index);
@@ -362,61 +437,68 @@ public  class BaseClass {
 }
 
 ********
+
 package dev.riotjy.testProject;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.HashMap;
-
-import dev.riotj.demo.extclass.ExtClassJ;
-import dev.riotj.demo.extclass.ExtClass4CollJ;
-
+import java.util.Set;
 
 public  class DervClassOne extends BaseClass {
-  protected Integer intOneDervOne;
+  protected ArrayList<RefClassOne> objOneDervOne = new ArrayList<>();
 
-  public Integer getIntOneDervOne() {
-    return this.intOneDervOne;
+  public int sizeObjOneDervOne() {
+    return this.objOneDervOne.size();
   }
 
-  public void setIntOneDervOne(Integer intOneDervOne) {
-    this.intOneDervOne = intOneDervOne;
+  public RefClassOne getObjOneDervOne(int index) {
+    if (index >= objOneDervOne.size())
+      return null;
+    return this.objOneDervOne.get(index);
   }
 
-  protected String strOneDervOne;
-
-  public String getStrOneDervOne() {
-    return this.strOneDervOne;
+  public RefClassOne setObjOneDervOne(int index, RefClassOne value) {
+    if (index >= objOneDervOne.size())
+      return null;
+    return this.objOneDervOne.set(index, value);
   }
 
-  public void setStrOneDervOne(String strOneDervOne) {
-    this.strOneDervOne = strOneDervOne;
+  public RefClassOne removeObjOneDervOne(int index) {
+    if (index >= objOneDervOne.size())
+      return null;
+    return this.objOneDervOne.remove(index);
   }
 
-  protected ExtClassJ objOneDervOne;
-
-  public ExtClassJ getObjOneDervOne() {
-    return this.objOneDervOne;
+  public RefClassOne popFrontObjOneDervOne() {
+    if (0 == objOneDervOne.size())
+      return null;
+    return this.objOneDervOne.remove(0);
   }
 
-  public void setObjOneDervOne(ExtClassJ objOneDervOne) {
-    this.objOneDervOne = objOneDervOne;
+  public void pushBackObjOneDervOne(RefClassOne value) {
+    this.objOneDervOne.add(value);
   }
 
-  protected HashMap<String, ExtClass4CollJ> mapOneDervOne = new HashMap<>();
+  public Iterator iteratorObjOneDervOne() {
+    return this.objOneDervOne.iterator();
+  }
+
+  protected HashMap<String, RefClassTwo> mapOneDervOne = new HashMap<>();
 
   public int sizeOfMapOneDervOne() {
     return this.mapOneDervOne.size();
   }
 
-  public ExtClass4CollJ getMapOneDervOne(String key) {
+  public RefClassTwo getMapOneDervOne(String key) {
     return this.mapOneDervOne.get(key);
   }
 
-  public void putMapOneDervOne(String key, ExtClass4CollJ value) {
+  public void putMapOneDervOne(String key, RefClassTwo value) {
     this.mapOneDervOne.put(key, value);
   }
 
-  public ExtClass4CollJ removeMapOneDervOne(String key) {
+  public RefClassTwo removeMapOneDervOne(String key) {
     return this.mapOneDervOne.remove(key);
   }
 
@@ -427,8 +509,11 @@ public  class DervClassOne extends BaseClass {
 }
 
 ********
+
 package dev.riotjy.testProject;
 
+import java.util.HashMap;
+import java.util.Set;
 
 public  class DervClassTwo extends DervClassOne {
   protected Integer intOneDervTwo;
@@ -451,9 +536,42 @@ public  class DervClassTwo extends DervClassOne {
     this.strOneDervTwo = strOneDervTwo;
   }
 
+  protected ExternalClassType objOneDervTwo;
+
+  public ExternalClassType getObjOneDervTwo() {
+    return this.objOneDervTwo;
+  }
+
+  public void setObjOneDervTwo(ExternalClassType objOneDervTwo) {
+    this.objOneDervTwo = objOneDervTwo;
+  }
+
+  protected HashMap<String, ExternalClassType4Coll> mapOneDervTwo = new HashMap<>();
+
+  public int sizeOfMapOneDervTwo() {
+    return this.mapOneDervTwo.size();
+  }
+
+  public ExternalClassType4Coll getMapOneDervTwo(String key) {
+    return this.mapOneDervTwo.get(key);
+  }
+
+  public void putMapOneDervTwo(String key, ExternalClassType4Coll value) {
+    this.mapOneDervTwo.put(key, value);
+  }
+
+  public ExternalClassType4Coll removeMapOneDervTwo(String key) {
+    return this.mapOneDervTwo.remove(key);
+  }
+
+  public Set<String> keySetMapOneDervTwo() {
+    return this.mapOneDervTwo.keySet();
+  }
+
 }
 
 ********
+
 package dev.riotjy.testProject;
 
 
@@ -481,6 +599,7 @@ public  class RefClassOne {
 }
 
 ********
+
 package dev.riotjy.testProject;
 
 
@@ -507,59 +626,104 @@ public  class RefClassTwo {
 
 }
 
-$$$$$$$$$$$$$$$$$$$$$$$
+
+********
+
+
+[main] INFO dev.riotjy.mobjy.export.ModelExporter - 
+********
 package dev.riotjy.testProject;
 
-import java.util.List;
+
+import dev.riotjy.demo.extclass.ExtClassJ;
+
+
+public  class ExternalClassType extends ExtClassJ {
+}
+
+********
+
+package dev.riotjy.testProject;
+
+
+import dev.riotjy.demo.extclass.ExtClass4CollJ;
+
+
+public  class ExternalClassType4Coll extends ExtClass4CollJ {
+}
+
+********
+
+package dev.riotjy.testProject;
+
+public enum MjyPrimitiveType {
+  BOOLEAN,
+  INT,
+  FLOAT,
+  DOUBLE,
+  STRING,
+  INVALID;
+}
+
+********
+
+package dev.riotjy.testProject;
+
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Set;
 
 import java.util.Iterator;
+import dev.riotjy.demo.extclass.ExtClassJ;
+import dev.riotjy.demo.extclass.ExtClass4CollJ;
 
 
 public  class TestProjectSerializer {
   private static String serBaseClass(BaseClass value) {
     return
-        lin(con(qtd(intOneBase), serValue(value.intOneBase))) +
-        lin(con(qtd(intTwoBase), serValue(value.intTwoBase))) +
-        lin(con(qtd(strOneBase), serValue(value.strOneBase))) +
-        lin(con(qtd(flOneBase), serValue(value.flOneBase))) +
-        lin(con(qtd(objOneBase), serValue(value.objOneBase))) +
-        lin(con(qtd(intArrOne), serArr(value.intArrOne))) +
-        lin(con(qtd(strArrOne), serArr(value.strArrOne))) +
-        lin(con(qtd(flArrBase), serArr(value.flArrBase))) +
-        lin(con(qtd(dblArrOne), serArr(value.dblArrOne))) +
-        lin(con(qtd(objArrTwoBase), serArr(value.objArrTwoBase))) +
-        con(qtd(objMapThreeBase), serMap(value.objMapThreeBase));
+        lin(con(qtd("boolOneBase"), serValue(value.boolOneBase))) +
+        lin(con(qtd("intOneBase"), serValue(value.intOneBase))) +
+        lin(con(qtd("intTwoBase"), serValue(value.intTwoBase))) +
+        lin(con(qtd("strOneBase"), serValue(value.strOneBase))) +
+        lin(con(qtd("flOneBase"), serValue(value.flOneBase))) +
+        lin(con(qtd("dblOneBase"), serValue(value.dblOneBase))) +
+        lin(con(qtd("objOneBase"), serValue(value.objOneBase))) +
+        lin(con(qtd("boolArrOne"), serArr(value.boolArrOne))) +
+        lin(con(qtd("intArrOne"), serArr(value.intArrOne))) +
+        lin(con(qtd("strArrOne"), serArr(value.strArrOne))) +
+        lin(con(qtd("flArrBase"), serArr(value.flArrBase))) +
+        lin(con(qtd("dblArrOne"), serArr(value.dblArrOne))) +
+        lin(con(qtd("objArrTwoBase"), serArr(value.objArrTwoBase))) +
+        con(qtd("objMapThreeBase"), serMap(value.objMapThreeBase));
   }
 
   private static String serDervClassOne(DervClassOne value) {
     return
-        lin(serBaseClass(BaseClass value)) +
-        lin(con(qtd(intOneDervOne), serValue(value.intOneDervOne))) +
-        lin(con(qtd(strOneDervOne), serValue(value.strOneDervOne))) +
-        lin(con(qtd(objOneDervOne), serValue(value.objOneDervOne))) +
-        con(qtd(mapOneDervOne), serMap(value.mapOneDervOne));
+        lin(serBaseClass(value)) +
+        lin(con(qtd("objOneDervOne"), serArr(value.objOneDervOne))) +
+        con(qtd("mapOneDervOne"), serMap(value.mapOneDervOne));
   }
 
   private static String serDervClassTwo(DervClassTwo value) {
     return
-        lin(serDervClassOne(DervClassOne value)) +
-        lin(con(qtd(intOneDervTwo), serValue(value.intOneDervTwo))) +
-        con(qtd(strOneDervTwo), serValue(value.strOneDervTwo));
+        lin(serDervClassOne(value)) +
+        lin(con(qtd("intOneDervTwo"), serValue(value.intOneDervTwo))) +
+        lin(con(qtd("strOneDervTwo"), serValue(value.strOneDervTwo))) +
+        lin(con(qtd("objOneDervTwo"), serValue(value.objOneDervTwo))) +
+        con(qtd("mapOneDervTwo"), serMap(value.mapOneDervTwo));
   }
 
   private static String serRefClassOne(RefClassOne value) {
     return
-        lin(con(qtd(intOneRefOne), serValue(value.intOneRefOne))) +
-        con(qtd(strOneRefOne), serValue(value.strOneRefOne));
+        lin(con(qtd("intOneRefOne"), serValue(value.intOneRefOne))) +
+        con(qtd("strOneRefOne"), serValue(value.strOneRefOne));
   }
 
   private static String serRefClassTwo(RefClassTwo value) {
     return
-        lin(con(qtd(intOneRefTwo), serValue(value.intOneRefTwo))) +
-        con(qtd(strOneRefTwo), serValue(value.strOneRefTwo));
+        lin(con(qtd("intOneRefTwo"), serValue(value.intOneRefTwo))) +
+        con(qtd("strOneRefTwo"), serValue(value.strOneRefTwo));
   }
 
   private static String serExternalClassType(ExternalClassType value) {
@@ -612,7 +776,12 @@ public  class TestProjectSerializer {
   }
 
   private static String serClass(String className, String fields) {
-    return "{\"cnid\":\"" + className + "\"," + fields + "}";
+    String code = "{\"cnid\":" + qtd(className) + "";
+    if (null != fields && !fields.isEmpty()) {
+      code += "," + fields;
+    }
+    code += "}";
+    return code;
   }
 
   private static String serArr(ArrayList<?> arr) {
@@ -670,50 +839,55 @@ public  class TestProjectSerializer {
 
 }
 
-#########################
+********
+
 package dev.riotjy.testProject;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-
 import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Set;
+
 import java.util.Map.Entry;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
+import dev.riotjy.demo.extclass.ExtClassJ;
+import dev.riotjy.demo.extclass.ExtClass4CollJ;
 
 
 public  class TestProjectDeserializer {
   private static void deserBaseClass(JsonObject jo,BaseClass value) {
     value.strOneBase = jo.get("strOneBase").getAsString();
+    value.boolOneBase = jo.get("boolOneBase").getAsBoolean();
     value.flOneBase = jo.get("flOneBase").getAsFloat();
     value.intOneBase = jo.get("intOneBase").getAsInt();
     value.objOneBase = (RefClassOne)deserObject(jo.get("objOneBase").getAsJsonObject());
+    value.dblOneBase = jo.get("dblOneBase").getAsDouble();
     value.intTwoBase = jo.get("intTwoBase").getAsInt();
     value.objArrTwoBase = deserArr(jo.get("objArrTwoBase").getAsJsonArray(), null);
-    value.strArrOne = deserArr(jo.get("strArrOne").getAsJsonArray(), null);
-    value.dblArrOne = deserArr(jo.get("dblArrOne").getAsJsonArray(), null);
-    value.intArrOne = deserArr(jo.get("intArrOne").getAsJsonArray(), null);
-    value.flArrBase = deserArr(jo.get("flArrBase").getAsJsonArray(), null);
+    value.strArrOne = deserArr(jo.get("strArrOne").getAsJsonArray(), MjyPrimitiveType.STRING);
+    value.dblArrOne = deserArr(jo.get("dblArrOne").getAsJsonArray(), MjyPrimitiveType.DOUBLE);
+    value.intArrOne = deserArr(jo.get("intArrOne").getAsJsonArray(), MjyPrimitiveType.INT);
+    value.flArrBase = deserArr(jo.get("flArrBase").getAsJsonArray(), MjyPrimitiveType.FLOAT);
+    value.boolArrOne = deserArr(jo.get("boolArrOne").getAsJsonArray(), MjyPrimitiveType.BOOLEAN);
     value.objMapThreeBase = deserMap(jo.get("objMapThreeBase").getAsJsonObject(), null);
   }
 
   private static void deserDervClassOne(JsonObject jo,DervClassOne value) {
     deserBaseClass(jo, value);
-    value.intOneDervOne = jo.get("intOneDervOne").getAsInt();
-    value.strOneDervOne = jo.get("strOneDervOne").getAsString();
-    value.objOneDervOne = (ExternalClassType)deserObject(jo.get("objOneDervOne").getAsJsonObject());
+    value.objOneDervOne = deserArr(jo.get("objOneDervOne").getAsJsonArray(), null);
     value.mapOneDervOne = deserMap(jo.get("mapOneDervOne").getAsJsonObject(), null);
   }
 
   private static void deserDervClassTwo(JsonObject jo,DervClassTwo value) {
     deserDervClassOne(jo, value);
+    value.objOneDervTwo = (ExternalClassType)deserObject(jo.get("objOneDervTwo").getAsJsonObject());
     value.intOneDervTwo = jo.get("intOneDervTwo").getAsInt();
     value.strOneDervTwo = jo.get("strOneDervTwo").getAsString();
+    value.mapOneDervTwo = deserMap(jo.get("mapOneDervTwo").getAsJsonObject(), null);
   }
 
   private static void deserRefClassOne(JsonObject jo,RefClassOne value) {
@@ -739,34 +913,34 @@ public  class TestProjectDeserializer {
     String cnid = jo.get("cnid").getAsString();
     
     switch (cnid) {
-    case "BaseClass":
+    case "BaseClass": {
       BaseClass obj = new BaseClass();
       deserBaseClass(jo ,obj);
-      return obj;
-    case "DervClassOne":
+      return obj; }
+    case "DervClassOne": {
       DervClassOne obj = new DervClassOne();
       deserDervClassOne(jo ,obj);
-      return obj;
-    case "DervClassTwo":
+      return obj; }
+    case "DervClassTwo": {
       DervClassTwo obj = new DervClassTwo();
       deserDervClassTwo(jo ,obj);
-      return obj;
-    case "RefClassOne":
+      return obj; }
+    case "RefClassOne": {
       RefClassOne obj = new RefClassOne();
       deserRefClassOne(jo ,obj);
-      return obj;
-    case "RefClassTwo":
+      return obj; }
+    case "RefClassTwo": {
       RefClassTwo obj = new RefClassTwo();
       deserRefClassTwo(jo ,obj);
-      return obj;
-    case "ExternalClassType":
+      return obj; }
+    case "ExternalClassType": {
       ExternalClassType obj = new ExternalClassType();
       deserExternalClassType(jo ,obj);
-      return obj;
-    case "ExternalClassType4Coll":
+      return obj; }
+    case "ExternalClassType4Coll": {
       ExternalClassType4Coll obj = new ExternalClassType4Coll();
       deserExternalClassType4Coll(jo ,obj);
-      return obj;
+      return obj; }
     default:
       return null;
     }
@@ -835,6 +1009,7 @@ public  class TestProjectDeserializer {
   public static Object deserialize(String json) {
     return deserialize(new JsonParser().parse(json).getAsJsonObject());
   }
+
 }
 ```
 and this CPP code:
@@ -842,24 +1017,52 @@ and this CPP code:
 ```CPP
 #include <cstdint>
 #include <string>
+class IMjyRoot {
+public:
+  virtual ~IMjyRoot() {}
+  virtual std::string className() = 0;
+};
+#pragma once
+#ifndef IMjyRoot_hpp
+#define IMjyRoot_hpp
+
+#endif // IMjyRoot_hpp
+
++++++++++++
+
+#include <cstdint>
+#include <string>
 #include <stdexcept>
 #include <vector>
 #include <map>
+#include <memory>
 #include "RefClassOne.hpp"
 #include "RefClassTwo.hpp"
+#include "IMjyRoot.hpp"
 
 
 #pragma once
 #ifndef BaseClass_hpp
 #define BaseClass_hpp
 
-#namespace testproject {
+namespace testproject {
 
-class BaseClass {
+class BaseClass: public IMjyRoot {
 public:
-  std::string className() const {return "BaseClass";}
+  virtual std::string className() {return "BaseClass";}
 
-protected:
+public:
+  bool boolOneBase;
+public:
+  bool getBoolOneBase() {
+    return this->boolOneBase;
+  }
+
+  void setBoolOneBase(bool boolOneBase) {
+    this->boolOneBase = boolOneBase;
+  }
+
+public:
   uint64_t intOneBase;
 public:
   uint64_t getIntOneBase() {
@@ -870,7 +1073,7 @@ public:
     this->intOneBase = intOneBase;
   }
 
-protected:
+public:
   uint64_t intTwoBase;
 public:
   uint64_t getIntTwoBase() {
@@ -881,7 +1084,7 @@ public:
     this->intTwoBase = intTwoBase;
   }
 
-protected:
+public:
   std::string strOneBase;
 public:
   std::string getStrOneBase() {
@@ -892,7 +1095,7 @@ public:
     this->strOneBase = strOneBase;
   }
 
-protected:
+public:
   float flOneBase;
 public:
   float getFlOneBase() {
@@ -903,18 +1106,59 @@ public:
     this->flOneBase = flOneBase;
   }
 
-protected:
-  RefClassOne objOneBase;
 public:
-  RefClassOne getObjOneBase() {
+  double dblOneBase;
+public:
+  double getDblOneBase() {
+    return this->dblOneBase;
+  }
+
+  void setDblOneBase(double dblOneBase) {
+    this->dblOneBase = dblOneBase;
+  }
+
+public:
+  std::shared_ptr<RefClassOne> objOneBase = nullptr;
+public:
+  std::shared_ptr<RefClassOne> getObjOneBase() {
     return this->objOneBase;
   }
 
-  void setObjOneBase(RefClassOne objOneBase) {
+  void setObjOneBase(std::shared_ptr<RefClassOne> objOneBase) {
     this->objOneBase = objOneBase;
   }
 
-protected:
+public:
+  std::vector<bool> boolArrOne;
+
+public:
+  std::vector<bool>::size_type sizeBoolArrOne() {
+    return this->boolArrOne.size();
+  }
+
+  bool atBoolArrOne(std::vector<bool>::size_type pos) {
+    if (pos >= boolArrOne.size())
+      throw std::invalid_argument("Vector position/index out of bounds!");
+    return this->boolArrOne.at(pos);
+  }
+
+  bool popFrontBoolArrOne() {
+    if (0 == boolArrOne.size())
+      throw std::length_error("Vector is empty!");
+    bool ret = this->boolArrOne.front();
+    this->boolArrOne.erase(boolArrOne.begin());
+    return ret;
+  }
+
+  void pushBackBoolArrOne(bool value) {
+    this->boolArrOne.push_back(value);
+  }
+
+  std::vector<bool>::const_iterator iteratorBoolArrOne() {
+    return this->boolArrOne.cbegin();
+  }
+
+public:
   std::vector<uint64_t> intArrOne;
 
 public:
@@ -928,10 +1172,10 @@ public:
     return this->intArrOne.at(pos);
   }
 
-  uint64_t & popFrontIntArrOne() {
+  uint64_t popFrontIntArrOne() {
     if (0 == intArrOne.size())
       throw std::length_error("Vector is empty!");
-    uint64_t & ret = this->intArrOne.front();
+    uint64_t ret = this->intArrOne.front();
     this->intArrOne.erase(intArrOne.begin());
     return ret;
   }
@@ -944,7 +1188,7 @@ public:
     return this->intArrOne.cbegin();
   }
 
-protected:
+public:
   std::vector<std::string> strArrOne;
 
 public:
@@ -958,10 +1202,10 @@ public:
     return this->strArrOne.at(pos);
   }
 
-  std::string & popFrontStrArrOne() {
+  std::string popFrontStrArrOne() {
     if (0 == strArrOne.size())
       throw std::length_error("Vector is empty!");
-    std::string & ret = this->strArrOne.front();
+    std::string ret = this->strArrOne.front();
     this->strArrOne.erase(strArrOne.begin());
     return ret;
   }
@@ -974,7 +1218,7 @@ public:
     return this->strArrOne.cbegin();
   }
 
-protected:
+public:
   std::vector<float> flArrBase;
 
 public:
@@ -988,10 +1232,10 @@ public:
     return this->flArrBase.at(pos);
   }
 
-  float & popFrontFlArrBase() {
+  float popFrontFlArrBase() {
     if (0 == flArrBase.size())
       throw std::length_error("Vector is empty!");
-    float & ret = this->flArrBase.front();
+    float ret = this->flArrBase.front();
     this->flArrBase.erase(flArrBase.begin());
     return ret;
   }
@@ -1004,7 +1248,7 @@ public:
     return this->flArrBase.cbegin();
   }
 
-protected:
+public:
   std::vector<double> dblArrOne;
 
 public:
@@ -1018,10 +1262,10 @@ public:
     return this->dblArrOne.at(pos);
   }
 
-  double & popFrontDblArrOne() {
+  double popFrontDblArrOne() {
     if (0 == dblArrOne.size())
       throw std::length_error("Vector is empty!");
-    double & ret = this->dblArrOne.front();
+    double ret = this->dblArrOne.front();
     this->dblArrOne.erase(dblArrOne.begin());
     return ret;
   }
@@ -1034,58 +1278,58 @@ public:
     return this->dblArrOne.cbegin();
   }
 
-protected:
-  std::vector<RefClassTwo> objArrTwoBase;
+public:
+  std::vector<std::shared_ptr<RefClassTwo>> objArrTwoBase;
 
 public:
-  std::vector<RefClassTwo>::size_type sizeObjArrTwoBase() {
+  std::vector<std::shared_ptr<RefClassTwo>>::size_type sizeObjArrTwoBase() {
     return this->objArrTwoBase.size();
   }
 
-  RefClassTwo & atObjArrTwoBase(std::vector<RefClassTwo>::size_type pos) {
+  std::shared_ptr<RefClassTwo> & atObjArrTwoBase(std::vector<std::shared_ptr<RefClassTwo>>::size_type pos) {
     if (pos >= objArrTwoBase.size())
       throw std::invalid_argument("Vector position/index out of bounds!");
     return this->objArrTwoBase.at(pos);
   }
 
-  RefClassTwo & popFrontObjArrTwoBase() {
+  std::shared_ptr<RefClassTwo> popFrontObjArrTwoBase() {
     if (0 == objArrTwoBase.size())
       throw std::length_error("Vector is empty!");
-    RefClassTwo & ret = this->objArrTwoBase.front();
+    std::shared_ptr<RefClassTwo> ret = this->objArrTwoBase.front();
     this->objArrTwoBase.erase(objArrTwoBase.begin());
     return ret;
   }
 
-  void pushBackObjArrTwoBase(RefClassTwo value) {
+  void pushBackObjArrTwoBase(std::shared_ptr<RefClassTwo> value) {
     this->objArrTwoBase.push_back(value);
   }
 
-  std::vector<RefClassTwo>::const_iterator iteratorObjArrTwoBase() {
+  std::vector<std::shared_ptr<RefClassTwo>>::const_iterator iteratorObjArrTwoBase() {
     return this->objArrTwoBase.cbegin();
   }
 
-protected:
-  std::map<std::string, RefClassTwo> objMapThreeBase;
+public:
+  std::map<std::string, std::shared_ptr<RefClassTwo>> objMapThreeBase;
 
 public:
-  std::map<std::string, RefClassTwo>::size_type sizeObjMapThreeBase() {
+  std::map<std::string, std::shared_ptr<RefClassTwo>>::size_type sizeObjMapThreeBase() {
     return this->objMapThreeBase.size();
   }
 
-  RefClassTwo & getObjMapThreeBase(std::string key) {
+  std::shared_ptr<RefClassTwo> & getObjMapThreeBase(std::string key) {
     return this->objMapThreeBase[key];
   }
 
-  bool putObjMapThreeBase(std::string key, RefClassTwo value) {
+  bool putObjMapThreeBase(std::string key, std::shared_ptr<RefClassTwo> value) {
     auto retPair = this->objMapThreeBase.emplace(key, value);
     return retPair.second;
   }
 
-  std::map<std::string, RefClassTwo>::size_type eraseObjMapThreeBase(std::string key) {
+  std::map<std::string, std::shared_ptr<RefClassTwo>>::size_type eraseObjMapThreeBase(std::string key) {
     return this->objMapThreeBase.erase(key);
   }
 
-  std::map<std::string, RefClassTwo>::const_iterator iteratorObjMapThreeBase() {
+  std::map<std::string, std::shared_ptr<RefClassTwo>>::const_iterator iteratorObjMapThreeBase() {
     return this->objMapThreeBase.cbegin();
   }
 
@@ -1097,15 +1341,14 @@ public:
 
 +++++++++++
 
-
-[main] INFO dev.riotjy.mobjy.export.ModelExporter - 
-+++++++++++
 #include <cstdint>
 #include <string>
 #include <stdexcept>
+#include <vector>
 #include <map>
-#include <dir1/dir2/ExtClassCpp>
-#include "dir1/dir2/ExtClass4CollCpp"
+#include <memory>
+#include "RefClassOne.hpp"
+#include "RefClassTwo.hpp"
 #include "BaseClass.hpp"
 
 
@@ -1113,67 +1356,64 @@ public:
 #ifndef DervClassOne_hpp
 #define DervClassOne_hpp
 
-#namespace testproject {
+namespace testproject {
 
 class DervClassOne: public BaseClass {
 public:
-  std::string className() const {return "DervClassOne";}
-
-protected:
-  uint64_t intOneDervOne;
-public:
-  uint64_t getIntOneDervOne() {
-    return this->intOneDervOne;
-  }
-
-  void setIntOneDervOne(uint64_t intOneDervOne) {
-    this->intOneDervOne = intOneDervOne;
-  }
-
-protected:
-  std::string strOneDervOne;
-public:
-  std::string getStrOneDervOne() {
-    return this->strOneDervOne;
-  }
-
-  void setStrOneDervOne(std::string strOneDervOne) {
-    this->strOneDervOne = strOneDervOne;
-  }
-
-protected:
-  ExtClassCpp objOneDervOne;
-public:
-  ExtClassCpp getObjOneDervOne() {
-    return this->objOneDervOne;
-  }
-
-  void setObjOneDervOne(ExtClassCpp objOneDervOne) {
-    this->objOneDervOne = objOneDervOne;
-  }
-
-protected:
-  std::map<std::string, ExtClass4CollCpp> mapOneDervOne;
+  virtual std::string className() {return "DervClassOne";}
 
 public:
-  std::map<std::string, ExtClass4CollCpp>::size_type sizeMapOneDervOne() {
+  std::vector<std::shared_ptr<RefClassOne>> objOneDervOne;
+
+public:
+  std::vector<std::shared_ptr<RefClassOne>>::size_type sizeObjOneDervOne() {
+    return this->objOneDervOne.size();
+  }
+
+  std::shared_ptr<RefClassOne> & atObjOneDervOne(std::vector<std::shared_ptr<RefClassOne>>::size_type pos) {
+    if (pos >= objOneDervOne.size())
+      throw std::invalid_argument("Vector position/index out of bounds!");
+    return this->objOneDervOne.at(pos);
+  }
+
+  std::shared_ptr<RefClassOne> popFrontObjOneDervOne() {
+    if (0 == objOneDervOne.size())
+      throw std::length_error("Vector is empty!");
+    std::shared_ptr<RefClassOne> ret = this->objOneDervOne.front();
+    this->objOneDervOne.erase(objOneDervOne.begin());
+    return ret;
+  }
+
+  void pushBackObjOneDervOne(std::shared_ptr<RefClassOne> value) {
+    this->objOneDervOne.push_back(value);
+  }
+
+  std::vector<std::shared_ptr<RefClassOne>>::const_iterator iteratorObjOneDervOne() {
+    return this->objOneDervOne.cbegin();
+  }
+
+public:
+  std::map<std::string, std::shared_ptr<RefClassTwo>> mapOneDervOne;
+
+public:
+  std::map<std::string, std::shared_ptr<RefClassTwo>>::size_type sizeMapOneDervOne() {
     return this->mapOneDervOne.size();
   }
 
-  ExtClass4CollCpp & getMapOneDervOne(std::string key) {
+  std::shared_ptr<RefClassTwo> & getMapOneDervOne(std::string key) {
     return this->mapOneDervOne[key];
   }
 
-  bool putMapOneDervOne(std::string key, ExtClass4CollCpp value) {
+  bool putMapOneDervOne(std::string key, std::shared_ptr<RefClassTwo> value) {
     auto retPair = this->mapOneDervOne.emplace(key, value);
     return retPair.second;
   }
 
-  std::map<std::string, ExtClass4CollCpp>::size_type eraseMapOneDervOne(std::string key) {
+  std::map<std::string, std::shared_ptr<RefClassTwo>>::size_type eraseMapOneDervOne(std::string key) {
     return this->mapOneDervOne.erase(key);
   }
 
-  std::map<std::string, ExtClass4CollCpp>::const_iterator iteratorMapOneDervOne() {
+  std::map<std::string, std::shared_ptr<RefClassTwo>>::const_iterator iteratorMapOneDervOne() {
     return this->mapOneDervOne.cbegin();
   }
 
@@ -1184,8 +1424,14 @@ public:
 #endif // DervClassOne_hpp
 
 +++++++++++
+
 #include <cstdint>
 #include <string>
+#include <stdexcept>
+#include <map>
+#include <memory>
+#include "ExternalClassType.hpp"
+#include "ExternalClassType4Coll.hpp"
 #include "DervClassOne.hpp"
 
 
@@ -1193,13 +1439,13 @@ public:
 #ifndef DervClassTwo_hpp
 #define DervClassTwo_hpp
 
-#namespace testproject {
+namespace testproject {
 
 class DervClassTwo: public DervClassOne {
 public:
-  std::string className() const {return "DervClassTwo";}
+  virtual std::string className() {return "DervClassTwo";}
 
-protected:
+public:
   uint64_t intOneDervTwo;
 public:
   uint64_t getIntOneDervTwo() {
@@ -1210,7 +1456,7 @@ public:
     this->intOneDervTwo = intOneDervTwo;
   }
 
-protected:
+public:
   std::string strOneDervTwo;
 public:
   std::string getStrOneDervTwo() {
@@ -1221,6 +1467,42 @@ public:
     this->strOneDervTwo = strOneDervTwo;
   }
 
+public:
+  std::shared_ptr<ExternalClassType> objOneDervTwo = nullptr;
+public:
+  std::shared_ptr<ExternalClassType> getObjOneDervTwo() {
+    return this->objOneDervTwo;
+  }
+
+  void setObjOneDervTwo(std::shared_ptr<ExternalClassType> objOneDervTwo) {
+    this->objOneDervTwo = objOneDervTwo;
+  }
+
+public:
+  std::map<std::string, std::shared_ptr<ExternalClassType4Coll>> mapOneDervTwo;
+
+public:
+  std::map<std::string, std::shared_ptr<ExternalClassType4Coll>>::size_type sizeMapOneDervTwo() {
+    return this->mapOneDervTwo.size();
+  }
+
+  std::shared_ptr<ExternalClassType4Coll> & getMapOneDervTwo(std::string key) {
+    return this->mapOneDervTwo[key];
+  }
+
+  bool putMapOneDervTwo(std::string key, std::shared_ptr<ExternalClassType4Coll> value) {
+    auto retPair = this->mapOneDervTwo.emplace(key, value);
+    return retPair.second;
+  }
+
+  std::map<std::string, std::shared_ptr<ExternalClassType4Coll>>::size_type eraseMapOneDervTwo(std::string key) {
+    return this->mapOneDervTwo.erase(key);
+  }
+
+  std::map<std::string, std::shared_ptr<ExternalClassType4Coll>>::const_iterator iteratorMapOneDervTwo() {
+    return this->mapOneDervTwo.cbegin();
+  }
+
 }; // class DervClassTwo
 
 
@@ -1228,20 +1510,23 @@ public:
 #endif // DervClassTwo_hpp
 
 +++++++++++
+
 #include <cstdint>
 #include <string>
+#include "IMjyRoot.hpp"
+
 
 #pragma once
 #ifndef RefClassOne_hpp
 #define RefClassOne_hpp
 
-#namespace testproject {
+namespace testproject {
 
-class RefClassOne {
+class RefClassOne: public IMjyRoot {
 public:
-  std::string className() const {return "RefClassOne";}
+  virtual std::string className() {return "RefClassOne";}
 
-protected:
+public:
   uint64_t intOneRefOne;
 public:
   uint64_t getIntOneRefOne() {
@@ -1252,7 +1537,7 @@ public:
     this->intOneRefOne = intOneRefOne;
   }
 
-protected:
+public:
   std::string strOneRefOne;
 public:
   std::string getStrOneRefOne() {
@@ -1270,20 +1555,23 @@ public:
 #endif // RefClassOne_hpp
 
 +++++++++++
+
 #include <cstdint>
 #include <string>
+#include "IMjyRoot.hpp"
+
 
 #pragma once
 #ifndef RefClassTwo_hpp
 #define RefClassTwo_hpp
 
-#namespace testproject {
+namespace testproject {
 
-class RefClassTwo {
+class RefClassTwo: public IMjyRoot {
 public:
-  std::string className() const {return "RefClassTwo";}
+  virtual std::string className() {return "RefClassTwo";}
 
-protected:
+public:
   uint64_t intOneRefTwo;
 public:
   uint64_t getIntOneRefTwo() {
@@ -1294,7 +1582,7 @@ public:
     this->intOneRefTwo = intOneRefTwo;
   }
 
-protected:
+public:
   std::string strOneRefTwo;
 public:
   std::string getStrOneRefTwo() {
@@ -1310,4 +1598,528 @@ public:
 
 } // namespace testproject
 #endif // RefClassTwo_hpp
+
++++++++++++
+
+#include <cstdint>
+#include <string>
+#include "ext/ExtClassCpp.hpp"
+
+
+#pragma once
+#ifndef ExternalClassType_hpp
+#define ExternalClassType_hpp
+
+namespace testproject {
+
+class ExternalClassType : public IMjyRoot, ExtClassCpp {
+public:
+  virtual std::string className() {return "ExternalClassType";}
+
+  // TODO: ADD ANY NECESSARY CODE FOR DE-/SERIALIZATION OF ExtClassCpp
+
+}; // class ExternalClassType
+
+
+} // namespace testproject
+#endif // ExternalClassType_hpp
+
++++++++++++
+
+#include <cstdint>
+#include <string>
+#include "ext/ExtClass4CollCpp.hpp"
+
+
+#pragma once
+#ifndef ExternalClassType4Coll_hpp
+#define ExternalClassType4Coll_hpp
+
+namespace testproject {
+
+class ExternalClassType4Coll : public IMjyRoot, ExtClass4CollCpp {
+public:
+  virtual std::string className() {return "ExternalClassType4Coll";}
+
+  // TODO: ADD ANY NECESSARY CODE FOR DE-/SERIALIZATION OF ExtClass4CollCpp
+
+}; // class ExternalClassType4Coll
+
+
+} // namespace testproject
+#endif // ExternalClassType4Coll_hpp
+
++++++++++++
+
+#include <cstdint>
+#include <string>
+#include <stdexcept>
+#include <vector>
+#include <map>
+#include <iterator>
+#include "json.hpp"
+#include "BaseClass.hpp"
+#include "DervClassOne.hpp"
+#include "DervClassTwo.hpp"
+#include "RefClassOne.hpp"
+#include "RefClassTwo.hpp"
+#include "ExternalClassType.hpp"
+#include "ExternalClassType4Coll.hpp"
+
+
+#pragma once
+#ifndef testProjectSerializer_hpp
+#define testProjectSerializer_hpp
+
+namespace testproject {
+
+class TestProjectSerializer: public IMjyRoot {
+public:
+  virtual std::string className() {return "TestProjectSerializer";}
+
+private:
+  std::string serBaseClass(BaseClass * value) {
+    return
+        lin(con(qtd("strOneBase"), qtd(value->strOneBase))) +
+        lin(con(qtd("boolOneBase"), serBool(value->boolOneBase))) +
+        lin(con(qtd("flOneBase"), std::to_string(value->flOneBase))) +
+        lin(con(qtd("intOneBase"), std::to_string(value->intOneBase))) +
+        lin(con(qtd("objOneBase"), serCValue(value->objOneBase.get()))) +
+        lin(con(qtd("dblOneBase"), std::to_string(value->dblOneBase))) +
+        lin(con(qtd("intTwoBase"), std::to_string(value->intTwoBase))) +
+        lin(con(qtd("objArrTwoBase"), serArr(value->objArrTwoBase))) +
+        lin(con(qtd("strArrOne"), serArr(value->strArrOne))) +
+        lin(con(qtd("dblArrOne"), serArr(value->dblArrOne))) +
+        lin(con(qtd("intArrOne"), serArr(value->intArrOne))) +
+        lin(con(qtd("flArrBase"), serArr(value->flArrBase))) +
+        lin(con(qtd("boolArrOne"), serArr(value->boolArrOne))) +
+        con(qtd("objMapThreeBase"), serMap(value->objMapThreeBase));
+  }
+
+private:
+  std::string serDervClassOne(DervClassOne * value) {
+    return
+        lin(serBaseClass(value)) +
+        lin(con(qtd("objOneDervOne"), serArr(value->objOneDervOne))) +
+        con(qtd("mapOneDervOne"), serMap(value->mapOneDervOne));
+  }
+
+private:
+  std::string serDervClassTwo(DervClassTwo * value) {
+    return
+        lin(serDervClassOne(value)) +
+        lin(con(qtd("objOneDervTwo"), serCValue(value->objOneDervTwo.get()))) +
+        lin(con(qtd("intOneDervTwo"), std::to_string(value->intOneDervTwo))) +
+        lin(con(qtd("strOneDervTwo"), qtd(value->strOneDervTwo))) +
+        con(qtd("mapOneDervTwo"), serMap(value->mapOneDervTwo));
+  }
+
+private:
+  std::string serRefClassOne(RefClassOne * value) {
+    return
+        lin(con(qtd("intOneRefOne"), std::to_string(value->intOneRefOne))) +
+        con(qtd("strOneRefOne"), qtd(value->strOneRefOne));
+  }
+
+private:
+  std::string serRefClassTwo(RefClassTwo * value) {
+    return
+        lin(con(qtd("intOneRefTwo"), std::to_string(value->intOneRefTwo))) +
+        con(qtd("strOneRefTwo"), qtd(value->strOneRefTwo));
+  }
+
+private:
+  std::string serExternalClassType(ExternalClassType * value) {
+    return
+        // TODO: REPLACE WITH SERIALIZATION CODE FOR CLASS ExternalClassType AS NECESSARY! VERIFY CLASS DEFINITION.
+        "";
+  }
+
+private:
+  std::string serExternalClassType4Coll(ExternalClassType4Coll * value) {
+    return
+        // TODO: REPLACE WITH SERIALIZATION CODE FOR CLASS ExternalClassType4Coll AS NECESSARY! VERIFY CLASS DEFINITION.
+        "";
+  }
+
+private:
+  std::string serCValue(IMjyRoot* val) {
+    if(val->className() == "BaseClass") {
+        return serClass(val->className(), serBaseClass(dynamic_cast<BaseClass*>(val)));
+    }
+    if(val->className() == "DervClassOne") {
+        return serClass(val->className(), serDervClassOne(dynamic_cast<DervClassOne*>(val)));
+    }
+    if(val->className() == "DervClassTwo") {
+        return serClass(val->className(), serDervClassTwo(dynamic_cast<DervClassTwo*>(val)));
+    }
+    if(val->className() == "RefClassOne") {
+        return serClass(val->className(), serRefClassOne(dynamic_cast<RefClassOne*>(val)));
+    }
+    if(val->className() == "RefClassTwo") {
+        return serClass(val->className(), serRefClassTwo(dynamic_cast<RefClassTwo*>(val)));
+    }
+    if(val->className() == "ExternalClassType") {
+        return serClass(val->className(), serExternalClassType(dynamic_cast<ExternalClassType*>(val)));
+    }
+    if(val->className() == "ExternalClassType4Coll") {
+        return serClass(val->className(), serExternalClassType4Coll(dynamic_cast<ExternalClassType4Coll*>(val)));
+    }
+    return "";  }
+
+private:
+  std::string qtd(std::string in) {
+    return "\"" + in + "\"";
+  }
+  std::string con(std::string first, std::string second) {
+    return first + ":" + second;
+  }
+  std::string lin(std::string in) {
+    return in + ",";
+  }
+  std::string crl(std::string in) {
+    return "{" + in + "}";
+  }
+  
+  std::string serClass(std::string className, std::string fields) {
+    std::string json =  "{\"cnid\":\"" + className + "\"";
+    if (!fields.empty()) {
+      json += "," + fields;
+    }
+    json += "}";
+    return json;
+  }
+  
+  std::string serBool(bool val) {
+    return val ? "true" : "false";
+  }
+
+  template <typename T>
+  std::string serArr(std::vector<std::shared_ptr<T>> arr) {
+    std::string json = "[";
+    typename std::vector<std::shared_ptr<T>>::const_iterator it = arr.cbegin();
+  
+    while (it != arr.cend()) {
+      if (it != --arr.cend()) {
+        json += lin(serCValue(it->get()));
+      } else {
+        json += serCValue(it->get());
+      }
+      ++it;
+    }
+  
+    json += "]";
+    return json;
+  }
+  
+  template <typename T>
+  std::string serArr(std::vector<T> arr) {
+  
+    int arrSize = arr.size();
+    std::string json = "[";
+  
+    for (int i = 0; i < arrSize; ++i) {
+      T val = arr[i];
+      if (i < arrSize - 1) {
+        json += lin(std::to_string(val));
+      } else {
+        json += std::to_string(val);
+      }
+    }
+  
+    json += "]";
+    return json;
+  }
+
+  std::string serArr(std::vector<bool> arr) {
+
+    int arrSize = arr.size();
+    std::string json = "[";
+
+    for (int i = 0; i < arrSize; ++i) {
+      bool val = arr[i];
+      if (i < arrSize - 1) {
+        json += lin(serBool(val));
+      } else {
+        json += serBool(val);
+      }
+    }
+
+    json += "]";
+    return json;
+  }
+  
+  std::string serArr(std::vector<std::string> arr) {
+  
+    int arrSize = arr.size();
+    std::string json = "[";
+  
+    for (int i = 0; i < arrSize; ++i) {
+      std::string val = arr[i];
+      if (i < arrSize - 1) {
+        json += lin(qtd(val));
+      } else {
+        json += qtd(val);
+      }
+    }
+  
+    json += "]";
+    return json;
+  }
+  
+  template <typename T>
+  std::string serMap(std::map<std::string, std::shared_ptr<T>> hm) {
+    std::string json = "{";
+  
+    typename std::map<std::string, std::shared_ptr<T>>::const_iterator it = hm.cbegin();
+  
+    while (it != hm.cend()) {
+      if (it != --hm.cend()) {
+        json += lin(con(qtd(it->first), serCValue(it->second.get())));
+      } else {
+        json += con(qtd(it->first), serCValue(it->second.get()));
+      }
+      ++it;
+    }
+  
+    json += "}";
+    return json;
+  }
+  
+  
+  template <typename T>
+  std::string serMap(std::map<std::string, T> map) {
+    std::string json = "{";
+  
+    typename std::map<std::string, T>::const_iterator it = map.cbegin();
+  
+    while (it != map.cend()) {
+      if (it != --map.cend()) {
+        json += lin(con(qtd(it->first), std::to_string(it->second)));
+      } else {
+        json += con(qtd(it->first), std::to_string(it->second));
+      }
+      ++it;
+    }
+  
+    json += "}";
+    return json;
+  }
+  
+  std::string serMap(std::map<std::string, bool> map) {
+    std::string json = "{";
+
+    std::map<std::string, bool>::const_iterator it = map.cbegin();
+
+    while (it != map.cend()) {
+      if (it != --map.cend()) {
+        json += lin(con(qtd(it->first), serBool(it->second)));
+      } else {
+        json += con(qtd(it->first), serBool(it->second));
+      }
+      ++it;
+    }
+  }
+
+  std::string serMap(std::map<std::string, std::string> map) {
+    std::string json = "{";
+  
+    std::map<std::string, std::string>::const_iterator it = map.cbegin();
+  
+    while (it != map.cend()) {
+      if (it != --map.cend()) {
+        json += lin(con(qtd(it->first), qtd(it->second)));
+      } else {
+        json += con(qtd(it->first), qtd(it->second));
+      }
+      ++it;
+    }
+  
+    json += "}";
+    return json;
+  }
+public:
+  std::string serialize(IMjyRoot& val) {
+    return serCValue(&val);
+  }
+
+}; // class TestProjectSerializer
+
+
+} // namespace testproject
+#endif // testProjectSerializer_hpp
+
++++++++++++
+
+#include <cstdint>
+#include <string>
+#include <stdexcept>
+#include <vector>
+#include <map>
+#include <iterator>
+#include <memory>
+#include "json.hpp"
+#include "BaseClass.hpp"
+#include "DervClassOne.hpp"
+#include "DervClassTwo.hpp"
+#include "RefClassOne.hpp"
+#include "RefClassTwo.hpp"
+#include "ExternalClassType.hpp"
+#include "ExternalClassType4Coll.hpp"
+
+
+#pragma once
+#ifndef testProjectDeserializer_hpp
+#define testProjectDeserializer_hpp
+
+namespace testproject {
+
+class TestProjectDeserializer: public IMjyRoot {
+public:
+  virtual std::string className() {return "TestProjectDeserializer";}
+
+  void deserBaseClass(jsonl::json & jo,BaseClass * value) {
+    value->strOneBase = jo["strOneBase"];
+    value->boolOneBase = jo["boolOneBase"];
+    value->flOneBase = jo["flOneBase"];
+    value->intOneBase = jo["intOneBase"];
+    value->objOneBase = std::dynamic_pointer_cast<RefClassOne>(deserObject(jo["objOneBase"]));
+    value->dblOneBase = jo["dblOneBase"];
+    value->intTwoBase = jo["intTwoBase"];
+    deserArr(jo["objArrTwoBase"], value->objArrTwoBase);
+    deserArr(jo["strArrOne"], value->strArrOne);
+    deserArr(jo["dblArrOne"], value->dblArrOne);
+    deserArr(jo["intArrOne"], value->intArrOne);
+    deserArr(jo["flArrBase"], value->flArrBase);
+    deserArr(jo["boolArrOne"], value->boolArrOne);
+    deserMap(jo["objMapThreeBase"], value->objMapThreeBase);
+  }
+
+  void deserDervClassOne(jsonl::json & jo,DervClassOne * value) {
+    deserBaseClass(jo, value);
+    deserArr(jo["objOneDervOne"], value->objOneDervOne);
+    deserMap(jo["mapOneDervOne"], value->mapOneDervOne);
+  }
+
+  void deserDervClassTwo(jsonl::json & jo,DervClassTwo * value) {
+    deserDervClassOne(jo, value);
+    value->objOneDervTwo = std::dynamic_pointer_cast<ExternalClassType>(deserObject(jo["objOneDervTwo"]));
+    value->intOneDervTwo = jo["intOneDervTwo"];
+    value->strOneDervTwo = jo["strOneDervTwo"];
+    deserMap(jo["mapOneDervTwo"], value->mapOneDervTwo);
+  }
+
+  void deserRefClassOne(jsonl::json & jo,RefClassOne * value) {
+    value->intOneRefOne = jo["intOneRefOne"];
+    value->strOneRefOne = jo["strOneRefOne"];
+  }
+
+  void deserRefClassTwo(jsonl::json & jo,RefClassTwo * value) {
+    value->intOneRefTwo = jo["intOneRefTwo"];
+    value->strOneRefTwo = jo["strOneRefTwo"];
+  }
+
+  void deserExternalClassType(jsonl::json & jo,ExternalClassType * value) {
+        // TODO: REPLACE WITH SERIALIZATION CODE FOR CLASS ExternalClassType AS NECESSARY! VERIFY CLASS DEFINITION.
+  }
+
+  void deserExternalClassType4Coll(jsonl::json & jo,ExternalClassType4Coll * value) {
+        // TODO: REPLACE WITH SERIALIZATION CODE FOR CLASS ExternalClassType4Coll AS NECESSARY! VERIFY CLASS DEFINITION.
+  }
+
+  std::shared_ptr<IMjyRoot> deserObject(jsonl::json &  jo) {
+    std::string cnid = jo["cnid"];
+
+    if (cnid == "BaseClass") {
+      std::shared_ptr<BaseClass> obj = std::make_shared<BaseClass>();
+      deserBaseClass(jo, obj.get());
+      return obj;
+    }
+    if (cnid == "DervClassOne") {
+      std::shared_ptr<DervClassOne> obj = std::make_shared<DervClassOne>();
+      deserDervClassOne(jo, obj.get());
+      return obj;
+    }
+    if (cnid == "DervClassTwo") {
+      std::shared_ptr<DervClassTwo> obj = std::make_shared<DervClassTwo>();
+      deserDervClassTwo(jo, obj.get());
+      return obj;
+    }
+    if (cnid == "RefClassOne") {
+      std::shared_ptr<RefClassOne> obj = std::make_shared<RefClassOne>();
+      deserRefClassOne(jo, obj.get());
+      return obj;
+    }
+    if (cnid == "RefClassTwo") {
+      std::shared_ptr<RefClassTwo> obj = std::make_shared<RefClassTwo>();
+      deserRefClassTwo(jo, obj.get());
+      return obj;
+    }
+    if (cnid == "ExternalClassType") {
+      std::shared_ptr<ExternalClassType> obj = std::make_shared<ExternalClassType>();
+      deserExternalClassType(jo, obj.get());
+      return obj;
+    }
+    if (cnid == "ExternalClassType4Coll") {
+      std::shared_ptr<ExternalClassType4Coll> obj = std::make_shared<ExternalClassType4Coll>();
+      deserExternalClassType4Coll(jo, obj.get());
+      return obj;
+    }
+    return nullptr;
+  }
+
+
+  template <typename T>
+  void deserArr(jsonl::json jo, std::vector<T> & vec) {
+    std::size_t size = jo.size();
+    vec.clear();
+    for (std::size_t i = 0; i < size; ++i) {
+      vec.push_back(jo[i]);
+    }
+  }
+
+  template <typename T>
+  void deserArr(jsonl::json jo, std::vector<std::shared_ptr<T>> & vec) {
+    std::size_t size = jo.size();
+    vec.clear();
+    for (std::size_t i = 0; i < size; ++i) {
+      vec.push_back(std::dynamic_pointer_cast<T>(deserObject(jo[i])));
+    }
+  }
+
+  template <typename T>
+  void deserMap(jsonl::json jo, std::map<std::string, T> & map) {
+    map.clear();
+    auto it = jo.cbegin();
+    while (it != jo.cend()) {
+      map.emplace(it.key(), it.value());
+      ++it;
+    }
+  }
+
+  template <typename T>
+  void deserMap(jsonl::json jo, std::map<std::string, std::shared_ptr<T>> & map) {
+    map.clear();
+    auto it = jo.cbegin();
+    while (it != jo.cend()) {
+      map.emplace(it.key(), std::dynamic_pointer_cast<T>(deserObject(jo[it.key()])));
+      ++it;
+    }
+  }
+
+  std::shared_ptr<IMjyRoot> deserialize(jsonl::json &  jo) {
+    return deserObject(jo);
+  }
+  
+  std::shared_ptr<IMjyRoot> deserialize(std::string jsonStr) {
+    jsonl::json jo = jsonl::json::parse(jsonStr);
+    return deserialize(jo);
+  }
+
+
+}; // class TestProjectDeserializer
+
+
+} // namespace testproject
+#endif // testProjectDeserializer_hpp
 ```

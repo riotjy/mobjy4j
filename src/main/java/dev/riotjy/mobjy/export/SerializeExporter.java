@@ -75,7 +75,6 @@ public class SerializeExporter {
     for (MjyClass clazz : theModel.getClasses()) {
       String className = clazz.getName();
       if (clazz.isExternal()) {
-        className = clazz.getLangDepClass("java");
         importGen.addImport(clazz.getLangDepResource("java"));
       }
       
