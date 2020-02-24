@@ -51,7 +51,15 @@ Eclipse: install buildship extension for Gradle support, import as existing grad
 RUNNING INSTRUCTIONS:
 
 Run class "Mobjy" with parameter -i set to the full/relative path to input YAML file and -o parameter to the output directory/folder.
-**mpbjy** will generate a bunch of java and cpp files. In order to use them, the gson library for java and the nlohmann/json (json.hpp) library for cpp are needed.
+**mpbjy** will generate a bunch of java and cpp files. 
+
+In order to use the output code files, the *gson* library for java and the *nlohmann/json (json.hpp)* library for C++ are needed respectively.
+
+The serializer and deserializer provide the methods/functions serialize(...) and deserialize(...) respectively for each supported language.
+
+Passing a generated class instance to the serializer will result in a JSON string.
+Passing that JSON string to the deserializer will result in an object of the type passed to the serializer.
+It is recommended to manufacture the JSON data using the serializer instead of other methods to ensure compatibility and error free execution.
 
 WHAT DOES IT DO:
 
