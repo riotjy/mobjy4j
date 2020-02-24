@@ -48,7 +48,9 @@ Run class "Mobjy" with parameter -i set to the full/relative path to input YAML 
 
 WHAT DOES IT DO:
 
-Using ./examples/example.yaml foudn in the project directory, currently it turns this YAML class model definition:
+Using ./examples/example.yaml foudn in the project directory, currently it turns the following YAML class model definition into Java and C++ code. (scroll down)
+
+## YAML input
 ```YAML
 
 # classes definition example
@@ -120,7 +122,7 @@ ExternalClassType4Coll:    # an external class to be imported and used as type
       class: ExtClass4CollCpp
 ```
 
-into this Java code: 
+## JAVA output: 
 
 
 ```Java
@@ -1031,7 +1033,7 @@ public  class TestProjectDeserializer {
 }
 ```
 
-and this C++11 code:
+## C++ output (C++11):
 
 
 ```CPP
