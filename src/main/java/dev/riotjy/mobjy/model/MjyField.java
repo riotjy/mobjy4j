@@ -18,21 +18,22 @@
  *******************************************************************************/
 package dev.riotjy.mobjy.model;
 
-public enum VersionStatus {
-  ALPHA, BETA, RELEASE, INVALID;
+import java.util.HashMap;
+import java.util.Set;
+
+public class MjyField extends MjyElement{
+
+  private MjyField() {} 
   
-  public static VersionStatus getVersionStatus(String status) {
-    if (status.equals("alpha")) return ALPHA;
-    if (status.equals("beta")) return BETA;
-    if (status.equals("release")) return RELEASE;
-    return INVALID;
+  public MjyField(String name) {this.name = name;}
+  
+  private String name;
+
+  public String getName() {
+    return name;
   }
-  
-  @Override
-  public String toString() {
-    if (this == ALPHA) return "alpha";
-    if (this == BETA) return "beta";
-    if (this == RELEASE) return "release";
-    return "invalid";
+
+  public void setName(String name) {
+    this.name = name;
   }
 }

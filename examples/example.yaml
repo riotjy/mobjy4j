@@ -1,3 +1,21 @@
+#*******************************************************************************
+# Copyright 2020 riotjy and listed authors
+#
+#    Licensed under the Apache License, Version 2.0 (the "License");
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+#
+#        http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
+#    
+#    Authors:
+#      Alex Savulov
+#*******************************************************************************
 %YAML 1.1
 ---
 # YAML defined model example
@@ -28,7 +46,7 @@ golang:
 
 #NOTES:
 #keywords: 
-#  class, extends, references, collection, key, value, 
+#  class, extends, type, collection, key, value, 
 #  bool, int, string, float, double, version, compatver, project
 #  java, cpp, path, resource
 #all members are supplied with getters and setters
@@ -41,6 +59,8 @@ BaseClass:            #creates class BaseClass
   boolArrOne: bool[]
   intOneBase: int
   intTwoBase: int
+  intThreeBase: 
+    type: int
   intArrOne: int[]    #creates an array of integer primitives
   strOneBase: string
   strArrOne: string[] #creates an array list of strings
@@ -48,13 +68,16 @@ BaseClass:            #creates class BaseClass
   dblOneBase: double #creates an array list of single precision float primitives
   flArrBase: float[]
   dblArrOne: double[] #creates an array list of double precision floats primitives
+  dblArrTwo:          #creates an array list of double precision floats primitives
+    type: int
+    collection: arrayList
   objOneBase:         #creates an object of type RefClassOne
-    references: RefClassOne
+    type: RefClassOne
   objArrTwoBase:      #creates an array list of objects of type RefClassTwo
-    references: RefClassTwo
+    type: RefClassTwo
     collection: arrayList 
   objMapThreeBase:    #creates a hash map <string, RefClassTwo>
-    references: RefClassTwo
+    type: RefClassTwo
     collection: hashMap
     
 DervClassOne:   #creates class DervClassOne extending BaseClass
@@ -62,10 +85,10 @@ DervClassOne:   #creates class DervClassOne extending BaseClass
 #  intOneDervOne: int
 #  strOneDervOne: string
   objOneDervOne:
-    references: RefClassOne
+    type: RefClassOne
     collection: arrayList
   mapOneDervOne:
-    references: RefClassTwo
+    type: RefClassTwo
     collection: hashMap
   
 
@@ -74,9 +97,9 @@ DervClassTwo:   #creates class DervClassOne extending DervClassTwo
   intOneDervTwo: int
   strOneDervTwo: string
   objOneDervTwo:
-    references: ExternalClassType
+    type: ExternalClassType
   mapOneDervTwo:
-    references: ExternalClassType4Coll
+    type: ExternalClassType4Coll
     collection: hashMap
 
 RefClassOne:    #creates class RefClassOne
@@ -108,4 +131,27 @@ ExternalClassType4Coll:    # an external class to be imported and used as type
    golang:
       path: dirA/dirB/ExtClass4CollGo
       class: ExtClass4CollGo
-  
+
+AnnotatedClassExample:
+  meta:
+    java:
+      Entity: 
+      Table: '(name = "ANNOTATED_TABLE")'
+  id: 
+    type: int
+    meta:
+      java:
+        Id: '()' 
+        GeneratedValue: 
+        Column: '(name = "id")'
+        
+  intArrExample:                                 # creates an annotated array of integer primitives
+    type: int
+    collection: arrayList
+    meta:
+      java:
+        ManyToAny: '(metaColumn = @Column(name = "property_type"))'
+        JoinColumn: |-                           # multiline annotation using |-
+          (name="parent_id", insertable=false,
+              updatable=false, nullable=false)   # using more spaces to indent the second line
+        OrderColumn: '(name="order")'  

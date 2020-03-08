@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2020 riotjy
+ * Copyright 2020 riotjy and listed authors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -12,6 +12,9 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
+ *    
+ *    Authors:
+ *      Alex Savulov
  *******************************************************************************/
 package dev.riotjy.mobjy.builder;
 
@@ -25,11 +28,15 @@ import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dev.riotjy.mobjy.model.MjyAttribute;
 import dev.riotjy.mobjy.model.MjyClass;
+import dev.riotjy.mobjy.model.MjyCollection;
 import dev.riotjy.mobjy.model.MjyCollectionType;
+import dev.riotjy.mobjy.model.MjyField;
 import dev.riotjy.mobjy.model.MjyModel;
 import dev.riotjy.mobjy.model.MjyModelFactory;
 import dev.riotjy.mobjy.model.MjyPrimitiveType;
+import dev.riotjy.mobjy.model.MjyType;
 import dev.riotjy.mobjy.model.MjyVersion;
 import dev.riotjy.mobjy.util.Recursive;
 
@@ -56,7 +63,7 @@ public class ModelBuilder {
     if (cyclicInheritanceFound())
       throw new Exception("Cyclic inheritance found.");
     buildImports();
-    buildMembers();
+    buildFieldsAndMetas();
     return theModel;
   }
 
@@ -165,82 +172,138 @@ public class ModelBuilder {
     return true;
   }
   
-  private boolean buildMembers() throws Exception {
+  private boolean buildFieldsAndMetas() throws Exception {
     Collection<? extends Object> keys = modelLoader.getKeys();
     for (Object key : keys) {
       if (isNotClass(key.toString())) {
           continue;
       }
       String className = key.toString();
-      buildMembers(className);
+      buildFields(className);
+      buildMetas(className);
     }
     return true;
   }
-
-  private boolean buildMembers(String className) throws Exception {
+  
+  private boolean buildMetas(String className) throws Exception {
     MjyClass theClass = theModel.getClassByName(className);
     if (null == theClass) {
       return false;
     }
     if (theClass.isExternal()) {
-      // this class should not have members
+      // this class should not have metas
       return false;
     }
 
     Map<String, Object> classMap = (Map)modelLoader.getMapped(className);
-    Set<String> members = classMap.keySet();
-    for (String member : members) {
+    Set<String> fields = classMap.keySet();
+    for (String field : fields) {
 
-      if (member.equals("extends"))
+      if (!field.equals("meta"))
         continue;
 
-      Object type = (classMap).get(member);
-      if (type instanceof String) {
-        if (type.toString().contains("[]")) {
+      Object metaObj = ((Map<String, Object>)classMap).get("meta");
+      if (null != metaObj && metaObj instanceof Map<?,?>) {
+        Map<String, Object> langMap = (Map)metaObj;
+        for (String lang: langMap.keySet()) {
+          Map<String, String> entries = (Map)langMap.get(lang);
+          for (String entry : entries.keySet()) {
+            theClass.addMetas(lang, entry, entries.get(entry));
+          }
+        }
+      }
+    }
+    return true;
+  }
+
+  private boolean buildFields(String className) throws Exception {
+    MjyClass theClass = theModel.getClassByName(className);
+    if (null == theClass) {
+      return false;
+    }
+    if (theClass.isExternal()) {
+      // this class should not have fields
+      return false;
+    }
+
+    Map<String, Object> classMap = (Map)modelLoader.getMapped(className);
+    Set<String> fields = classMap.keySet();
+    for (String field : fields) {
+
+      if (field.equals("extends") || field.equals("meta"))
+        continue;
+
+      Object typeSpec = (classMap).get(field);
+
+      // shorthand field spec for primitives
+      if (typeSpec instanceof String) {
+        if (typeSpec.toString().contains("[]")) {
           theClass.addCollection(
-              MjyModelFactory.makeCollection(member,
+              MjyModelFactory.makeCollection(field,
                   MjyCollectionType.ARRAYLIST,
                   MjyModelFactory.makePrimitive(
-                      MjyPrimitiveType.getMjyPrimitiveType(type.toString().replace("[]", "")))));
+                      MjyPrimitiveType.getMjyPrimitiveType(typeSpec.toString().replace("[]", "")))));
           theClass.setUsesArrayList(true);
           continue;
         } else {
           theClass.addAttribute(
-              MjyModelFactory.makeAttribute(member,
+              MjyModelFactory.makeAttribute(field,
                   MjyModelFactory.makePrimitive(
-                      MjyPrimitiveType.getMjyPrimitiveType(type.toString()))));
+                      MjyPrimitiveType.getMjyPrimitiveType(typeSpec.toString()))));
           continue;
         }
       }
-      if (type instanceof Map<?,?>) {
-        Map<String,String> mappedType = (Map)type;
-        String references = mappedType.get("references");
+      
+      // detailed field spec
+      if (typeSpec instanceof Map<?,?>) {
+        Map<String,String> mappedType = (Map)typeSpec;
+        String typeName = mappedType.get("type");
 
-        MjyClass classTypeUsed = theModel.getClassByName(references);
+        MjyType valType = null;
+        MjyClass classTypeUsed = theModel.getClassByName(typeName);
+
         if (null == classTypeUsed) {
-          // Programmer wants to use an external class, let it do
-          //TODO: some classes need importing from another package
-          classTypeUsed = MjyModelFactory.makeClass(references);
+          // not a modeled class, could be a primitive
+          MjyPrimitiveType primType = MjyPrimitiveType.getMjyPrimitiveType(typeName);
+          if (primType != MjyPrimitiveType.INVALID) {
+            valType = MjyModelFactory.makePrimitive(primType);
+          } else {
+            // Programmer wants to use an external class, let it do
+            //TODO: some classes need importing from another package
+            classTypeUsed = MjyModelFactory.makeClass(typeName);
+            valType = MjyModelFactory.makeObject(classTypeUsed);
+          }
+        } else {
+          valType = MjyModelFactory.makeObject(classTypeUsed);
         }
         
         String collectionType = mappedType.get("collection");
+        MjyField classField;
         if (null == collectionType) {
-          theClass.addAttribute(
-              MjyModelFactory.makeAttribute(member,
-                  MjyModelFactory.makeObject(classTypeUsed)));
-          continue;
+          classField = MjyModelFactory.makeAttribute(field, valType);
+          theClass.addAttribute((MjyAttribute)classField);
         } else {
           MjyCollectionType collType = MjyCollectionType.getMjyCollectionType(collectionType);
-          theClass.addCollection(
-              MjyModelFactory.makeCollection(member, collType,
-                  MjyModelFactory.makeObject(classTypeUsed)));
+          classField = MjyModelFactory.makeCollection(field, collType, valType);
+          theClass.addCollection((MjyCollection)classField);
           if (MjyCollectionType.ARRAYLIST == collType) {
             theClass.setUsesArrayList(true);
           } else if (MjyCollectionType.HASHMAP == collType) {
             theClass.setUsesMap(true);
           }
-          continue;
         }
+        // metadata
+        Object metaObj = ((Map<String, Object>)typeSpec).get("meta");
+        if (null != metaObj && metaObj instanceof Map<?,?>) {
+          Map<String, Object> langMap = (Map)metaObj;
+          for (String lang: langMap.keySet()) {
+            Map<String, String> entries = (Map)langMap.get(lang);
+            for (String entry : entries.keySet()) {
+              classField.addMetas(lang, entry, entries.get(entry));
+            }
+          }
+        }
+        
       }
     }
     return true;

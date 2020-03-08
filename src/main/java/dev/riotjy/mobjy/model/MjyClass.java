@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2020 riotjy
+ * Copyright 2020 riotjy and listed authors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -12,6 +12,9 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
+ *    
+ *    Authors:
+ *      Alex Savulov
  *******************************************************************************/
 package dev.riotjy.mobjy.model;
 
@@ -20,10 +23,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
-public class MjyClass {
+import com.google.gson.annotations.JsonAdapter;
+
+public class MjyClass extends MjyElement {
 
   private String name;
-
+  
   private boolean usesArrayList;
   private boolean usesMap;
 

@@ -16,23 +16,38 @@
  *    Authors:
  *      Alex Savulov
  *******************************************************************************/
-package dev.riotjy.mobjy.model;
+package dev.riotjy.mobjy.export.codegen;
 
-public enum VersionStatus {
-  ALPHA, BETA, RELEASE, INVALID;
+import java.util.HashMap;
+
+public abstract class MetaCodeGenerator extends CodeGenerator {
+
+  protected int indent = 0;
+  protected HashMap<String, String> metas = new HashMap<>();
   
-  public static VersionStatus getVersionStatus(String status) {
-    if (status.equals("alpha")) return ALPHA;
-    if (status.equals("beta")) return BETA;
-    if (status.equals("release")) return RELEASE;
-    return INVALID;
+  public MetaCodeGenerator() {
+    super();
   }
   
-  @Override
-  public String toString() {
-    if (this == ALPHA) return "alpha";
-    if (this == BETA) return "beta";
-    if (this == RELEASE) return "release";
-    return "invalid";
+  public MetaCodeGenerator(int indent) {
+    this();
+    this.indent = indent;
   }
+
+  public boolean putMeta(String key, String value) {
+    return metas.put(key, value) != null;
+  }
+  
+  protected static String indent(int indent) {
+    StringBuilder sb = new StringBuilder();
+    while (indent > 0) {
+      sb.append(" ");
+      --indent;
+    }
+    return sb.toString();
+  }
+  
+//  public String getMeta(String key) {
+//    return metas.get(key);
+//  }
 }

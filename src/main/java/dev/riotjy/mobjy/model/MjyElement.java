@@ -21,31 +21,40 @@ package dev.riotjy.mobjy.model;
 import java.util.HashMap;
 import java.util.Set;
 
-public class MjyLanguageSettings {
+public class MjyElement {
 
-  private String language;
-  
-  private HashMap<String, String> settings = new HashMap<>();
-  
-  private MjyLanguageSettings() {}
+  public MjyElement() {
+    // TODO Auto-generated constructor stub
+  }
 
-  public MjyLanguageSettings(String language) {
-    this.language = language;
+  HashMap<String, MjyLanguageSettings> meta = new HashMap<>();
+
+  public MjyLanguageSettings getMetas(String language) {
+    return meta.get(language);
   }
   
-  public String getLanguage() {
-    return language;
+  public String getMetaValue(String language, String metaKey) {
+    MjyLanguageSettings metas = getMetas(language);
+    if (null != metas) {
+      return metas.getSetting(metaKey);
+    }
+    return null;
   }
   
-  public void addSetting(String name, String value) {
-    settings.put(name, value);
+  public void addLanguageMetas(String language) {
+    if (meta.containsKey(language))
+      return;
+    meta.put(language, new MjyLanguageSettings(language));
   }
   
-  public String getSetting(String name) {
-    return settings.get(name);
+  public void addMetas(String language, String settName, String settValue) {
+    addLanguageMetas(language);
+    meta.get(language).addSetting(settName, settValue);
   }
-  
-  public Set<String> getSettingNames() {
-    return settings.keySet();
+
+  public Set<String> getMetasKeySet() {
+    return meta.keySet();
   }
+
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2020 riotjy
+ * Copyright 2020 riotjy and listed authors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -12,6 +12,9 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
+ *    
+ *    Authors:
+ *      Alex Savulov
  *******************************************************************************/
 package dev.riotjy.mobjy.export.codegen.java;
 
@@ -38,7 +41,7 @@ public class JavaAttributeCodeGenerator extends AttributeCodeGenerator {
     // setter
     code += "  public void set" + capitalized + "(" + type + " " + name + ") {\n";
     code += "    this." + name + " = " + name + ";\n";
-    code += "  }\n";
+    code += "  }\n\n";
 
     return code;
   }

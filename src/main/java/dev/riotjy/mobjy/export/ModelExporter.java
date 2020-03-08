@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2020 riotjy
+ * Copyright 2020 riotjy and listed authors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -12,6 +12,9 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
+ *    
+ *    Authors:
+ *      Alex Savulov
  *******************************************************************************/
 package dev.riotjy.mobjy.export;
 
@@ -37,6 +40,7 @@ import dev.riotjy.mobjy.export.codegen.java.JavaAttributeCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaClassCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaHashMapCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaImportsCodeGenerator;
+import dev.riotjy.mobjy.export.codegen.java.JavaMetaCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaMetaTypeMap;
 import dev.riotjy.mobjy.export.codegen.java.JavaPackageCodeGenerator;
 import dev.riotjy.mobjy.export.codegen.java.JavaPrimitiveTypesStaticCodeGenerator;
@@ -45,6 +49,7 @@ import dev.riotjy.mobjy.model.MjyAttribute;
 import dev.riotjy.mobjy.model.MjyClass;
 import dev.riotjy.mobjy.model.MjyCollection;
 import dev.riotjy.mobjy.model.MjyCollectionType;
+import dev.riotjy.mobjy.model.MjyLanguageSettings;
 import dev.riotjy.mobjy.model.MjyModel;
 import dev.riotjy.mobjy.model.MjyType;
 import dev.riotjy.mobjy.util.ResourceWriter;
@@ -80,16 +85,39 @@ public class ModelExporter {
       int cnt = clazz.getAttributeCount();
       for (int i = 0; i < cnt; ++i) {
         MjyAttribute attr = clazz.getAttributeByIndex(i);
+
+        MjyLanguageSettings javaMetas = attr.getMetas("java");
+        if (null != javaMetas) {
+          JavaMetaCodeGenerator metaGen = new JavaMetaCodeGenerator(2);
+          for(String key : javaMetas.getSettingNames()) {
+            String val = javaMetas.getSetting(key);
+            metaGen.putMeta(key, val);
+          }
+          classGen.addPart(metaGen);
+        }
+
         JavaAttributeCodeGenerator attrGen = new JavaAttributeCodeGenerator(attr.getName(), getJavaTypeName(attr.getType()));
         classGen.addPart(attrGen);
       }
       cnt = clazz.getCollectionCount();
       for (int i = 0; i < cnt; ++i) {
         MjyCollection coll = clazz.getCollectionByIndex(i);
+        
+        MjyLanguageSettings javaMetas = coll.getMetas("java");
+        if (null != javaMetas) {
+          JavaMetaCodeGenerator metaGen = new JavaMetaCodeGenerator(2);
+          for(String key : javaMetas.getSettingNames()) {
+            String val = javaMetas.getSetting(key);
+            metaGen.putMeta(key, val);
+          }
+          classGen.addPart(metaGen);
+        }
+
         if (coll.getCollectionType() == MjyCollectionType.ARRAYLIST) {
           JavaArrayListCodeGenerator arrGen = new JavaArrayListCodeGenerator(coll.getName(), getJavaTypeName(coll.getValueType()));
           classGen.addPart(arrGen);
         }
+        
         if (coll.getCollectionType() == MjyCollectionType.HASHMAP) {
           JavaHashMapCodeGenerator hashGen = new JavaHashMapCodeGenerator(coll.getName(), getJavaTypeName(coll.getValueType()));
           classGen.addPart(hashGen);
@@ -108,12 +136,22 @@ public class ModelExporter {
         }
       }
       
+      JavaMetaCodeGenerator classMetaGen = new JavaMetaCodeGenerator(0);
+      MjyLanguageSettings javaMetas = clazz.getMetas("java");
+      if (null != javaMetas) {
+        for(String key : javaMetas.getSettingNames()) {
+          String val = javaMetas.getSetting(key);
+          classMetaGen.putMeta(key, val);
+        }
+      }
+      
       JavaPackageCodeGenerator packGen = new JavaPackageCodeGenerator(
           theModel.getLanguageSettingValue("java", "package"));
       
       JavaResourceCodeGenerator resourceGen = new JavaResourceCodeGenerator(clazz.getName());
       resourceGen.addPart(packGen);
       resourceGen.addPart(importGen);
+      resourceGen.addPart(classMetaGen);
       resourceGen.addPart(classGen);
       String code = resourceGen.generate();
       log.info("\n********\n" + code + "\n********\n\n");

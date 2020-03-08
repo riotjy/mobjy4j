@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2020 riotjy
+ * Copyright 2020 riotjy and listed authors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -12,6 +12,9 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
+ *    
+ *    Authors:
+ *      Alex Savulov
  *******************************************************************************/
 package dev.riotjy.mobjy.export.codegen.java;
 
@@ -31,13 +34,13 @@ public class JavaClassCodeGenerator extends ClassCodeGenerator {
   @Override
   public String generate() {
     String code = "public " +
-        (isAbstract ? "abstract " : " ") + "class " +
+        (isAbstract ? "abstract " : "") + "class " +
         className +
         (null == generalization ? "" : " extends " + generalization) +
-        " {\n";
+        " {\n\n";
 
     for (CodeGenerator part : parts) {
-      code += part.generate() + "\n";
+      code += part.generate();
     }
 
     code += "}\n";
