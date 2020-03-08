@@ -174,7 +174,8 @@ AnnotatedClassExample:
         JoinColumn: |-                           # multiline annotation using |-
           (name="parent_id", insertable=false,
               updatable=false, nullable=false)   # using more spaces to indent the second line
-        OrderColumn: '(name="order")'```
+        OrderColumn: '(name="order")'
+        
 ```
 
 ## JAVA output: 
