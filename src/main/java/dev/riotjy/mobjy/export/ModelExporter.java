@@ -154,7 +154,9 @@ public class ModelExporter {
       resourceGen.addPart(classMetaGen);
       resourceGen.addPart(classGen);
       String code = resourceGen.generate();
-      log.info("\n********\n" + code + "\n********\n\n");
+      log.info("\n********************************************************************************\n" +
+          code + 
+          "\n********************************************************************************\n\n");
       ResourceWriter.mkdirs(path + "/java");
       ResourceWriter.write(path + "/java/" + clazz.getName() + ".java", code);
     }
@@ -171,7 +173,9 @@ public class ModelExporter {
     resourceGen.addPart(new JavaPrimitiveTypesStaticCodeGenerator());
     
     String code = resourceGen.generate();
-    log.info("\n********\n" + code + "\n********\n\n");
+    log.info("\n********************************************************************************\n" +
+        code +
+        "\n********************************************************************************\n\n");
     path += "/java";
     ResourceWriter.mkdirs(path);
     ResourceWriter.write(path + "/MjyPrimitiveType.java", code);
@@ -273,7 +277,9 @@ public class ModelExporter {
     resourceGen.addPart(includeGen);
     resourceGen.addPart(namspGen);
     String code = resourceGen.generate();
-    log.info("\n+++++++++++\n" + code + "\n+++++++++++\n\n");
+    log.info("\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n" +
+        code + 
+        "\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n\n");
     path += "/cpp";
     ResourceWriter.mkdirs(path);
     ResourceWriter.write(path + "/" + clazz.getName() + ".hpp", code);
@@ -301,7 +307,9 @@ public class ModelExporter {
     resourceGen.addPart(includeGen);
     resourceGen.addPart(namspGen);
     String code = resourceGen.generate();
-    log.info("\n+++++++++++\n" + code + "\n+++++++++++\n\n");
+    log.info("\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n" +
+        code + 
+        "\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n\n");
     path += "/cpp";
     ResourceWriter.mkdirs(path);
     ResourceWriter.write(path + "/" + clazz.getName() + ".hpp", code);
@@ -311,7 +319,9 @@ public class ModelExporter {
     CppResourceCodeGenerator resourceGen = new CppResourceCodeGenerator("IMjyRoot");
     resourceGen.addPart(new CppRootInterfaceCodeGenerator());
     String code = resourceGen.generate();
-    log.info("\n+++++++++++\n" + code + "\n+++++++++++\n\n");
+    log.info("\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n" +
+        code + 
+        "\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n\n");
     path += "/cpp";
     ResourceWriter.mkdirs(path);
     ResourceWriter.write(path + "/IMjyRoot.hpp", code);

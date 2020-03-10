@@ -29,7 +29,11 @@ public class JavaPrimitiveTypesStaticCodeGenerator extends CodeGenerator {
     return 
         "public enum MjyPrimitiveType {\n" + 
         "  BOOLEAN,\n" + 
+        "  CHAR,\n" + 
+        "  BYTE,\n" + 
+        "  SHORT,\n" + 
         "  INT,\n" + 
+        "  LONG,\n" + 
         "  FLOAT,\n" + 
         "  DOUBLE,\n" + 
         "  STRING,\n" + 

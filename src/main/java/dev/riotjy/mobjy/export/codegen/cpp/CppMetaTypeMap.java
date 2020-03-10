@@ -30,7 +30,11 @@ public class CppMetaTypeMap {
   
   private CppMetaTypeMap() {
     map.put(MjyPrimitiveType.BOOLEAN.toString(), "bool");
-    map.put(MjyPrimitiveType.INT.toString(), "uint64_t");
+    map.put(MjyPrimitiveType.CHAR.toString(), "char16_t");
+    map.put(MjyPrimitiveType.BYTE.toString(), "int8_t");
+    map.put(MjyPrimitiveType.SHORT.toString(), "int16_t");
+    map.put(MjyPrimitiveType.INT.toString(), "int32_t");
+    map.put(MjyPrimitiveType.LONG.toString(), "int64_t");
     map.put(MjyPrimitiveType.FLOAT.toString(), "float");
     map.put(MjyPrimitiveType.DOUBLE.toString(), "double");
     map.put(MjyPrimitiveType.STRING.toString(), "std::string");

@@ -102,7 +102,11 @@ public class SerializeExporter {
   }
   
   public void exportCpp(String path) {
-    CppResourceCodeGenerator resourceGen = new CppResourceCodeGenerator(theModel.getProject() + "Serializer");
+    CppResourceCodeGenerator resourceGen = 
+        new CppResourceCodeGenerator(
+            theModel.getProject().substring(0,1).toUpperCase() +
+            theModel.getProject().substring(1) + 
+            "Serializer");
     
     CppIncludesCodeGenerator includeGen = new CppIncludesCodeGenerator(true, true);
     includeGen.addImport("<iterator>");

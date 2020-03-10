@@ -355,7 +355,7 @@ public class ModelBuilder {
   private boolean isLangSettings(String key) {
     if (key.toString().equals("java") ||
         key.toString().equals("cpp") ||
-        key.toString().equals("golang")) {
+        key.toString().equals("csharp")) {
       return true;
     }
     return false;

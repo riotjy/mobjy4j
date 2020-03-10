@@ -19,7 +19,7 @@
 %YAML 1.1
 ---
 # YAML defined model example
-project: testProject
+project: demoProject
 
 version:
   major: 1
@@ -36,13 +36,13 @@ compatver:
   candidate: 0
 
 java:                    # project level language dependent setting
-  package: dev.riotjy.testProject
+  package: dev.riotjy.demoProject
   
 cpp:
-  namespace: testproject
+  namespace: demoproject
   
 csharp:                  # c# support not implemented yet
-  namespace: TestProject
+  namespace: DemoProject
 
 #NOTES:
 #keywords: 
@@ -69,62 +69,53 @@ csharp:                  # c# support not implemented yet
 #  the processing of the model will fail.
 
 # classes definition example
-BaseClass:            # creates class BaseClass
-  boolOneBase: bool
-  boolArrOne: bool[]
-  intOneBase: int
-  intTwoBase: int     # shorthand style for primitives
-  intThreeBase:       # detailed style for primitives
-    type: int
-  intArrOne: int[]    # creates an array of integer primitives
-  strOneBase: string
-  strArrOne: string[] # creates an array list of strings
-  flOneBase: float
-  dblOneBase: double  # creates an array list of single precision float primitives
-  flArrBase: float[]
-  dblArrOne: double[] # shorthand style for primitives
-  dblArrTwo:          # detailed style for primitives
-    type: double
-    collection: arrayList
-  objOneBase:         # creates an object of type RefClassOne
+BaseClass:                # creates class BaseClass with the following fields(members)
+# primitives
+  intBase: int            # creates an int field (see below example for all primitives supported)
+
+  objBase:                # creates an object of type RefClassOne
     type: RefClassOne
-  objArrTwoBase:      # creates an array list of objects of type RefClassTwo
+  objArrBase:             # creates an array list of objects of type RefClassTwo
     type: RefClassTwo
     collection: arrayList 
-  objMapThreeBase:    # creates a hash map <string, RefClassTwo>
+  objMapBase:             # creates a hash map <string, RefClassTwo>
     type: RefClassTwo
     collection: hashMap
-    
+
+
 DervClassOne:             # creates class DervClassOne extending BaseClass
   extends: BaseClass  
-  intOneDervOne: int
-  strOneDervOne: string
-  objOneDervOne:
+  intDervOne: int
+  strDervOne: string
+  objDervOne:
     type: RefClassOne
     collection: arrayList
   mapOneDervOne:
     type: RefClassTwo
     collection: hashMap
-  
+
 
 DervClassTwo:             # creates class DervClassOne extending DervClassTwo
   extends: DervClassOne
-  intOneDervTwo: int
-  strOneDervTwo: string
-  objOneDervTwo:
+  intDervTwo: int
+  strDervTwo: string
+  objDervTwo:
     type: ExternalClassType
-  mapOneDervTwo:
+  mapDervTwo:
     type: ExternalClassType4Coll
     collection: hashMap
 
+
 RefClassOne:              #creates class RefClassOne
-  intOneRefOne: int
-  strOneRefOne: string
+  intRefOne: int
+  strRefOne: string
+
 
 RefClassTwo:              #creates class RefClassTwo
-  intOneRefTwo: int
-  strOneRefTwo: string
-  
+  intRefTwo: int
+  strRefTwo: string
+
+
 ExternalClassType:        # wraps an external class to be imported and used as type
    java:
       path: dev.riotjy.demo.extclass.ExtClassJ  # import directive
@@ -147,7 +138,34 @@ ExternalClassType4Coll:    # wraps an external class to be imported and used as 
       path: ns1.ns2
       class: ExtClass4CollCS
 
-AnnotatedClassExample:
+
+PrimitivesClass:
+  boolOne: bool
+  charOne: char
+  byteOne: byte
+  shortOne: short
+  intOne: int
+  longOne: long
+  flOne: float
+  dblOne: double
+  strOne: string
+
+  intTwo: int         # shorthand style for primitives
+  intThree:           # detailed style for primitives (needed when using annotations, see below example)
+    type: int
+  intArrOne: int[]    # creates an array of integer primitives (shorthand notation)
+
+  boolArrOne: bool[]  # creates an array of booleans (somewhat inefficient)
+  strArrOne: string[] # creates an array list of strings
+  flArr: float[]      # creates an array list of single precision float primitives
+  dblArrOne: double[] # creates an array list of double precision float primitives
+
+  dblArrTwo:          # detailed style for primitives (needed when using annotations, see below example)
+    type: double
+    collection: arrayList
+
+
+AnnotatedClass:
   meta:                                          # class level meta data
     java:                                        # java annotations
       Entity:                                    # creates @Entity

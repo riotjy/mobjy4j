@@ -20,7 +20,11 @@ package dev.riotjy.mobjy.model;
 
 public enum MjyPrimitiveType {
   BOOLEAN,
+  CHAR,
+  BYTE,
+  SHORT,
   INT,
+  LONG,
   FLOAT,
   DOUBLE,
   STRING,
@@ -29,7 +33,11 @@ public enum MjyPrimitiveType {
   
   public static MjyPrimitiveType getMjyPrimitiveType(String type) {
     if (type.equals("bool")) return BOOLEAN;
+    if (type.equals("char")) return CHAR;
+    if (type.equals("byte")) return BYTE;
+    if (type.equals("short")) return SHORT;
     if (type.equals("int")) return INT;
+    if (type.equals("long")) return LONG;
     if (type.equals("float")) return FLOAT;
     if (type.equals("double")) return DOUBLE;
     if (type.equals("string")) return STRING;
@@ -39,7 +47,11 @@ public enum MjyPrimitiveType {
   @Override
   public String toString() {
     if (this == BOOLEAN) return "bool";
+    if (this == CHAR) return "char";
+    if (this == BYTE) return "byte";
+    if (this == SHORT) return "short";
     if (this == INT) return "int";
+    if (this == LONG) return "long";
     if (this == FLOAT) return "float";
     if (this == DOUBLE) return "double";
     if (this == STRING) return "string";

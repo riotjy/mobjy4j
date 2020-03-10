@@ -30,7 +30,11 @@ public class JavaMetaTypeMap {
   
   private JavaMetaTypeMap() {
     map.put(MjyPrimitiveType.BOOLEAN.toString(), "Boolean");
+    map.put(MjyPrimitiveType.CHAR.toString(), "Character");
+    map.put(MjyPrimitiveType.BYTE.toString(), "Byte");
+    map.put(MjyPrimitiveType.SHORT.toString(), "Short");
     map.put(MjyPrimitiveType.INT.toString(), "Integer");
+    map.put(MjyPrimitiveType.LONG.toString(), "Long");
     map.put(MjyPrimitiveType.FLOAT.toString(), "Float");
     map.put(MjyPrimitiveType.DOUBLE.toString(), "Double");
     map.put(MjyPrimitiveType.STRING.toString(), "String");
