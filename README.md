@@ -1,11 +1,11 @@
 # **mobjy** for Java
 
-**mobjy** for Java is a tool/library intended for data modeling and architecture to help simplify the production of language specific data model code.
+**mobjy** for Java is a tool/library intended for data modeling and architecture. It helps simplify the creation of language specific JSON processing code.
 
 ![Image: ./res/readme.png](https://gitlab.com/riotjy/mobjy4j/-/raw/master/res/readme.png)
 (Click on the image for hi-res viewing)
 
-**mobjy** automates the generation of ample Java and C++ data model code using a fairly easy to write YAML specification. (see full YAML example and output code at the end)
+**mobjy** automates the generation of ample Java and C++ data model code from a fairly easy to write YAML specification. (see full YAML example and output code at the end)
 
 **mobjy** processes the data model specification in YAML, then outputs Java and C++ embeddable code comprised of
 - the data model entities hierarchy as OOP classes
@@ -69,9 +69,9 @@ Passing a compatible JSON string to the deserializer will result in an object of
 It is recommended to manufacture the JSON data using the serializer instead of other methods to ensure compatibility and error free execution.
 For debugging purposes, a generated JSON data string can be then used as a template.
 
-## WHAT DOES IT DO:
+## WHAT CAN IT DO:
 
-Using ./examples/example.yaml found in the project directory, currently it turns the following YAML class model definition into Java and C++ code. (scroll down)
+It can turn the following YAML class model definition (./examples/example.yaml) into the follwing Java and C++ code. (scroll down)
 
 ## YAML input
 ```YAML
