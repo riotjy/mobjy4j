@@ -4,6 +4,8 @@
 
 **mobjy** automates the generation of ample Java and C++ data model code using a fairly easy to write YAML specification. (see YAML example below)
 
+![Image: ./res/readme.png](https://gitlab.com/riotjy/mobjy4j/-/raw/master/res/readme.png)
+
 **mobjy** processes the data model specification in YAML, then outputs Java and C++ embeddable code comprised of
 - the data model entities hierarchy as OOP classes
 - a serializer utility to convert in process data objects to JSON 

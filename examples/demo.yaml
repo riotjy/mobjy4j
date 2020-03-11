@@ -1,0 +1,89 @@
+#*******************************************************************************
+# Copyright 2020 riotjy and listed authors
+#
+#    Licensed under the Apache License, Version 2.0 (the "License");
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+#
+#        http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
+#    
+#    Authors:
+#      Alex Savulov
+#*******************************************************************************
+%YAML 1.1
+---
+# YAML defined model example
+project: demoProject
+
+version:
+  major: 1
+  minor: 0
+  revision: 3
+  status: release     # alpha | beta | release
+  candidate: 0
+
+compatver:
+  major: 1
+  minor: 0
+  revision: 0
+  status: release
+  candidate: 0
+
+java:                    # project level language dependent setting
+  package: dev.riotjy.demoProject
+  
+cpp:
+  namespace: demoproject
+  
+csharp:                  # c# support not implemented yet
+  namespace: DemoProject
+
+#NOTES:
+#keywords: 
+#  class, extends, type, collection, references, meta
+#  bool, int, string, float, double, 
+#  version, compatver, project
+#  java, cpp, csharp, path, resource, references
+#
+#structure:
+#  Except the first level elements that are keywords (see above)
+#  All other first level elements are classes (objects) definitions
+#  which can contain fields
+#  All second level elements are fields of classes (objects)
+#  The YAML hierarchy of mappings gives the structure of the classes
+#
+#guidance:
+#  The only restrictions on the syntax used in this model definition
+#  file are imposed by the YAML 1.1 specification.
+#  It is recommended to avoid using any language specific keywords 
+#  as class or field names. There is currently no check for that,
+#  the model developer is responsible for ensuring that.
+#  The only structural restriction for the class model currently
+#  is that cyclic inheritance is not allowed. If encountered,
+#  the processing of the model will fail.
+
+# classes definition example
+
+MyBaseClass:
+  myIntBase: int
+  myLongArr: long[]
+    
+MyDerivedClass:
+  extends: MyBaseClass
+  myIntDerv:
+    type: int
+  myDoubleArr:
+    type: double
+    collection: arrayList
+  myOtherMap:
+    type: MyOtherClass
+    collection: hashMap
+
+MyOtherClass:
+  myOtherString: string
