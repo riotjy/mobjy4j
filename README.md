@@ -25,7 +25,7 @@ multiple data objects and converters in multiple projects and languages.
 between in process data objects and JSON data possible while
 ensuring the proper creation of the intended in process class instances.
 It also supports the specification of class and field level **_Java annotations_**,
-useful for ORM purposes (e.g. Hibernate) for example.
+useful for ORM purposes (e.g. Hibernate).
 
 In its current verison **mobjy** is using the *gson* and *nlohmann/json* libraries
 for parsing and extracting JSON data.
