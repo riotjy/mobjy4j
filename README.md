@@ -24,7 +24,7 @@ multiple data objects and converters in multiple projects and languages.
 **mobjy** supports object oriented hierarchies (inheritance) making the conversion
 between in process data objects and JSON data possible while
 ensuring the proper creation of the intended in process class instances.
-It also supports the specification of class and field level Java annotations,
+It also supports the specification of class and field level **_Java annotations_**,
 useful for ORM purposes (e.g. Hibernate) for example.
 
 In its current verison **mobjy** is using the *gson* and *nlohmann/json* libraries
