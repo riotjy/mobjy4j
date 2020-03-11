@@ -2,9 +2,10 @@
 
 **mobjy** for Java is a tool/library intended for data modeling and architecture to help simplify the production of language specific data model code.
 
-**mobjy** automates the generation of ample Java and C++ data model code using a fairly easy to write YAML specification. (see YAML example below)
-
 ![Image: ./res/readme.png](https://gitlab.com/riotjy/mobjy4j/-/raw/master/res/readme.png)
+(Click on the image for hi-res viewing)
+
+**mobjy** automates the generation of ample Java and C++ data model code using a fairly easy to write YAML specification. (see full YAML example and output code at the end)
 
 **mobjy** processes the data model specification in YAML, then outputs Java and C++ embeddable code comprised of
 - the data model entities hierarchy as OOP classes
