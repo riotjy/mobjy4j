@@ -99,8 +99,16 @@ public class JavaDeserializeClassCodeGenerator extends DeserializeClassCodeGener
     
     case BOOLEAN:
       return "Boolean";
+    case CHAR:
+      return "Character";
+    case BYTE:
+      return "Byte";
+    case SHORT:
+      return "Short";
     case INT:
       return "Int";
+    case LONG:
+      return "Long";
     case FLOAT:
       return "Float";
     case DOUBLE:
@@ -119,8 +127,16 @@ public class JavaDeserializeClassCodeGenerator extends DeserializeClassCodeGener
     
     case BOOLEAN:
       return "BOOLEAN";
+    case CHAR:
+      return "CHAR";
+    case BYTE:
+      return "BYTE";
+    case SHORT:
+      return "SHORT";
     case INT:
       return "INT";
+    case LONG:
+      return "LONG";
     case FLOAT:
       return "FLOAT";
     case DOUBLE:

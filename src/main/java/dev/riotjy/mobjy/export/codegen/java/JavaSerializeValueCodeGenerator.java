@@ -41,7 +41,11 @@ public class JavaSerializeValueCodeGenerator extends SerializeValueCodeGenerator
         "      return \"null\";\n" + 
         "    \n" + 
         "    if (value instanceof Boolean ||\n" + 
+        "        value instanceof Byte ||\n" + 
+        "        value instanceof Character ||\n" + 
+        "        value instanceof Short ||\n" + 
         "        value instanceof Integer ||\n" + 
+        "        value instanceof Long ||\n" + 
         "        value instanceof Float ||\n" + 
         "        value instanceof Double) {\n" + 
         "      return value.toString();\n" + 

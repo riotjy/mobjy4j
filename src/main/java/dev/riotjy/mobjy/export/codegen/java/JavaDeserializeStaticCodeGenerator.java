@@ -34,8 +34,16 @@ public class JavaDeserializeStaticCodeGenerator extends CodeGenerator {
         "    switch (prType) {\n" + 
         "    case BOOLEAN:\n" + 
         "      return Boolean.valueOf(jp.getAsBoolean());\n" + 
+        "    case CHAR:\n" + 
+        "      return Character.valueOf(jp.getAsCharacter());\n" + 
+        "    case BYTE:\n" + 
+        "      return Byte.valueOf(jp.getAsByte());\n" + 
+        "    case SHORT:\n" + 
+        "      return Short.valueOf(jp.getAsShort());\n" + 
         "    case INT:\n" + 
         "      return Integer.valueOf(jp.getAsInt());\n" + 
+        "    case LONG:\n" + 
+        "      return Long.valueOf(jp.getAsLong());\n" + 
         "    case FLOAT:\n" + 
         "      return Float.valueOf(jp.getAsFloat());\n" + 
         "    case DOUBLE:\n" + 
