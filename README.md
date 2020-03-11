@@ -139,7 +139,6 @@ csharp:                  # c# support not implemented yet
 
 # classes definition example
 BaseClass:                # creates class BaseClass with the following fields(members)
-# primitives
   intBase: int            # creates an int field (see below example for all primitives supported)
 
   objBase:                # creates an object of type RefClassOne
