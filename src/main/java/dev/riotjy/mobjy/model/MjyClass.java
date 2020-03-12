@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.google.gson.annotations.JsonAdapter;
-
 public class MjyClass extends MjyElement {
 
   private String name;

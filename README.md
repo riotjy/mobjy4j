@@ -68,16 +68,32 @@ Message to [ r i o t j y ] [ p r o t o n m a i l ] [ c o m ] (fill in missing).
 
 BUILD INSTRUCTIONS:
 
-Gradle: run gradlew.* script, specify desired task
+Gradle: run gradlew.* script, specify desired build task.
 
 Eclipse: install buildship extension for Gradle support, import as existing
-gradle project, build project
+gradle project, build project.
 
 RUNNING INSTRUCTIONS:
 
 Run class "Mobjy" with parameter **-i** set to the full/relative path to input
 YAML file and **-o** parameter to the output directory/folder.
-**mobjy** will generate a bunch of java and cpp files in there. 
+**mobjy** will generate a bunch of java and cpp files in there.
+
+For convenience, the Gradle task **buildFatJar** in the launch group *buildfatjar*
+will build a fat jar incorporating all needed libraries: *./build/libs/Mobjy-all.jar*
+
+Also for convenience you can find a copy of the fat jar under *./fatjar/Mobjy-all.jar* built for Java 11,
+but it is recommended, you build it yourself.
+
+To launch *cd* to the project root and use the command:
+```
+java -cp ./build/libs/Mobjy-all.jar dev.riotjy.mobjy.Mobjy -i ./examples/example.yaml -o /home/riotjy/mobjy/out
+```
+or
+```
+java -cp ./fatjar/Mobjy-all.jar dev.riotjy.mobjy.Mobjy -i ./examples/example.yaml -o /home/riotjy/mobjy/out
+```
+if you want to use the prebuilt fat jar.
 
 In order to use the output code files, currently the *gson* library for java
 and the *nlohmann/json (json.hpp)* library for C++ are needed.

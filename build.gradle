@@ -46,3 +46,17 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     
 }
+
+task buildFatJar(type: Jar) {
+  manifest {
+    attributes 'Implementation-Title' : 'mobjy jar',
+      'Implementation-Version' : '00.00.00',
+      'Main-Class' : 'dev.riotjy.mobjy.Mobjy'
+  }
+  baseName = 'Mobjy-all'
+  from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+  with jar
+}
+
+buildFatJar.group = "BuildFatJar"
+buildFatJar.description = "Build Fat Jar"
